@@ -1,0 +1,326 @@
+@inject Ape.Services.SecureConfigurationService ConfigService
+@{
+    ViewData["Title"] = "Welcome";
+    string siteName = await ConfigService.GetCredentialAsync("SITE_NAME") ?? "The Ape Project";
+}
+
+<style>
+
+    .logo {
+        image-rendering: pixelated;
+        max-height: 70px; /* Large screens */
+    }
+
+   .tree {
+        image-rendering: pixelated;
+        max-height: 300px;  /* Large screens */
+    } 
+    
+    .logophone,
+    .treephone {
+        display: none;
+    }
+    
+
+    .vsicon {
+        image-rendering: pixelated;
+        max-height: 36px; /* Large screens */
+    }
+
+    @@media (max-width: 768px) {
+
+        /* Prevent horizontal overflow on mobile */
+        .container, .card {
+            overflow-x: hidden;
+        }
+
+        .logo,
+        .tree {
+            display: none; /* Phone screens */
+        }
+
+        .treephone {
+            display: inline;
+            max-height: 136px; /* Phone screens */
+        }
+
+        .logophone {
+            display: inline;
+            max-height: 80px; /* Phone screens */
+        }
+        
+              
+
+        .vsicon {
+            max-height: 18px; /* Phone screens */
+        }
+
+    }
+
+    /* Pulsating button style */
+    .btn-pulse {
+        display: inline-block;
+        background: rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white !important;
+        padding: 0.5rem 1.25rem;
+        border-radius: 20px;
+        font-weight: 600;
+        text-decoration: none !important;
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+    }
+
+    .btn-pulse:hover {
+        background: rgba(0, 0, 0, 0.85);
+        transform: translateY(-2px);
+        color: white !important;
+        animation: none;
+    }
+
+    @@keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    .lead-1 {
+        font-size: 1.25rem;
+        font-weight: 500;
+    }
+
+    .lead-2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+</style>
+
+<!-- Hero Section -->
+<div class="container mt-0 mb-4">
+
+    <div class="row justify-content-around">       
+
+        <!-- The Ape Project -->
+        <div class="col-12 col-md-8 text-center">
+            <h1 class="display-5 fw-bold mb-0"><img class="img-fluid logo me-2" src="/images/site/logo.png" alt="logo">@siteName</h1>                       
+        </div>        
+
+    </div>
+    
+    <!-- Visual Studio Label -->
+    <div class="text-center mb-2">
+
+        <!-- for -->
+        <h5 class="mb-0">for</h5>
+
+        <!-- Visual Studio -->
+        <h2><img class="text-center vsicon" src="~/images/site/vsicon.webp" alt="" aria-hidden="true" /> <a class="text-dark text-decoration-none" href="https://visualstudio.microsoft.com/" target="_blank" rel="noopener noreferrer">Visual Studio</a></h2>
+
+        <!-- About Button -->
+        <a asp-controller="Info" asp-action="About" class="btn-pulse my-2 me-2">
+            <i class="bi bi-info-circle me-2"></i>Learn More
+        </a>
+
+        <!-- GitHub Button -->
+        <a href="https://github.com/MikishVaughn/Ape" target="_blank" rel="noopener noreferrer"
+           class="btn-pulse my-2">
+            <i class="bi bi-github me-2"></i>View on GitHub
+        </a>
+
+    </div>
+
+</div>
+
+<!-- First Card -->
+<div class="rounded bg-light py-0 mx-auto my-4" style="max-width: 1000px;">
+    
+    <div class="card shadow-sm w-100 py-4 px-3" style="background-color: lightgray;">
+
+        <div class="row g-0">
+
+            <div class="col-12 col-md-4 text-lg-end text-center mb-2 mb-md-0">
+                           
+                <img class="img-fluid tree" src="~/images/site/apetree.png" alt="tree" aria-hidden="true" /> 
+                <img class="img-fluid treephone" src="~/images/site/tree.png" alt="tree" aria-hidden="true" />
+
+            </div>
+
+            <div class="col-12 col-md-8" style="max-width: 580px;">
+
+                <img class="w-100 rounded-3" src="~/images/site/mvc.png" alt="ASP.NET Core MVC architecture diagram" />
+
+                <p class="lead-1 text-secondary my-2">
+                    A production-ready <b>ASP.NET Core MVC</b> framework with comprehensive authentication,
+                    role-based access control, document management, and administrative tools.
+                </p>
+
+                <p class="lead-2 text-secondary my-2">This framework provides a solid foundation for building secure, 
+                    enterprise-grade web applications.
+                </p>
+
+                <div class="text-center">
+                    <span class="badge rounded-pill bg-dark my-2 px-3 py-2">C#</span>
+                    <span class="badge rounded-pill bg-dark my-2 px-3 py-2">.NET Core</span>
+                    <span class="badge rounded-pill bg-dark my-2 px-3 py-2">MVC</span>
+                    <span class="badge rounded-pill bg-dark my-2 px-3 py-2">Entity Framework</span>
+                    <span class="badge rounded-pill bg-dark my-2 px-3 py-2">SQL Server</span>
+                    <span class="badge rounded-pill bg-dark my-2 px-3 py-2">Identity</span>
+                </div>
+            </div>               
+                
+        </div>
+
+    </div>
+           
+</div>
+
+
+<!-- Features Section -->
+<div class="rounded bg-light py-0 mx-auto" style="max-width: 1000px;">
+
+    <div class="card shadow-sm w-100 py-4 px-3" style="background-color: black;">
+        <h2 class="text-white text-center mb-2">Platform Features</h2>
+        <p class="text-center text-white mb-4">Built-in tools for managing members, content, and communications</p>
+
+        <div class="row g-4">
+
+            <!-- Identity & Security -->
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div>
+                            <i class="bi bi-shield-lock fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Identity &amp; Security</h5>
+                        <p class="card-text text-secondary">
+                            ASP.NET Identity with Entity Framework, email verification, and secure account management including two factor authorization.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role Management -->
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div>
+                            <i class="bi bi-people fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Role Management</h5>
+                        <p class="card-text text-secondary">
+                            Role-driven access control with Admin and Member roles. Manage user assignments from the admin panel.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email System -->
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div>
+                            <i class="bi bi-envelope fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Email System</h5>
+                        <p class="card-text text-secondary">
+                            Azure Communication Services with SMTP fallback. Configured through the System Credentials page for outbound email needs.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div>
+                            <i class="bi bi-chat-dots fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Contact Form</h5>
+                        <p class="card-text text-secondary">
+                            Public contact form with admin-configurable recipient addresses, and email logging with triple-layer SPAM protection (honeypot fields, JavaScript token, timing validation).
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Document Library -->
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div>
+                            <i class="bi bi-file-earmark-pdf fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Document Library</h5>
+                        <p class="card-text text-secondary">
+                            Hierarchical PDF management with folder-based organization. Supports Admin-only and Member-visible access levels.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Gallery -->
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div>
+                            <i class="bi bi-images fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Image Gallery</h5>
+                        <p class="card-text text-secondary">
+                            Admin-editable picture gallery with categorized albums and image management.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- More Links -->
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div>
+                            <i class="bi bi-link-45deg fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="card-title">More Links</h5>
+                        <p class="card-text text-secondary">
+                            Organized link categories with drag-and-drop reordering. Admin-only and public visibility options.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Credentials -->
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div>
+                            <i class="bi bi-key fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="card-title">System Credentials</h5>
+                        <p class="card-text text-secondary">
+                            Encrypted credential storage for API keys, SMTP settings, and service configuration with audit logging.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Users -->
+            <div class="col-12 col-sm-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <div>
+                            <i class="bi bi-activity fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Active Members</h5>
+                        <p class="card-text text-secondary">
+                            Monitor currently active members and recent login activity from the admin dashboard.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
