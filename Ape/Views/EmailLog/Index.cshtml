@@ -496,9 +496,10 @@
             }
         });
 
-        @if (currentPage == 1 && string.IsNullOrWhiteSpace(search) && serverFilter == "All")
-        {
-            <text>
+        // Auto-refresh configuration (set by server)
+        var enableAutoRefresh = @Json.Serialize(currentPage == 1 && string.IsNullOrWhiteSpace(search) && serverFilter == "All");
+
+        if (enableAutoRefresh) {
             var autoRefreshTimer = setTimeout(function() {
                 location.reload();
             }, 30000);
@@ -515,7 +516,6 @@
                     }, 30000);
                 });
             }
-            </text>
         }
     </script>
 }
