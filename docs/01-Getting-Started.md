@@ -21,8 +21,8 @@ Before you begin, ensure you have the following installed:
   - LocalDB (included with Visual Studio) for development
   - SQL Server Express or full SQL Server for production
 
-- **Visual Studio 2022** or **VS Code** (recommended)
-  - Visual Studio: Include "ASP.NET and web development" workload
+- **Visual Studio 2026** (preferred) or **VS Code**
+  - Visual Studio 2026: Include "ASP.NET and web development" workload (uses `.slnx` solution format)
   - VS Code: Install C# extension
 
 ---
