@@ -1,0 +1,25 @@
+﻿
+
+.bg-yellow {
+    background: #FFFACD
+}
+
+.bg-gray {
+    background: gray;
+}
+
+.bg-info-subtle {
+   background-color: #cff4fc;
+}
+
+.btn-primary {
+    color: #fff !important;
+    background-color: #3bc21b !important;
+    border-color: #2cac18 !important;
+}
+    .btn-primary:hover,
+    .btn-primary:focus,
+    .btn-primary:active {
+        background-color: #258d14 !important;
+        border-color: #2cac18 !important;
+    }

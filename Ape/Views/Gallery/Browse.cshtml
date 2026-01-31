@@ -36,7 +36,7 @@
 
     <!-- Sidebar: Category Tree -->
     <div class="col-md-4 col-lg-3">
-        <div class="card shadow-sm mb-3">
+        <div class="card bg-yellow shadow-sm mb-3">
             <div class="card-header bg-secondary text-white py-2">
                 <strong>Categories</strong>
             </div>
@@ -49,7 +49,7 @@
 
     <!-- Main Content Area -->
     <div class="col-md-8 col-lg-9">
-        <div class="card shadow">
+        <div class="card bg-yellow shadow">
             <!-- Breadcrumb Navigation -->
             <div class="card-header bg-light py-2">
                 <nav aria-label="breadcrumb">
@@ -92,7 +92,7 @@
                     @if (Model.CanManage)
                     {
                         <div class="btn-group">
-                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
                                 + New Category
                             </button>
                             @if (Model.CurrentCategoryId.HasValue)
@@ -134,7 +134,7 @@
                                     </a>
                                     @if (Model.CanManage)
                                     {
-                                        <div class="card-footer bg-transparent border-0 py-1">
+                                        <div class="card-footer bg-transparent border-0 p-1">
                                             <div class="btn-group btn-group-sm w-100" role="group">
                                                 <button type="button" class="btn btn-outline-secondary"
                                                         onclick="showEditCategoryModal(@category.CategoryId, '@category.Name.Replace("'", "\\'")', @((int)category.AccessLevel), '@(category.Description?.Replace("'", "\\'") ?? "")');" title="Edit">
@@ -409,12 +409,12 @@
 <!-- Create Category Modal -->
 <div class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content bg-yellow">
             <form asp-action="CreateCategoryForm" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="parentCategoryId" value="@Model.CurrentCategoryId" />
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createCategoryModalLabel">Create New Category</h5>
+                <div class="modal-header bg-gray">
+                    <h5 class="modal-title text-light" id="createCategoryModalLabel">Create New Category</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

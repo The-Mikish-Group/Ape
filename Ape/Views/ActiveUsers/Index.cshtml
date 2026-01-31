@@ -26,7 +26,7 @@
         <!-- Active Now -->
         <div class="col-md-3 col-sm-6">
             @{
-                var activeNowBg = Model.ActiveNowExcludingSelfCount > 0 ? "bg-danger" : (Model.ActiveNowCount > 0 ? "bg-info" : "bg-secondary");
+                var activeNowBg = Model.ActiveNowExcludingSelfCount > 0 ? "bg-danger" : (Model.ActiveNowCount > 0 ? "bg-gray" : "bg-secondary");
                 var activeNowLabel = Model.ActiveNowExcludingSelfCount > 0 ? "DON'T DEPLOY" : (Model.ActiveNowCount > 0 ? "Just you!" : "None");
             }
             <div class="card text-white @activeNowBg">
@@ -55,7 +55,7 @@
 
         <!-- Idle -->
         <div class="col-md-3 col-sm-6">
-            <div class="card text-white @(Model.IdleCount > 0 ? "bg-info" : "bg-secondary")">
+            <div class="card text-dark @(Model.IdleCount > 0 ? "bg-info-subtle" : "bg-secondary")">
                 <div class="card-body text-center">
                     <h3 class="mb-0">@Model.IdleCount</h3>
                     <small><i class="bi bi-circle"></i> Idle Session</small>
@@ -68,7 +68,7 @@
 
         <!-- Session Expired -->
         <div class="col-md-3 col-sm-6">
-            <div class="card text-white @(Model.ExpiredCount > 0 ? "bg-success" : "bg-secondary")">
+            <div class="card text-dark @(Model.ExpiredCount > 0 ? "bg-success-subtle" : "bg-secondary")">
                 <div class="card-body text-center">
                     <h3 class="mb-0">@Model.ExpiredCount</h3>
                     <small><i class="bi bi-circle-fill text-success"></i> Session Expired</small>
@@ -126,7 +126,7 @@
 <!-- User Activity Table -->
 <div class="container">
     <div class="card shadow">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header bg-gray text-white">
             <h5 class="mb-0">All Member Activity</h5>
         </div>
         <div class="card-body p-0">

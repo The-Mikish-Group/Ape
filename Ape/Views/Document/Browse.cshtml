@@ -35,7 +35,7 @@
 <div class="row mx-1">
     <!-- Sidebar: Folder Tree -->
     <div class="col-md-4 col-lg-3">
-        <div class="card shadow-sm mb-3">
+        <div class="card bg-yellow shadow-sm mb-3">
             <div class="card-header bg-secondary text-white py-2">
                 <strong>Folders</strong>
             </div>
@@ -48,7 +48,7 @@
 
     <!-- Main Content Area -->
     <div class="col-md-8 col-lg-9">
-        <div class="card shadow">
+        <div class="card bg-yellow shadow">
             <!-- Breadcrumb Navigation -->
             <div class="card-header bg-light py-2">
                 <nav aria-label="breadcrumb">
@@ -89,7 +89,7 @@
                         <div class="btn-group">
                             @if (Model.CanManageFolders)
                             {
-                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createFolderModal">
+                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createFolderModal">
                                     + New Folder
                                 </button>
                             }
@@ -271,12 +271,12 @@
 <!-- Create Folder Modal -->
 <div class="modal fade" id="createFolderModal" tabindex="-1" aria-labelledby="createFolderModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content bg-yellow">
             <form asp-action="CreateFolderForm" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="parentFolderId" value="@Model.CurrentFolderId" />
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createFolderModalLabel">Create New Folder</h5>
+                <div class="modal-header bg-gray">
+                    <h5 class="modal-title text-light" id="createFolderModalLabel">Create New Folder</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
