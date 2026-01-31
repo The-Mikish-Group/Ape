@@ -1,8 +1,16 @@
 @model Ape.Models.ViewModels.GalleryCategoryTreeNode
 @using Ape.Models
 
-<li>
+@{
+    var canManage = ViewData["CanManage"] as bool? ?? false;
+}
+
+<li data-category-id="@Model.CategoryId">
     <div class="category-tree-item @(Model.IsSelected ? "selected" : "") @(Model.AccessLevel > DocumentAccessLevel.Member ? "category-restricted" : "")">
+        @if (canManage)
+        {
+            <span class="category-drag-handle" title="Drag to reorder">&#9776;</span>
+        }
         @if (Model.Children.Any())
         {
             <span class="category-toggle" onclick="toggleCategoryNode(this)">@Html.Raw(Model.IsExpanded ? "&#9660;" : "&#9654;")</span>
@@ -27,10 +35,10 @@
     </div>
     @if (Model.Children.Any())
     {
-        <ul class="@(Model.IsExpanded ? "" : "d-none")">
+        <ul class="sortable-categories @(Model.IsExpanded ? "" : "d-none")" data-parent-id="@Model.CategoryId">
             @foreach (var child in Model.Children)
             {
-                @await Html.PartialAsync("_CategoryTreeNode", child)
+                <partial name="_CategoryTreeNode" model="child" view-data="ViewData" />
             }
         </ul>
     }

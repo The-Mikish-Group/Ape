@@ -1,8 +1,16 @@
 @model Ape.Models.ViewModels.FolderTreeNode
 @using Ape.Models
 
-<li>
+@{
+    var canManage = ViewData["CanManageFolders"] as bool? ?? false;
+}
+
+<li data-folder-id="@Model.FolderId">
     <div class="folder-tree-item @(Model.IsSelected ? "selected" : "") @(Model.AccessLevel > DocumentAccessLevel.Member ? "folder-restricted" : "")">
+        @if (canManage)
+        {
+            <span class="folder-drag-handle" title="Drag to reorder">&#9776;</span>
+        }
         @if (Model.Children.Any())
         {
             <span class="folder-toggle" onclick="toggleFolderNode(this)">@Html.Raw(Model.IsExpanded ? "&#9660;" : "&#9654;")</span>
@@ -27,10 +35,10 @@
     </div>
     @if (Model.Children.Any())
     {
-        <ul class="@(Model.IsExpanded ? "" : "d-none")">
+        <ul class="sortable-folders @(Model.IsExpanded ? "" : "d-none")" data-parent-id="@Model.FolderId">
             @foreach (var child in Model.Children)
             {
-                @await Html.PartialAsync("_FolderTreeNode", child)
+                <partial name="_FolderTreeNode" model="child" view-data="ViewData" />
             }
         </ul>
     }

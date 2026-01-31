@@ -32,21 +32,22 @@
     </div>
 }
 
-<div class="row">
+<div class="row mx-1">
     <!-- Sidebar: Folder Tree -->
-    <div class="col-md-3 col-lg-2">
+    <div class="col-md-4 col-lg-3">
         <div class="card shadow-sm mb-3">
             <div class="card-header bg-secondary text-white py-2">
                 <strong>Folders</strong>
             </div>
             <div class="card-body p-2" id="folderTreeContainer">
+                @{ ViewData["CanManageFolders"] = Model.CanManageFolders; }
                 @await Html.PartialAsync("_FolderTree", Model.FolderTree)
             </div>
         </div>
     </div>
 
     <!-- Main Content Area -->
-    <div class="col-md-9 col-lg-10">
+    <div class="col-md-8 col-lg-9">
         <div class="card shadow">
             <!-- Breadcrumb Navigation -->
             <div class="card-header bg-light py-2">
@@ -836,7 +837,7 @@
             document.getElementById('bulkMoveCount').textContent = selectedIds.length;
 
             // Load available folders
-            const currentFolderId = @(Model.CurrentFolderId ?? 0);
+            const currentFolderId = @Json.Serialize(Model.CurrentFolderId ?? 0);
             fetch('@Url.Action("GetFolderTree", "Document")')
                 .then(response => response.json())
                 .then(tree => {
@@ -894,6 +895,76 @@
             .catch(error => {
                 alert('Error moving files.');
             });
+        }
+
+        // ============================================================
+        // Folder Sorting (Admin/Manager only)
+        // ============================================================
+
+        @if (Model.CanManageFolders)
+        {
+            <text>
+        function initializeFolderSorting() {
+            const sortableLists = document.querySelectorAll('.sortable-folders');
+
+            sortableLists.forEach(list => {
+                new Sortable(list, {
+                    group: 'folders',
+                    animation: 150,
+                    handle: '.folder-drag-handle',
+                    ghostClass: 'sortable-ghost',
+                    chosenClass: 'sortable-chosen',
+                    fallbackOnBody: true,
+                    swapThreshold: 0.65,
+                    onEnd: function(evt) {
+                        if (evt.from === evt.to && evt.oldIndex !== evt.newIndex) {
+                            saveFolderSortOrder(evt.to);
+                        } else if (evt.from !== evt.to) {
+                            saveFolderSortOrder(evt.to);
+                        }
+                    }
+                });
+            });
+        }
+
+        function saveFolderSortOrder(listElement) {
+            const items = listElement.querySelectorAll(':scope > li[data-folder-id]');
+            const folderIds = [];
+            const sortOrders = [];
+
+            items.forEach((item, index) => {
+                const folderId = item.getAttribute('data-folder-id');
+                if (folderId) {
+                    folderIds.push(parseInt(folderId));
+                    sortOrders.push(index);
+                }
+            });
+
+            if (folderIds.length === 0) return;
+
+            const formData = new FormData();
+            folderIds.forEach(id => formData.append('folderIds', id));
+            sortOrders.forEach(order => formData.append('sortOrders', order));
+            formData.append('__RequestVerificationToken', csrfToken);
+
+            fetch('@Url.Action("UpdateFolderSortOrder", "Document")', {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success) {
+                    console.error('Failed to save folder order:', data.message);
+                }
+            })
+            .catch(err => {
+                console.error('Error saving folder order:', err);
+            });
+        }
+
+        // Initialize folder sorting on page load
+        document.addEventListener('DOMContentLoaded', initializeFolderSorting);
+            </text>
         }
     </script>
 

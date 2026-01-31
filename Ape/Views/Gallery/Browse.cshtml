@@ -35,19 +35,20 @@
 <div class="row mx-1">
 
     <!-- Sidebar: Category Tree -->
-    <div class="col-md-3 col-lg-2">
+    <div class="col-md-4 col-lg-3">
         <div class="card shadow-sm mb-3">
             <div class="card-header bg-secondary text-white py-2">
                 <strong>Categories</strong>
             </div>
             <div class="card-body p-2" id="categoryTreeContainer">
+                @{ ViewData["CanManage"] = Model.CanManage; }
                 @await Html.PartialAsync("_CategoryTree", Model.CategoryTree)
             </div>
         </div>
     </div>
 
     <!-- Main Content Area -->
-    <div class="col-md-9 col-lg-10">
+    <div class="col-md-8 col-lg-9">
         <div class="card shadow">
             <!-- Breadcrumb Navigation -->
             <div class="card-header bg-light py-2">
@@ -272,7 +273,7 @@
                                         @if (Model.CanManage)
                                         {
                                             <div class="image-checkbox-overlay">
-                                                <input type="checkbox" class="form-check-input image-checkbox" value="@image.ImageId" onclick="updateSelection(event)" title="Select image">
+                                                <input type="checkbox" class="form-check-input image-checkbox" value="@image.ImageId" onchange="updateSelection(this)" title="Select image">
                                             </div>
                                         }
                                         <a href="#" onclick="openLightbox('@image.ImageUrl', '@(image.OriginalFileName?.Replace("'", "\\'") ?? image.FileName)'); return false;">
@@ -658,6 +659,8 @@
 </div>
 
 @section Scripts {
+    <!-- SortableJS for drag-and-drop sorting -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
     <script>
         const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
 
@@ -983,8 +986,7 @@
         }
 
         // Update selection count and show/hide bulk actions bar
-        function updateSelection(event) {
-            if (event) event.stopPropagation();
+        function updateSelection(element) {
 
             const selectedIds = getSelectedImageIds();
             const count = selectedIds.length;
@@ -1037,7 +1039,7 @@
             document.getElementById('bulkMoveCount').textContent = selectedIds.length;
 
             // Load available categories
-            const currentCategoryId = @(Model.CurrentCategoryId ?? 0);
+            const currentCategoryId = @Json.Serialize(Model.CurrentCategoryId ?? 0);
             fetch('@Url.Action("GetCategoryTree", "Gallery")')
             .then(r => r.json())
             .then(tree => {
@@ -1273,7 +1275,7 @@
         async function startUpload() {
             if (selectedFiles.length === 0) return;
 
-            const categoryId = @(Model.CurrentCategoryId ?? 0);
+            const categoryId = @Json.Serialize(Model.CurrentCategoryId ?? 0);
             const description = document.getElementById('uploadDescription')?.value || '';
             const totalFiles = selectedFiles.length;
             const MAX_WIDTH = 1920;
@@ -1398,6 +1400,80 @@
 
             const descField = document.getElementById('uploadDescription');
             if (descField) descField.value = '';
+        }
+
+        // ============================================================
+        // Category Sorting (Admin/Manager only)
+        // ============================================================
+
+        @if (Model.CanManage)
+        {
+            <text>
+        function initializeCategorySorting() {
+            const sortableLists = document.querySelectorAll('.sortable-categories');
+
+            sortableLists.forEach(list => {
+                new Sortable(list, {
+                    group: 'categories',
+                    animation: 150,
+                    handle: '.category-drag-handle',
+                    ghostClass: 'sortable-ghost',
+                    chosenClass: 'sortable-chosen',
+                    fallbackOnBody: true,
+                    swapThreshold: 0.65,
+                    onEnd: function(evt) {
+                        // Only save if position changed within the same list
+                        if (evt.from === evt.to && evt.oldIndex !== evt.newIndex) {
+                            saveCategorySortOrder(evt.to);
+                        } else if (evt.from !== evt.to) {
+                            // Item moved to a different parent - reload to update parent relationship
+                            // For now, just save the order of the destination list
+                            saveCategorySortOrder(evt.to);
+                        }
+                    }
+                });
+            });
+        }
+
+        function saveCategorySortOrder(listElement) {
+            const items = listElement.querySelectorAll(':scope > li[data-category-id]');
+            const categoryIds = [];
+            const sortOrders = [];
+
+            items.forEach((item, index) => {
+                const catId = item.getAttribute('data-category-id');
+                if (catId) {
+                    categoryIds.push(parseInt(catId));
+                    sortOrders.push(index);
+                }
+            });
+
+            if (categoryIds.length === 0) return;
+
+            const formData = new FormData();
+            categoryIds.forEach(id => formData.append('categoryIds', id));
+            sortOrders.forEach(order => formData.append('sortOrders', order));
+            formData.append('__RequestVerificationToken', csrfToken);
+
+            fetch('@Url.Action("UpdateCategorySortOrder", "Gallery")', {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success) {
+                    console.error('Failed to save category order:', data.message);
+                    // Optionally show a toast/alert
+                }
+            })
+            .catch(err => {
+                console.error('Error saving category order:', err);
+            });
+        }
+
+        // Initialize sorting on page load
+        document.addEventListener('DOMContentLoaded', initializeCategorySorting);
+            </text>
         }
     </script>
 

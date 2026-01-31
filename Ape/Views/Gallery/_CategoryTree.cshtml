@@ -1,5 +1,6 @@
 @model List<Ape.Models.ViewModels.GalleryCategoryTreeNode>
 @using Ape.Models
+@using Microsoft.AspNetCore.Mvc.ViewFeatures
 
 @if (Model == null || !Model.Any())
 {
@@ -7,10 +8,10 @@
 }
 else
 {
-    <ul class="category-tree list-unstyled mb-0">
+    <ul class="category-tree list-unstyled mb-0 sortable-categories" data-parent-id="">
         @foreach (var node in Model)
         {
-            @await Html.PartialAsync("_CategoryTreeNode", node)
+            <partial name="_CategoryTreeNode" model="node" view-data="ViewData" />
         }
     </ul>
 }
@@ -63,5 +64,27 @@ else
     }
     .category-restricted .category-icon {
         color: #ffc107;
+    }
+    /* Drag handle styles */
+    .category-drag-handle {
+        cursor: grab;
+        color: #999;
+        font-size: 0.8rem;
+        padding: 0 2px;
+        user-select: none;
+    }
+    .category-drag-handle:hover {
+        color: #666;
+    }
+    .category-drag-handle:active {
+        cursor: grabbing;
+    }
+    /* Sortable ghost/drag styles */
+    .sortable-ghost {
+        opacity: 0.4;
+        background-color: #cfe2ff;
+    }
+    .sortable-chosen .category-tree-item {
+        background-color: #e9ecef;
     }
 </style>
