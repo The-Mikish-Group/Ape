@@ -26,3 +26,17 @@
         background-color: #258d14 !important;
         border-color: #2cac18 !important;
     }
+
+/*  btn-warning Defaults */
+.btn-warning {
+    color: #705103 !important;
+    background-color: lightpink !important;
+    border-color: black !important;
+}
+
+    .btn-warning:focus,
+    .btn-warning:hover {
+        color: #705103 !important;
+        background-color: #fa3f3f !important;
+        border-color: black !important;
+    }
