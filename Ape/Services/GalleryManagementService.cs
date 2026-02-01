@@ -737,6 +737,53 @@ namespace Ape.Services
                 $"{movedCount} image(s) moved to '{targetCategory.CategoryName}'.");
         }
 
+        public async Task<GalleryImageOperationResult> MoveAllCategoryImagesAsync(int sourceCategoryId, int targetCategoryId)
+        {
+            if (sourceCategoryId == targetCategoryId)
+            {
+                return GalleryImageOperationResult.Failed("Source and target categories are the same.");
+            }
+
+            var sourceCategory = await _context.GalleryCategories.FindAsync(sourceCategoryId);
+            if (sourceCategory == null)
+            {
+                return GalleryImageOperationResult.Failed("Source category not found.");
+            }
+
+            var targetCategory = await _context.GalleryCategories.FindAsync(targetCategoryId);
+            if (targetCategory == null)
+            {
+                return GalleryImageOperationResult.Failed("Target category not found.");
+            }
+
+            var images = await _context.GalleryImages
+                .Where(i => i.CategoryID == sourceCategoryId)
+                .ToListAsync();
+
+            if (images.Count == 0)
+            {
+                return GalleryImageOperationResult.Failed("No images in source category.");
+            }
+
+            var maxSortOrder = await _context.GalleryImages
+                .Where(i => i.CategoryID == targetCategoryId)
+                .MaxAsync(i => (int?)i.SortOrder) ?? 0;
+
+            foreach (var image in images)
+            {
+                image.CategoryID = targetCategoryId;
+                image.SortOrder = ++maxSortOrder;
+            }
+
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Moved all {Count} gallery images from '{SourceCategory}' to '{TargetCategory}'",
+                images.Count, sourceCategory.CategoryName, targetCategory.CategoryName);
+
+            return GalleryImageOperationResult.UploadResult(images.Count, 0,
+                $"All {images.Count} image(s) moved to '{targetCategory.CategoryName}'.");
+        }
+
         public async Task<GalleryImageOperationResult> DeleteImageAsync(int imageId)
         {
             var image = await _context.GalleryImages.FindAsync(imageId);

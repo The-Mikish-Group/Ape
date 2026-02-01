@@ -216,6 +216,15 @@ namespace Ape.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> MoveAllCategoryImages(int sourceCategoryId, int targetCategoryId)
+        {
+            var result = await _galleryService.MoveAllCategoryImagesAsync(sourceCategoryId, targetCategoryId);
+            return Json(new { success = result.Success, message = result.Message });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> DeleteImages(int[] imageIds)
         {
             var result = await _galleryService.DeleteImagesAsync(imageIds);

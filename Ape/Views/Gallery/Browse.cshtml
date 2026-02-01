@@ -178,22 +178,32 @@
                         @if (Model.CanManage)
                         {
                             <!-- Bulk Actions Bar -->
-                            <div class="mb-3 p-2 bg-light rounded d-none" id="bulkActionsBar">
+                            <div class="mb-3 p-2 bg-light rounded">
                                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
-                                    <div>
-                                        <input type="checkbox" class="form-check-input me-2" id="selectAllImages" onclick="toggleSelectAll(this)" title="Select all on this page">
-                                        <span class="text-muted"><span id="selectedCount">0</span> image(s) selected</span>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div>
+                                            <input type="checkbox" class="form-check-input me-2" id="selectAllImages" onclick="toggleSelectAll(this)" title="Select all on this page">
+                                            <label for="selectAllImages" class="form-check-label small" style="cursor: pointer;">Select Page</label>
+                                        </div>
+                                        <span class="text-muted small" id="selectionInfo">
+                                            <span id="selectedCount">0</span> of @Model.TotalImages selected
+                                        </span>
                                     </div>
-                                    <div class="btn-group btn-group-sm">
-                                        <button type="button" class="btn btn-outline-primary" onclick="showBulkMoveModal()">
-                                            <i class="bi bi-folder-symlink"></i> Move Selected
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <button type="button" class="btn btn-sm btn-outline-success" onclick="showMoveAllModal()" title="Move all @Model.TotalImages images in this folder">
+                                            <i class="bi bi-folder-symlink"></i> Move All (@Model.TotalImages)
                                         </button>
-                                        <button type="button" class="btn btn-outline-danger" onclick="confirmBulkDelete()">
-                                            <i class="bi bi-trash"></i> Delete Selected
-                                        </button>
-                                        <button type="button" class="btn btn-outline-secondary" onclick="clearSelection()">
-                                            Clear
-                                        </button>
+                                        <div class="btn-group btn-group-sm d-none" id="selectedActionsBar">
+                                            <button type="button" class="btn btn-outline-primary" onclick="showBulkMoveModal()">
+                                                <i class="bi bi-folder-symlink"></i> Move Selected
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger" onclick="confirmBulkDelete()">
+                                                <i class="bi bi-trash"></i> Delete Selected
+                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary" onclick="clearSelection()">
+                                                Clear
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -639,6 +649,29 @@
     </div>
 </div>
 
+<!-- Move All Images Modal -->
+<div class="modal fade" id="moveAllModal" tabindex="-1" aria-labelledby="moveAllModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="moveAllModalLabel">Move All Images in Folder</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Moving all <strong>@Model.TotalImages</strong> image(s) from <strong>@Model.CurrentCategoryName</strong></p>
+                <div class="mb-3">
+                    <label for="moveAllTargetCategoryId" class="form-label">Select Target Category</label>
+                    <select class="form-select" id="moveAllTargetCategoryId"></select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="moveAllImages()">Move All Images</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Confirm Action Modal -->
 <div class="modal fade" id="confirmActionModal" tabindex="-1" aria-labelledby="confirmActionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -987,20 +1020,19 @@
 
         // Update selection count and show/hide bulk actions bar
         function updateSelection(element) {
-
             const selectedIds = getSelectedImageIds();
             const count = selectedIds.length;
-            const bulkBar = document.getElementById('bulkActionsBar');
+            const selectedActionsBar = document.getElementById('selectedActionsBar');
             const countSpan = document.getElementById('selectedCount');
             const selectAllCheckbox = document.getElementById('selectAllImages');
 
             if (countSpan) countSpan.textContent = count;
 
-            if (bulkBar) {
+            if (selectedActionsBar) {
                 if (count > 0) {
-                    bulkBar.classList.remove('d-none');
+                    selectedActionsBar.classList.remove('d-none');
                 } else {
-                    bulkBar.classList.add('d-none');
+                    selectedActionsBar.classList.add('d-none');
                 }
             }
 
@@ -1065,6 +1097,60 @@
                 addOptions(tree);
                 new bootstrap.Modal(document.getElementById('bulkMoveModal')).show();
             });
+        }
+
+        // Show move all images modal
+        function showMoveAllModal() {
+            const currentCategoryId = @Json.Serialize(Model.CurrentCategoryId ?? 0);
+            fetch('@Url.Action("GetCategoryTree", "Gallery")')
+            .then(r => r.json())
+            .then(tree => {
+                const select = document.getElementById('moveAllTargetCategoryId');
+                select.innerHTML = '';
+
+                function addOptions(nodes, level = 0) {
+                    nodes.forEach(node => {
+                        const option = document.createElement('option');
+                        option.value = node.categoryId;
+                        option.textContent = '\u00A0\u00A0'.repeat(level) + node.name;
+                        if (node.categoryId == currentCategoryId) {
+                            option.disabled = true;
+                            option.textContent += ' (current)';
+                        }
+                        select.appendChild(option);
+                        if (node.children && node.children.length) {
+                            addOptions(node.children, level + 1);
+                        }
+                    });
+                }
+
+                addOptions(tree);
+                new bootstrap.Modal(document.getElementById('moveAllModal')).show();
+            });
+        }
+
+        // Execute move all images in category
+        function moveAllImages() {
+            const sourceCategoryId = @Json.Serialize(Model.CurrentCategoryId ?? 0);
+            const targetCategoryId = document.getElementById('moveAllTargetCategoryId').value;
+
+            if (!targetCategoryId) {
+                alert('Please select a target category.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('sourceCategoryId', sourceCategoryId);
+            formData.append('targetCategoryId', targetCategoryId);
+            formData.append('__RequestVerificationToken', csrfToken);
+
+            fetch('@Url.Action("MoveAllCategoryImages", "Gallery")', { method: 'POST', body: formData })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) window.location.reload();
+                else alert('Error: ' + data.message);
+            })
+            .catch(() => alert('Error moving images.'));
         }
 
         // Execute bulk move
