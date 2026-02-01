@@ -7,6 +7,9 @@
 .bg-gray {
     background: gray;
 }
+.bg-gray-dark {
+    background-color: #423b20
+}
 
 .bg-info-subtle {
    background-color: #cff4fc;

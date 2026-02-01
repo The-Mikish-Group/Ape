@@ -5,7 +5,6 @@
 <style>
     .section-card {
         background-color: #f8f9fa;
-        border-left: 4px solid #0d6efd;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
@@ -83,7 +82,7 @@
     <!-- Header -->
     <div class="text-center mb-5">
         <h1 class="display-5 fw-bold mb-3">
-            <i class="bi bi-info-circle text-primary"></i> About the Ape Project
+            <i class="bi bi-info-circle-fill me-2" style="color: #0dcaf0;"></i>About the Ape Project
         </h1>
         <p class="lead-1 text-secondary">
             A production-ready ASP.NET Core MVC framework designed to give developers a massive head start
@@ -92,7 +91,7 @@
     </div>
 
     <!-- What is Ape? -->
-    <div class="card section-card bg-info shadow-sm mb-4">
+    <div class="card section-card bg-info-subtle shadow-sm mb-4">
         <div class="card-body p-4">
             <h2 class="h4 mb-3">
                 <i class="bi bi-lightbulb text-warning"></i> What is the Ape Project?
@@ -118,13 +117,13 @@
             </h2>
             <p>To get started with the Ape Project, you'll need:</p>
             <div class="d-flex flex-wrap gap-2 mb-3">
-                <span class="requirement-badge"><i class="bi bi-pc-display me-2"></i>Visual Studio 2026</span>
-                <span class="requirement-badge"><i class="bi bi-gear me-2"></i>.NET 10 LTS</span>
-                <span class="requirement-badge"><i class="bi bi-database me-2"></i>SQL Server (LocalDB or Full)</span>
-                <span class="requirement-badge"><i class="bi bi-git me-2"></i>Git (optional)</span>
+                <span class="requirement-badge"><i class="bi bi-pc-display me-2" style="color: #68217a;"></i>Visual Studio 2026</span>
+                <span class="requirement-badge"><i class="bi bi-gear me-2" style="color: #512bd4;"></i>.NET 10 LTS</span>
+                <span class="requirement-badge"><i class="bi bi-database me-2" style="color: #cc2927;"></i>SQL Server (LocalDB or Full)</span>
+                <span class="requirement-badge"><i class="bi bi-git me-2" style="color: #f05032;"></i>Git (optional)</span>
             </div>
 
-            <h6 class="mt-4 mb-2"><i class="bi bi-gear-fill me-1"></i> Visual Studio Workloads</h6>
+            <h6 class="mt-4 mb-2"><i class="bi bi-gear-fill me-1" style="color: #68217a;"></i> Visual Studio Workloads</h6>
             <p class="mb-2">During Visual Studio installation, select the following workloads:</p>
             <ul class="mb-3">
                 <li>
@@ -137,7 +136,7 @@
                 </li>
             </ul>
             <p class="text-muted mb-0">
-                <i class="bi bi-info-circle me-1"></i>
+                <i class="bi bi-info-circle me-1" style="color: #0dcaf0;"></i>
                 SQL Server LocalDB is included with the ASP.NET workload and works great for development.
                 For production, we recommend SQL Server Express or higher.
             </p>
@@ -145,8 +144,8 @@
     </div>
 
     <!-- Getting Started -->
-    <div class="card section-card bg-yellow shadow-sm mb-4">
-        <div class="card-body p-4">
+    <div class="card section-card shadow-sm mb-4">
+        <div class="card-body rounded bg-yellow p-4">
             <h2 class="h4 mb-3">
                 <i class="bi bi-rocket-takeoff text-primary"></i> Getting Started
             </h2>
@@ -202,7 +201,7 @@
 
     <!-- Documentation Links -->
     <div class="card section-card shadow-sm mb-4">
-        <div class="card-body p-4">
+        <div class="card-body bg-gray p-4">
             <h2 class="h4 mb-3">
                 <i class="bi bi-book text-info"></i> Documentation
             </h2>
@@ -210,25 +209,25 @@
             <div class="row g-2">
                 <div class="col-md-6">
                     <a href="https://github.com/The-Mikish-Group/Ape/blob/master/README.md" target="_blank" rel="noopener noreferrer" class="doc-link">
-                        <i class="bi bi-file-text me-2"></i>README - Project Overview
+                        <i class="bi bi-file-text me-2" style="color: #6f42c1;"></i>README - Project Overview
                         <i class="bi bi-arrow-right float-end"></i>
                     </a>
                 </div>
                 <div class="col-md-6">
                     <a href="https://github.com/The-Mikish-Group/Ape/blob/master/INSTALLATION.md" target="_blank" rel="noopener noreferrer" class="doc-link">
-                        <i class="bi bi-download me-2"></i>Installation Guide
+                        <i class="bi bi-download me-2" style="color: #20c997;"></i>Installation Guide
                         <i class="bi bi-arrow-right float-end"></i>
                     </a>
                 </div>
                 <div class="col-md-6">
                     <a href="https://github.com/The-Mikish-Group/Ape/blob/master/CONFIGURATION.md" target="_blank" rel="noopener noreferrer" class="doc-link">
-                        <i class="bi bi-sliders me-2"></i>Configuration Guide
+                        <i class="bi bi-sliders me-2" style="color: #fd7e14;"></i>Configuration Guide
                         <i class="bi bi-arrow-right float-end"></i>
                     </a>
                 </div>
                 <div class="col-md-6">
                     <a href="https://github.com/The-Mikish-Group/Ape/blob/master/FEATURES.md" target="_blank" rel="noopener noreferrer" class="doc-link">
-                        <i class="bi bi-list-check me-2"></i>Feature Documentation
+                        <i class="bi bi-list-check me-2" style="color: #198754;"></i>Feature Documentation
                         <i class="bi bi-arrow-right float-end"></i>
                     </a>
                 </div>
@@ -245,7 +244,7 @@
     <div class="card hosting-card shadow-sm mb-4">
         <div class="card-body p-4">
             <h2 class="h4 mb-3">
-                <i class="bi bi-cloud-upload"></i> Hosted Starter Sites
+                <i class="bi bi-cloud-upload" style="color: #0dcaf0;"></i> Hosted Starter Sites
             </h2>
             <p>
                 Don't want to deal with server setup? We offer <strong>pre-configured hosted solutions</strong>
@@ -255,23 +254,23 @@
             </p>
             <div class="row g-3 mt-2">
                 <div class="col-md-4 text-center">
-                    <i class="bi bi-shield-check tech-stack-icon"></i>
+                    <i class="bi bi-shield-check tech-stack-icon" style="color: #20c997;"></i>
                     <div><strong>SSL Configured</strong></div>
                     <small class="text-white-50">Secure HTTPS included</small>
                 </div>
                 <div class="col-md-4 text-center">
-                    <i class="bi bi-database-check tech-stack-icon"></i>
+                    <i class="bi bi-database-check tech-stack-icon" style="color: #ffc107;"></i>
                     <div><strong>Database Ready</strong></div>
                     <small class="text-white-50">SQL Server provisioned</small>
                 </div>
                 <div class="col-md-4 text-center">
-                    <i class="bi bi-envelope-check tech-stack-icon"></i>
+                    <i class="bi bi-envelope-check tech-stack-icon" style="color: #0d6efd;"></i>
                     <div><strong>Email Services</strong></div>
                     <small class="text-white-50">SMTP pre-configured</small>
                 </div>
             </div>
             <p class="mt-3 mb-0 text-white-50">
-                <i class="bi bi-info-circle me-1"></i>
+                <i class="bi bi-info-circle me-1" style="color: #0dcaf0;"></i>
                 Contact us for hosting options and pricing tailored to your needs.
             </p>
         </div>
@@ -281,7 +280,7 @@
     <div class="card custom-dev-card shadow-sm mb-4">
         <div class="card-body p-4">
             <h2 class="h4 mb-3">
-                <i class="bi bi-code-slash"></i> Custom Development Services
+                <i class="bi bi-code-slash" style="color: #20c997;"></i> Custom Development Services
             </h2>
             <p>
                 Need something beyond the standard framework? <strong>The Mikish Group</strong> offers custom
@@ -303,7 +302,7 @@
     <div class="text-center py-4">
         <h3 class="h5 mb-3">Ready to get started or have questions?</h3>
         <a asp-controller="Info" asp-action="Contact" class="btn btn-primary btn-lg me-2">
-            <i class="bi bi-envelope me-2"></i>Contact Us
+            📧 Contact Us
         </a>
         <a href="https://github.com/The-Mikish-Group/Ape" target="_blank" rel="noopener noreferrer" class="btn btn-outline-dark btn-lg">
             <i class="bi bi-github me-2"></i>Visit GitHub
