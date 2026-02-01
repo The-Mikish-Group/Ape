@@ -21,7 +21,7 @@
 
 .btn-primary {
     color: #fff !important;
-    background-color: #3bc21b !important;
+    background-color: #3bb61e !important;
     border-color: #2cac18 !important;
 }
     .btn-primary:hover,
@@ -44,3 +44,29 @@
         background-color: #fa3f3f !important;
         border-color: black !important;
     }
+
+/* #region Paginagion */
+.pagination .page-link {
+    background-color: var(--pagination-bg, #FFFFFF);
+    border-color: var(--pagination-border, #808080);
+    color: var(--pagination-text, #424143);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--pagination-active-bg, #808080);
+    border-color: var(--pagination-active-border, #808080);
+    color: var(--pagination-active-text, #FFFFFF);
+}
+
+.pagination .page-link:hover {
+    background-color: var(--pagination-hover-bg, #D3D3D3);
+    color: var(--pagination-hover-text, #424143);
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: var(--pagination-disabled-bg, #f8f9fa);
+    border-color: var(--pagination-disabled-border, #808080);
+    color: var(--pagination-disabled-text, #6c757d);
+}
+
+/* #endregion Pagination */
