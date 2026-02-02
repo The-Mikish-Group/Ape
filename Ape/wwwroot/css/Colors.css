@@ -11,7 +11,7 @@ body {
 }
 
 .bg-card-body-dark {
-    background: #fde0b6
+    background: #fde0b6;   
 }
 
 .bg-card-header {
@@ -25,6 +25,21 @@ body {
 .bg-card-features {
     background-color: #423b20
 }
+
+@media (max-width: 768px) {    
+    .card-header,
+    .card-footer,
+    .card {
+        border-radius: 0;        
+    }
+    
+    .bg-card-body-dark {
+    background: #fde0b6;
+    border-radius: 6px;   
+}
+
+}
+
 /* End Card and Modal Colors */
 
 .bg-info-subtle {
