@@ -39,7 +39,7 @@
 
                         <!-- Profile Tab -->
                         <li class="nav-item">
-                            <a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)"
+                            <a class="px-2 nav-link @ManageNavPages.IndexNavClass(ViewContext)"
                                asp-page="./Index" role="tab">
                                 Profile
                             </a>
@@ -47,14 +47,14 @@
 
                         <!-- Email Tab -->
                         <li class="nav-item">
-                            <a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)"
+                            <a class="px-2 nav-link @ManageNavPages.EmailNavClass(ViewContext)"
                                asp-page="./Email" role="tab">
                                 Email
                             </a>
                         </li>
 
                         <!-- Password Tab -->
-                        <li class="nav-item">
+                        <li class="px-2 nav-item">
                             <a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)"
                                asp-page="./ChangePassword" role="tab">
                                 Password
@@ -62,7 +62,7 @@
                         </li>
 
                         <!-- Two-Factor Tab -->
-                        <li class="nav-item">
+                        <li class="px-2 nav-item">
                             <a class="nav-link @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)"
                                asp-page="./TwoFactorAuthentication" role="tab">
                                 Security
@@ -71,7 +71,7 @@
 
                         <!-- Delete Account Tab (appears last, styled differently) -->
                         <li class="nav-item ms-auto">
-                            <a class="nav-link text-danger" href="#" role="tab"
+                            <a class="px-2 nav-link text-danger" href="#" role="tab"
                                data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
                                 Delete
                             </a>

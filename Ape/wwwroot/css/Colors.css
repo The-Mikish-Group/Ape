@@ -20,21 +20,21 @@ body {
 }
 
 .card {
-    border-radius: 6;
+    border-radius: 6px;
    /* background: #FFFACD*/
 }
 .card-header {
-    border-radius: 6;
+    border-radius: 6px;
     background: gray;
 }
 
 .card-body {
-    border-radius: 6;
+    border-radius: 6px;
     /*background: #FFFACD*/
 }
 
 .card-footer {
-    border-radius: 6;
+    border-radius: 6px;
     background-color: #5a512c
 }
 
