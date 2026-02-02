@@ -23,6 +23,16 @@
                             📧 Contact
                         </a>
                     </li>
+                     <li class="nav-item text-light mb-2">
+                        <a class="rounded-2 text-light footer-nav-link footer-fs text-nowrap ps-2" style="text-decoration:none;" asp-controller="Gallery" asp-action="Browse">
+                            🖼️ Galleries
+                        </a>
+                    </li>
+                    <li class="nav-item text-light mb-2">
+                        <a class="rounded-2 text-light footer-nav-link footer-fs text-nowrap ps-2" style="text-decoration:none;" asp-controller="Links" asp-action="MoreLinks">
+                            🔗 More Links
+                        </a>
+                    </li>
                 </ul>
             </div>
 
@@ -35,10 +45,11 @@
                             <a class="rounded-2 text-light footer-nav-link dropdown-toggle footer-fs px-2" style="text-decoration:none; width:135px;" href="#" id="membersFooterDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Members
                             </a>
-                            <ul class="dropdown-menu ps-lg-2 border-0 bg-transparent ps-4" aria-labelledby="membersFooterDropdown" style="margin-top: 0; width:180px;">
+                            <ul class="dropdown-menu ps-lg-2 border-0 bg-transparent ps-0" aria-labelledby="membersFooterDropdown" style="margin-top: 0; width:180px;">
                                 <li class="nav-item text-light mb-2">
                                     <a class="rounded-2 text-light footer-nav-link footer-fs text-nowrap ps-2" style="text-decoration:none;" asp-area="Identity" asp-page="/Account/Manage/Index">
-                                        ⚙️ Account Management
+                                        ⚙️ Account
+
                                     </a>
                                 </li>
                                 <li class="nav-item text-light mb-2">
@@ -46,16 +57,7 @@
                                         📚 Document Library
                                     </a>
                                 </li>
-                                <li class="nav-item text-light mb-2">
-                                    <a class="rounded-2 text-light footer-nav-link footer-fs text-nowrap ps-2" style="text-decoration:none;" asp-controller="Gallery" asp-action="Browse">
-                                        🖼️ Galleries
-                                    </a>
-                                </li>
-                                <li class="nav-item text-light mb-2">
-                                    <a class="rounded-2 text-light footer-nav-link footer-fs text-nowrap ps-2" style="text-decoration:none;" asp-controller="Links" asp-action="MoreLinks">
-                                        🔗 More Links
-                                    </a>
-                                </li>
+                               
                             </ul>
                         </li>
                     }

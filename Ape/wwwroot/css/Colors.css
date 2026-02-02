@@ -5,36 +5,22 @@ body {
     background-repeat: repeat-x;
 }
 
-/* Card and Modal Colors */
-@media (max-width: 768px) {
-    .card-header,
-    .card-footer,
-    .card {
-        border-radius: 0;
-    }
-
-    .bg-card-body-dark {
-        border-radius: 6px;
-        background: #fde0b6;
-    }
-}
-
 .card {
-    border-radius: 6px;
+    border-radius: 4px;
    /* background: #FFFACD*/
 }
 .card-header {
-    border-radius: 6px;
+    border-radius: 4px;
     background: gray;
 }
 
 .card-body {
-    border-radius: 6px;
+    border-radius: 4px;
     /*background: #FFFACD*/
 }
 
 .card-footer {
-    border-radius: 6px;
+    border-radius: 4px;
     background-color: #5a512c
 }
 
@@ -51,7 +37,7 @@ body {
 }
 
 .bg-card-body-dark {
-    border-radius: 6px;
+    border-radius: 4px;
     background: #fde0b6;
 }
 
@@ -59,13 +45,37 @@ body {
     background-color: #423b20
 }
 
+.bg-info-subtle {
+    border-radius: 4px;
+    background-color: #cff4fc;
+}
 
+/* Card and Modal Colors */
+@media (max-width: 768px) {
+    .card-header,
+    .card-footer,
+    .card {
+        border-radius: 0;
+    }
+
+    .bg-card-body-dark {
+        border-radius: 4px;
+        background: #fde0b6;
+    }
+    .bg-info-subtle {
+        border-radius: 4px;
+        background-color: #cff4fc;
+    }
+
+    .bg-card-features {
+        border-radius: 0;
+        background-color: #423b20
+    }
+}
 
 /* End Card and Modal Colors */
 
-.bg-info-subtle {
-   background-color: #cff4fc;
-}
+
 
 /* Focused Elements */
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
