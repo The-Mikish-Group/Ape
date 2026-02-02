@@ -203,3 +203,20 @@
         </div>
     </nav>
 </header>
+
+<script>
+    document.addEventListener('click', function(event) {
+        var navbar = document.getElementById('navbarContent');
+        var toggler = document.querySelector('.navbar-toggler');
+
+        if (navbar && navbar.classList.contains('show')) {
+            // Check if click is outside the navbar and toggler
+            if (!navbar.contains(event.target) && !toggler.contains(event.target)) {
+                var bsCollapse = bootstrap.Collapse.getInstance(navbar);
+                if (bsCollapse) {
+                    bsCollapse.hide();
+                }
+            }
+        }
+    });
+</script>
