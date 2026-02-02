@@ -90,7 +90,7 @@
                                 @foreach (var category in columns[colIndex])
                                 {
                                     <div class="masonry-item">
-                                        <div class="card bg-yellow dhadow-sm">
+                                        <div class="card shadow-sm">
                                             <div class="card-header bg-card-header">
                                                 <h5 class="text-light mb-0">
                                                     <i class="bi bi-folder2"></i> @category.CategoryName
@@ -100,7 +100,7 @@
                                                     }
                                                 </h5>
                                             </div>
-                                            <div class="card-body">
+                                            <div class="card-body bg-card-body">
                                                 @if (category.CategoryLinks.Any())
                                                 {
                                                     <ul class="list-unstyled mb-0">

@@ -36,11 +36,11 @@
 
     <!-- Sidebar: Category Tree -->
     <div class="col-md-4 col-lg-3">
-        <div class="card bg-card-body shadow-sm mb-3">
-            <div class="card-header bg-secondary text-white py-2">
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-card-header text-white py-2">
                 <strong>Categories</strong>
             </div>
-            <div class="card-body p-2" id="categoryTreeContainer">
+            <div class="card-body bg-card-body p-2" id="categoryTreeContainer">
                 @{ ViewData["CanManage"] = Model.CanManage; }
                 @await Html.PartialAsync("_CategoryTree", Model.CategoryTree)
             </div>

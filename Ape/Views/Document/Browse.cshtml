@@ -35,11 +35,11 @@
 <div class="row mx-1">
     <!-- Sidebar: Folder Tree -->
     <div class="col-md-4 col-lg-3">
-        <div class="card bg-card-body shadow-sm mb-3">
-            <div class="card-header bg-secondary text-white py-2">
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-card-header text-white py-2">
                 <strong>Folders</strong>
             </div>
-            <div class="card-body p-2" id="folderTreeContainer">
+            <div class="card-body bg-card-body p-2" id="folderTreeContainer">
                 @{ ViewData["CanManageFolders"] = Model.CanManageFolders; }
                 @await Html.PartialAsync("_FolderTree", Model.FolderTree)
             </div>
@@ -48,7 +48,7 @@
 
     <!-- Main Content Area -->
     <div class="col-md-8 col-lg-9">
-        <div class="card bg-yellow shadow">
+        <div class="card bg-card-body shadow">
             <!-- Breadcrumb Navigation -->
             <div class="card-header bg-light py-2">
                 <nav aria-label="breadcrumb">
@@ -279,7 +279,7 @@
                     <h5 class="modal-title text-light" id="createFolderModalLabel">Create New Folder</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body bg-yellow">
+                <div class="modal-body bg-card-body">
                     <div class="mb-3">
                         <label for="folderName" class="form-label">Folder Name</label>
                         <input type="text" class="form-control" id="folderName" name="folderName" required>
@@ -313,7 +313,7 @@
                     <h5 class="modal-title" id="uploadFileModalLabel">Upload File</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body bg-yellow">
+                <div class="modal-body bg-card-body">
                     <div class="mb-3">
                         <label for="file" class="form-label">Select PDF File</label>
                         <input type="file" class="form-control" id="file" name="file" accept=".pdf" required>
@@ -337,7 +337,7 @@
                 <h5 class="modal-title" id="editFolderModalLabel">✏️ Edit Folder</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body bg-yellow">
+            <div class="modal-body bg-card-body">
                 <input type="hidden" id="editFolderId" />
                 <div class="mb-3">
                     <label for="editFolderName" class="form-label">Folder Name</label>
@@ -367,7 +367,7 @@
                 <h5 class="modal-title" id="editFileModalLabel">Rename File</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body bg-yellow">
+            <div class="modal-body bg-card-body">
                 <input type="hidden" id="editFileId" />
                 <div class="mb-3">
                     <label for="editFileName" class="form-label">File Name</label>
@@ -390,7 +390,7 @@
                 <h5 class="modal-title" id="moveFileModalLabel">Move File</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body bg-yellow">
+            <div class="modal-body bg-card-body">
                 <input type="hidden" id="moveFileId" />
                 <input type="hidden" id="moveFileCurrentFolder" />
                 <p>Moving: <strong id="moveFileName"></strong></p>
@@ -415,7 +415,7 @@
                 <h5 class="modal-title" id="bulkMoveModalLabel">Move Selected Files</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body bg-yellow">
+            <div class="modal-body bg-card-body">
                 <p>Moving <strong id="bulkMoveCount">0</strong> file(s)</p>
                 <div class="mb-3">
                     <label for="bulkTargetFolderId" class="form-label">Select Target Folder</label>
@@ -438,7 +438,7 @@
                 <h5 class="modal-title" id="confirmActionModalLabel">Confirm Action</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body bg-yellow" id="confirmActionBody">
+            <div class="modal-body bg-card-body" id="confirmActionBody">
                 Are you sure?
             </div>
             <div class="modal-footer bg-card-footer rounded-bottom">
