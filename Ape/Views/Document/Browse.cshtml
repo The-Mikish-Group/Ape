@@ -9,7 +9,7 @@
 <!-- Page Header -->
 <div class="mb-4 mt-4">
     <div class="text-center">
-        <h2>Document Library</h2>
+        <h2>📚 Document Library</h2>
     </div>
     <div class="text-center">
         <p>Browse and manage organizational documents</p>
@@ -35,7 +35,7 @@
 <div class="row mx-1">
     <!-- Sidebar: Folder Tree -->
     <div class="col-md-4 col-lg-3">
-        <div class="card bg-yellow shadow-sm mb-3">
+        <div class="card bg-card-body shadow-sm mb-3">
             <div class="card-header bg-secondary text-white py-2">
                 <strong>Folders</strong>
             </div>
@@ -271,15 +271,15 @@
 <!-- Create Folder Modal -->
 <div class="modal fade" id="createFolderModal" tabindex="-1" aria-labelledby="createFolderModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content bg-yellow">
+        <div class="modal-content">
             <form asp-action="CreateFolderForm" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="parentFolderId" value="@Model.CurrentFolderId" />
-                <div class="modal-header bg-gray">
+                <div class="modal-header bg-card-header rounded-top">
                     <h5 class="modal-title text-light" id="createFolderModalLabel">Create New Folder</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body bg-yellow">
                     <div class="mb-3">
                         <label for="folderName" class="form-label">Folder Name</label>
                         <input type="text" class="form-control" id="folderName" name="folderName" required>
@@ -293,7 +293,7 @@
                         <div class="form-text">Controls who can view this folder and its contents.</div>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer bg-card-footer rounded-bottom">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">Create Folder</button>
                 </div>
@@ -309,18 +309,18 @@
             <form asp-action="UploadFile" method="post" enctype="multipart/form-data">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="folderId" value="@Model.CurrentFolderId" />
-                <div class="modal-header">
+                <div class="modal-header bg-card-header rounded-top">
                     <h5 class="modal-title" id="uploadFileModalLabel">Upload File</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body bg-yellow">
                     <div class="mb-3">
                         <label for="file" class="form-label">Select PDF File</label>
                         <input type="file" class="form-control" id="file" name="file" accept=".pdf" required>
                         <div class="form-text">Only PDF files are allowed.</div>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer bg-card-footer rounded-bottom">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-success">Upload</button>
                 </div>
@@ -333,11 +333,11 @@
 <div class="modal fade" id="editFolderModal" tabindex="-1" aria-labelledby="editFolderModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-card-header rounded-top">
                 <h5 class="modal-title" id="editFolderModalLabel">✏️ Edit Folder</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body bg-yellow">
                 <input type="hidden" id="editFolderId" />
                 <div class="mb-3">
                     <label for="editFolderName" class="form-label">Folder Name</label>
@@ -351,7 +351,7 @@
                     </select>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer bg-card-footer rounded-bottom">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" onclick="saveFolder()">Save Changes</button>
             </div>
@@ -363,18 +363,18 @@
 <div class="modal fade" id="editFileModal" tabindex="-1" aria-labelledby="editFileModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-card-header-rounded-top">
                 <h5 class="modal-title" id="editFileModalLabel">Rename File</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body bg-yellow">
                 <input type="hidden" id="editFileId" />
                 <div class="mb-3">
                     <label for="editFileName" class="form-label">File Name</label>
                     <input type="text" class="form-control" id="editFileName" required>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer bg-card-footer rounded-bottom">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" onclick="saveFile()">Rename</button>
             </div>
@@ -386,11 +386,11 @@
 <div class="modal fade" id="moveFileModal" tabindex="-1" aria-labelledby="moveFileModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-card-header rounded-top">
                 <h5 class="modal-title" id="moveFileModalLabel">Move File</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body bg-yellow">
                 <input type="hidden" id="moveFileId" />
                 <input type="hidden" id="moveFileCurrentFolder" />
                 <p>Moving: <strong id="moveFileName"></strong></p>
@@ -399,7 +399,7 @@
                     <select class="form-select" id="targetFolderId"></select>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer bg-card-footer rounded-bottom">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" onclick="moveFile()">Move File</button>
             </div>
@@ -411,18 +411,18 @@
 <div class="modal fade" id="bulkMoveModal" tabindex="-1" aria-labelledby="bulkMoveModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-card-header rounded-top">
                 <h5 class="modal-title" id="bulkMoveModalLabel">Move Selected Files</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body bg-yellow">
                 <p>Moving <strong id="bulkMoveCount">0</strong> file(s)</p>
                 <div class="mb-3">
                     <label for="bulkTargetFolderId" class="form-label">Select Target Folder</label>
                     <select class="form-select" id="bulkTargetFolderId"></select>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer bg-card-footer rounded-bottom">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" onclick="bulkMoveFiles()">Move Files</button>
             </div>
@@ -434,14 +434,14 @@
 <div class="modal fade" id="confirmActionModal" tabindex="-1" aria-labelledby="confirmActionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-card-header rounded-top">
                 <h5 class="modal-title" id="confirmActionModalLabel">Confirm Action</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="confirmActionBody">
+            <div class="modal-body bg-yellow" id="confirmActionBody">
                 Are you sure?
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer bg-card-footer rounded-bottom">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-danger" id="confirmActionBtn" onclick="">Confirm</button>
             </div>

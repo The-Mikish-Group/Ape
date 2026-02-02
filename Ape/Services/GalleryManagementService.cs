@@ -43,7 +43,63 @@ namespace Ape.Services
                 })
                 .ToListAsync();
 
+            // Calculate recursive image counts (including subcategories)
+            var recursiveCounts = await GetRecursiveImageCountsAsync(userAccessLevel);
+            foreach (var category in categories)
+            {
+                if (recursiveCounts.TryGetValue(category.CategoryId, out var totalCount))
+                {
+                    category.ImageCount = totalCount;
+                }
+            }
+
             return categories;
+        }
+
+        private async Task<Dictionary<int, int>> GetRecursiveImageCountsAsync(DocumentAccessLevel userAccessLevel)
+        {
+            // Get all categories with their parent relationships and direct image counts
+            var allCategories = await _context.GalleryCategories
+                .Where(c => c.AccessLevel <= userAccessLevel)
+                .Select(c => new { c.CategoryID, c.ParentCategoryID, DirectCount = c.GalleryImages.Count })
+                .ToListAsync();
+
+            // Build a lookup of children for each category
+            var childrenLookup = allCategories
+                .Where(c => c.ParentCategoryID.HasValue)
+                .GroupBy(c => c.ParentCategoryID!.Value)
+                .ToDictionary(g => g.Key, g => g.Select(c => c.CategoryID).ToList());
+
+            // Calculate recursive counts
+            var result = new Dictionary<int, int>();
+
+            int GetRecursiveCount(int categoryId)
+            {
+                if (result.TryGetValue(categoryId, out var cached))
+                    return cached;
+
+                var directCount = allCategories.First(c => c.CategoryID == categoryId).DirectCount;
+                var childCount = 0;
+
+                if (childrenLookup.TryGetValue(categoryId, out var children))
+                {
+                    foreach (var childId in children)
+                    {
+                        childCount += GetRecursiveCount(childId);
+                    }
+                }
+
+                var total = directCount + childCount;
+                result[categoryId] = total;
+                return total;
+            }
+
+            foreach (var category in allCategories)
+            {
+                GetRecursiveCount(category.CategoryID);
+            }
+
+            return result;
         }
 
         public async Task<GalleryCategoryViewModel?> GetCategoryAsync(int categoryId, DocumentAccessLevel userAccessLevel)

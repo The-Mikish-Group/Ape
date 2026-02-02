@@ -140,7 +140,7 @@
 
                     <!-- Phone Number -->
                     <div class="form-floating mb-3">
-                        <input asp-for="Input.PhoneNumber" class="text-black form-control readonly-PhoneNumber shadow" id="phoneNumber" placeholder="Phone Number" />
+                        <input asp-for="Input.PhoneNumber" class="text-black form-control readonly-PhoneNumber shadow" id="phoneNumber" />
                         <div class="phoneNumber-icon-container" id="phoneNumberCheckIcon">
                             &#10003;
                         </div>
@@ -156,7 +156,7 @@
 
                     <!-- Home Phone -->
                     <div class="form-floating mb-3">
-                        <input asp-for="Input.HomePhoneNumber" class="text-black form-control shadow" id="homephoneNumber" placeholder="Home Phone (Opt.)" />
+                        <input asp-for="Input.HomePhoneNumber" class="text-black form-control shadow" id="homephoneNumber" />
                         <label asp-for="Input.HomePhoneNumber" class="text-black form-label">Home Phone (Opt.)</label>
                         <span asp-validation-for="Input.HomePhoneNumber" class="text-danger"></span>
                     </div>
@@ -171,11 +171,11 @@
                             <span asp-validation-for="Input.FirstName" class="text-danger"></span>
                         </div>
                         <div class="col-2 form-floating mb-3">
-                            <input asp-for="Input.MiddleName" class="text-black form-control shadow" placeholder="Middle" />
+                            <input asp-for="Input.MiddleName" class="text-black form-control shadow" />
                             <span asp-validation-for="Input.MiddleName" class="text-danger"></span>
                         </div>
                         <div class="col-5 form-floating mb-3">
-                            <input asp-for="Input.LastName" class="text-black form-control shadow" placeholder="Last Name" />
+                            <input asp-for="Input.LastName" class="text-black form-control shadow" />
                             <label asp-for="Input.LastName" class="text-black form-label">Last Name</label>
                             <span asp-validation-for="Input.LastName" class="text-danger"></span>
                         </div>
@@ -187,26 +187,21 @@
                             <input asp-for="Input.Birthday" class="text-black form-control shadow date-picker" type="text" placeholder="mm/dd/yyyy" readonly />
                             <label asp-for="Input.Birthday" class="text-black form-label">Birthday</label>
                             <span asp-validation-for="Input.Birthday" class="text-danger"></span>
-                        </div>
-                        <div class="col-6 form-floating mb-2">
-                            <input asp-for="Input.Anniversary" class="text-black form-control shadow date-picker" type="text" placeholder="mm/dd/yyyy" readonly />
-                            <label asp-for="Input.Anniversary" class="text-black form-label">Anniversary (Opt.)</label>
-                            <span asp-validation-for="Input.Anniversary" class="text-danger"></span>
-                        </div>
+                        </div>                        
                     </div>
 
                     <hr />
 
                     <!-- Address Line 1 -->
                     <div class="col-12 form-floating mb-3">
-                        <input asp-for="Input.AddressLine1" class="text-black form-control shadow" placeholder="Address Line 1 (Opt.)" />
+                        <input asp-for="Input.AddressLine1" class="text-black form-control shadow"/>
                         <label asp-for="Input.AddressLine1" class="text-black form-label">Address Line 1 (Opt.)</label>
                         <span asp-validation-for="Input.AddressLine1" class="text-danger"></span>
                     </div>
 
                     <!-- Address Line 2 -->
                     <div class="col-12 form-floating mb-3">
-                        <input asp-for="Input.AddressLine2" class="text-black form-control shadow" placeholder="Address Line 2 (Opt.)" />
+                        <input asp-for="Input.AddressLine2" class="text-black form-control shadow" />
                         <label asp-for="Input.AddressLine2" class="text-black form-label">Address Line 2 (Opt.)</label>
                         <span asp-validation-for="Input.AddressLine2" class="text-danger"></span>
                     </div>
@@ -214,17 +209,17 @@
                     <!-- City, State, Zip -->
                     <div class="row gx-1">
                         <div class="col-5 form-floating mb-3">
-                            <input asp-for="Input.City" class="text-black form-control shadow" placeholder="City (Opt.)" />
+                            <input asp-for="Input.City" class="text-black form-control shadow" />
                             <label asp-for="Input.City" class="text-black form-label">City (Opt.)</label>
                             <span asp-validation-for="Input.City" class="text-danger"></span>
                         </div>
                         <div class="col-3 form-floating mb-3">
-                            <input asp-for="Input.State" class="text-black form-control shadow" placeholder="State (Opt.)" />
+                            <input asp-for="Input.State" class="text-black form-control shadow" />
                             <label asp-for="Input.State" class="text-black form-label">State (Opt.)</label>
                             <span asp-validation-for="Input.State" class="text-danger"></span>
                         </div>
                         <div class="col-4 form-floating mb-3">
-                            <input asp-for="Input.ZipCode" class="text-black form-control shadow" placeholder="Zip (Opt.)" />
+                            <input asp-for="Input.ZipCode" class="text-black form-control shadow" />
                             <label asp-for="Input.ZipCode" class="text-black form-label">Zip (Opt.)</label>
                             <span asp-validation-for="Input.ZipCode" class="text-danger"></span>
                         </div>

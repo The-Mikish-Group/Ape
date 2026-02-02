@@ -3,6 +3,21 @@
 }
 
 <style>
+    .bluesun-icon {
+        width: 24px;
+        height: 24px;
+        vertical-align: middle;
+        margin-right: 0px;
+        padding-bottom: 8px;
+    }
+
+    .logo-icon {        
+        height: 40px;
+        vertical-align: middle;
+        margin-right: 2px;
+        padding-bottom: 8px;
+    }
+
     .section-card {
         background-color: #f8f9fa;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -16,6 +31,9 @@
     .step-number {
         width: 32px;
         height: 32px;
+        min-width: 32px;
+        min-height: 32px;
+        flex-shrink: 0;
         background-color: #0d6efd;
         color: white;
         border-radius: 50%;
@@ -94,7 +112,7 @@
     <div class="card section-card bg-info-subtle shadow-sm mb-4">
         <div class="card-body p-4">
             <h2 class="h4 mb-3">
-                <i class="bi bi-lightbulb text-warning"></i> What is the Ape Project?
+                <img class="logo-icon" src="~/images/site/logo.png" />What is the Ape Project?
             </h2>
             <p>
                 The <strong>Ape Project</strong> is a comprehensive Visual Studio 2026 solution that serves as an
@@ -145,9 +163,9 @@
 
     <!-- Getting Started -->
     <div class="card section-card shadow-sm mb-4">
-        <div class="card-body rounded bg-yellow p-4">
+        <div class="card-body rounded bg-card-body p-4">
             <h2 class="h4 mb-3">
-                <i class="bi bi-rocket-takeoff text-primary"></i> Getting Started
+                🚀 Getting Started
             </h2>
             <div class="row g-3">
                 <div class="col-12">
@@ -201,7 +219,7 @@
 
     <!-- Documentation Links -->
     <div class="card section-card shadow-sm mb-4">
-        <div class="card-body bg-gray p-4">
+        <div class="card-body bg-card-header p-4">
             <h2 class="h4 mb-3">
                 <i class="bi bi-book text-info"></i> Documentation
             </h2>
@@ -289,11 +307,11 @@
                 here to help bring your vision to life.
             </p>
             <ul class="list-unstyled mb-0">
-                <li class="mb-2"><i class="bi bi-check-lg text-success me-2"></i>Custom feature development</li>
-                <li class="mb-2"><i class="bi bi-check-lg text-success me-2"></i>Third-party API integrations</li>
-                <li class="mb-2"><i class="bi bi-check-lg text-success me-2"></i>UI/UX customization</li>
-                <li class="mb-2"><i class="bi bi-check-lg text-success me-2"></i>Performance optimization</li>
-                <li><i class="bi bi-check-lg text-success me-2"></i>Ongoing support and maintenance</li>
+                <li class="mb-2"><i class="bi bi-check-lg me-2" style="color: #20c997;"></i>Custom feature development</li>
+                <li class="mb-2"><i class="bi bi-check-lg me-2" style="color: #20c997;"></i>Third-party API integrations</li>
+                <li class="mb-2"><i class="bi bi-check-lg me-2" style="color: #20c997;"></i>UI/UX customization</li>
+                <li class="mb-2"><i class="bi bi-check-lg me-2" style="color: #20c997;"></i>Performance optimization</li>
+                <li><i class="bi bi-check-lg me-2" style="color: #20c997;"></i>Ongoing support and maintenance</li>
             </ul>
         </div>
     </div>
@@ -313,7 +331,7 @@
     <div class="text-center text-muted py-3 border-top mt-4">
         <small>
             <i class="bi bi-heart-fill text-danger me-1"></i>
-            Built with passion by <strong>The Mikish Group</strong>
+            Built with passion by <strong><img class="mb-0 bluesun-icon" src="/images/site/BlueSun.svg">The Mikish Group</strong>
         </small>
     </div>
 

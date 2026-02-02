@@ -1,4 +1,4 @@
-@inject Ape.Services.SecureConfigurationService ConfigService
+﻿@inject Ape.Services.SecureConfigurationService ConfigService
 @{
     ViewData["Title"] = "Contact Us";
     string siteName = await ConfigService.GetCredentialAsync("SITE_NAME") ?? "Ape";
@@ -11,7 +11,7 @@
             <div class="card-header bg-yellow rounded p-2 shadow">
 
                 <div class="mb-1 p-0 text-center">
-                    <h2 class="pb-2">Contact Us</h2>
+                    <h2 class="pb-2">✉️ Contact Us</h2>
                     <p class="text-black fw-bold">Fill in the form below to send us an email.</p>
                 </div>
 

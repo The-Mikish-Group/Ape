@@ -1,4 +1,4 @@
-@model List<Ape.Models.LinkCategory>
+﻿@model List<Ape.Models.LinkCategory>
 @{
     ViewData["Title"] = "More Links";
 }
@@ -8,7 +8,7 @@
         <div class="col-12">
             <!-- Page Header -->
             <div class="mb-4 text-center">
-                <h2>More Links</h2>
+                <h2>🔗 More Links</h2>
                 <p>Useful links organized by category</p>
 
                 @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
@@ -91,7 +91,7 @@
                                 {
                                     <div class="masonry-item">
                                         <div class="card bg-yellow dhadow-sm">
-                                            <div class="card-header bg-gray">
+                                            <div class="card-header bg-card-header">
                                                 <h5 class="text-light mb-0">
                                                     <i class="bi bi-folder2"></i> @category.CategoryName
                                                     @if (category.IsAdminOnly)
@@ -138,8 +138,8 @@
                         {
                             <div class="masonry-item">
                                 <div class="card">
-                                    <div class="card-header">
-                                        <h5 class="mb-0">
+                                    <div class="card-header bg-card-header">
+                                        <h5 class="text-light mb-0">
                                             <i class="bi bi-folder2"></i> @category.CategoryName
                                             @if (category.IsAdminOnly)
                                             {
@@ -157,8 +157,8 @@
                                                         <a href="@link.LinkUrl"
                                                            target="_blank"
                                                            rel="noopener noreferrer"
-                                                           class="link-item d-flex align-items-center text-decoration-none">
-                                                            <i class="bi bi-link-45deg text-primary me-2"></i>
+                                                           class="link-item d-flex text-dark align-items-center text-decoration-none">
+                                                            <i class="bi bi-link-45deg text-dark me-2"></i>
                                                             <span>@link.LinkName</span>
                                                         </a>
                                                     </li>

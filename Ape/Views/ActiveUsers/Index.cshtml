@@ -1,4 +1,4 @@
-@model Ape.Models.ViewModels.ActiveUsersViewModel
+﻿@model Ape.Models.ViewModels.ActiveUsersViewModel
 @using Ape.Models.ViewModels
 
 @{
@@ -8,7 +8,7 @@
 
 <!-- Page Header -->
 <div class="text-center mt-4">
-    <h2>Active Users Dashboard</h2>
+    <h2><span class="icon-pair" aria-hidden="true"><span>👨‍👩‍👧</span><span>⚡</span></span>Active Users</h2>
 </div>
 
 <div class="text-center">
@@ -26,7 +26,7 @@
         <!-- Active Now -->
         <div class="col-md-3 col-sm-6">
             @{
-                var activeNowBg = Model.ActiveNowExcludingSelfCount > 0 ? "bg-danger" : (Model.ActiveNowCount > 0 ? "bg-gray" : "bg-secondary");
+                var activeNowBg = Model.ActiveNowExcludingSelfCount > 0 ? "bg-danger" : (Model.ActiveNowCount > 0 ? "bg-card-header" : "bg-secondary");
                 var activeNowLabel = Model.ActiveNowExcludingSelfCount > 0 ? "DON'T DEPLOY" : (Model.ActiveNowCount > 0 ? "Just you!" : "None");
             }
             <div class="card text-white @activeNowBg">
@@ -126,7 +126,7 @@
 <!-- User Activity Table -->
 <div class="container">
     <div class="card shadow">
-        <div class="card-header bg-gray text-white">
+        <div class="card-header bg-card-header text-white">
             <h5 class="mb-0">All Member Activity</h5>
         </div>
         <div class="card-body p-0">

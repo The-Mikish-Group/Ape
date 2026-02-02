@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewData["Title"] = "View PDF";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
@@ -6,16 +6,28 @@
     var fileName = (string)ViewData["FileName"]!;
 }
 
+<style>
+    .fs-4 {
+        font-size: calc(1.2rem + .3vw) !important;
+    }
+
+    @@media (min-width: 1200px) {
+        .fs-4 {
+            font-size: 1.2rem !important;
+        }
+    }
+</style>
+
 <div class="container mt-3 mt-lg-2 mb-0 pt-0 bg-white" style="margin: 10px auto; max-width: 800px;">
     <div class="row gy-2">
         <div class="col text-start">
             <a id="closeButton" href="#" class="text-decoration-none fs-4" title="Close">
-                <i class="bi bi-x-circle"></i>
+                ❌
             </a>
         </div>
         <div class="col text-end mb-2">
             <a id="downloadButton" href="#" class="text-decoration-none fs-3" title="Download Content">
-                <i class="bi bi-paperclip"></i>
+                📎
             </a>
         </div>
     </div>

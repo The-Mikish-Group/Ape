@@ -39,7 +39,7 @@
                             <div class="input-group">
                                 <input asp-for="Input.Password" id="password" type="password" class="form-control" autocomplete="off" aria-required="true" placeholder="password" />
                                 <button type="button" id="togglePassword" class="btn btn-sm btn-outline-secondary bg-red-lighter">
-                                    <span id="passwordIcon">🙈</span>
+                                    <span id="passwordIcon" style="font-size: 1.4rem;">🙈</span>
                                 </button>
                             </div>
                             <span asp-validation-for="Input.Password" class="text-danger"></span>
@@ -55,7 +55,7 @@
 
                         <!-- Forgot your Password -->
                         <div class="mb-4 text-center">
-                            <a class="btn btn-warning rounded-3 px-4 py-2 shadow" asp-page="./ForgotPassword" asp-route-returnUrl="@Model.ReturnUrl">
+                            <a class="btn btn-warning rounded-3 px-4 shadow" asp-page="./ForgotPassword" asp-route-returnUrl="@Model.ReturnUrl">
                                 🔑 Forgot your password?
                             </a>
                         </div>
@@ -64,12 +64,12 @@
                         <div class="d-flex justify-content-between">
 
                             <!-- Cancel -->
-                            <a asp-controller="Info" asp-action="Index" class="btn btn-sm btn-secondary rounded-2 me-2 border-0 shadow" title="Cancel">
+                            <a asp-controller="Info" asp-action="Index" class="btn btn-secondary rounded-2 me-2 border-0 shadow" title="Cancel">
                                 ⬅️ Cancel
                             </a>
 
                             <!-- Log In -->                            
-                            <button id="login-submit" type="submit" class="btn btn-sm btn-success rounded-2 me-2 border-0 shadow">
+                            <button id="login-submit" type="submit" class="btn btn-success rounded-2 me-2 border-0 shadow">
                                 🔓 Log in
                             </button>                            
 

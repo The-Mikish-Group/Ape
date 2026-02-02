@@ -2,17 +2,17 @@
 @using Ape.Models
 
 @{
-    ViewData["Title"] = "Image Gallery";
+    ViewData["Title"] = "Galleries";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <!-- Page Header -->
 <div class="mb-4 mt-4">
     <div class="text-center">
-        <h2>Image Gallery</h2>
+        <h2>🖼️ Galleries</h2>
     </div>
     <div class="text-center">
-        <p>Browse and manage image galleries</p>
+        <p>Browse and manage galleries</p>
     </div>
 </div>
 
@@ -36,7 +36,7 @@
 
     <!-- Sidebar: Category Tree -->
     <div class="col-md-4 col-lg-3">
-        <div class="card bg-yellow shadow-sm mb-3">
+        <div class="card bg-card-body shadow-sm mb-3">
             <div class="card-header bg-secondary text-white py-2">
                 <strong>Categories</strong>
             </div>
@@ -49,7 +49,8 @@
 
     <!-- Main Content Area -->
     <div class="col-md-8 col-lg-9">
-        <div class="card bg-yellow shadow">
+        <div class="card bg-card-body shadow">
+
             <!-- Breadcrumb Navigation -->
             <div class="card-header bg-light py-2">
                 <nav aria-label="breadcrumb">
@@ -157,6 +158,7 @@
                     </div>
                 </div>
             }
+
 
             <!-- Images Section -->
             @if (Model.CurrentCategoryId.HasValue)
@@ -395,6 +397,8 @@
                     <p class="mb-0">Select a category to view its images</p>
                 </div>
             }
+
+
         </div>
     </div>
 </div>
@@ -419,15 +423,15 @@
 <!-- Create Category Modal -->
 <div class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content bg-yellow">
+        <div class="modal-content">
             <form asp-action="CreateCategoryForm" method="post">
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="parentCategoryId" value="@Model.CurrentCategoryId" />
-                <div class="modal-header bg-gray">
+                <div class="modal-header bg-card-header rounded-top">
                     <h5 class="modal-title text-light" id="createCategoryModalLabel">Create New Category</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body bg-card-body">
                     <div class="mb-3">
                         <label for="categoryName" class="form-label">Category Name</label>
                         <input type="text" class="form-control" id="categoryName" name="categoryName" required>
@@ -445,7 +449,7 @@
                         <div class="form-text">Controls who can view this category and its images.</div>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer bg-card-footer rounded-bottom">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">Create Category</button>
                 </div>
@@ -459,11 +463,11 @@
     <div class="modal-dialog">
         <div class="modal-content">
             @Html.AntiForgeryToken()
-            <div class="modal-header">
+            <div class="modal-header bg-card-header rounded-top">
                 <h5 class="modal-title" id="uploadImagesModalLabel">Upload Images</h5>
                 <button type="button" class="btn-close" id="uploadCloseBtn" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body bg-card-body">
                 <!-- File Selection (hidden during upload) -->
                 <div id="uploadSelectSection">
                     <div class="mb-3">
@@ -504,7 +508,7 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer bg-card-footer rounded-bottom">
                 <button type="button" class="btn btn-secondary" id="uploadCancelBtn" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-success" id="uploadStartBtn" disabled onclick="startUpload()">
                     <i class="bi bi-cloud-upload"></i> Upload
@@ -518,11 +522,11 @@
 <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-card-header rounded-top">
                 <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body bg-card-body">
                 <input type="hidden" id="editCategoryId" />
                 <div class="mb-3">
                     <label for="editCategoryName" class="form-label">Category Name</label>
@@ -540,7 +544,7 @@
                     </select>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer bg-card-footer rounded-bottom">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" onclick="saveCategory()">Save Changes</button>
             </div>
@@ -552,11 +556,11 @@
 <div class="modal fade" id="moveCategoryModal" tabindex="-1" aria-labelledby="moveCategoryModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-card-header rounded-top">
                 <h5 class="modal-title" id="moveCategoryModalLabel">Move Category</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body bg-card-body">
                 <input type="hidden" id="moveCategoryId" />
                 <input type="hidden" id="moveCategoryCurrentParent" />
                 <p>Moving: <strong id="moveCategoryName"></strong></p>
@@ -566,7 +570,7 @@
                     <div class="form-text">Select "Gallery Root" to move this category to the top level.</div>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer bg-card-footer rounded-bottom">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" onclick="moveCategory()">Move Category</button>
             </div>
@@ -578,11 +582,11 @@
 <div class="modal fade" id="editImageModal" tabindex="-1" aria-labelledby="editImageModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-card-header rounded-top">
                 <h5 class="modal-title" id="editImageModalLabel">Edit Image</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body bg-card-body">
                 <input type="hidden" id="editImageId" />
                 <div class="mb-3">
                     <label for="editImageName" class="form-label">Display Name</label>
@@ -593,7 +597,7 @@
                     <textarea class="form-control" id="editImageDescription" rows="2" maxlength="500"></textarea>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer bg-card-footer rounded-bottom">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" onclick="saveImage()">Save Changes</button>
             </div>
@@ -605,11 +609,11 @@
 <div class="modal fade" id="moveImageModal" tabindex="-1" aria-labelledby="moveImageModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-card-header rounded-top">
                 <h5 class="modal-title" id="moveImageModalLabel">Move Image</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body bg-card-body">
                 <input type="hidden" id="moveImageId" />
                 <input type="hidden" id="moveImageCurrentCategory" />
                 <p>Moving: <strong id="moveImageName"></strong></p>
@@ -618,7 +622,7 @@
                     <select class="form-select" id="targetCategoryId"></select>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer bg-card-footer rounded-bottom">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" onclick="moveImage()">Move Image</button>
             </div>
@@ -630,18 +634,18 @@
 <div class="modal fade" id="bulkMoveModal" tabindex="-1" aria-labelledby="bulkMoveModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-card-header rounded-top">
                 <h5 class="modal-title" id="bulkMoveModalLabel">Move Selected Images</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body bg-card-body">
                 <p>Moving <strong id="bulkMoveCount">0</strong> image(s)</p>
                 <div class="mb-3">
                     <label for="bulkTargetCategoryId" class="form-label">Select Target Category</label>
                     <select class="form-select" id="bulkTargetCategoryId"></select>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer bg-card-footer rounded-bottom">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" onclick="bulkMoveImages()">Move Images</button>
             </div>
@@ -653,18 +657,18 @@
 <div class="modal fade" id="moveAllModal" tabindex="-1" aria-labelledby="moveAllModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-card-header rounded-top">
                 <h5 class="modal-title" id="moveAllModalLabel">Move All Images in Folder</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body bg-card-body">
                 <p>Moving all <strong>@Model.TotalImages</strong> image(s) from <strong>@Model.CurrentCategoryName</strong></p>
                 <div class="mb-3">
                     <label for="moveAllTargetCategoryId" class="form-label">Select Target Category</label>
                     <select class="form-select" id="moveAllTargetCategoryId"></select>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer bg-card-footer rounded-bottom">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-success" onclick="moveAllImages()">Move All Images</button>
             </div>
@@ -676,14 +680,14 @@
 <div class="modal fade" id="confirmActionModal" tabindex="-1" aria-labelledby="confirmActionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-card-header rounded-top">
                 <h5 class="modal-title" id="confirmActionModalLabel">Confirm Action</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="confirmActionBody">
+            <div class="modal-body bg-card-body" id="confirmActionBody">
                 Are you sure?
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer bg-card-footer rounded-bottom">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-danger" id="confirmActionBtn" onclick="">Confirm</button>
             </div>

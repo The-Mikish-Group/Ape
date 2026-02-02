@@ -1,24 +1,42 @@
-﻿
+﻿/* Background Color and Image */
+body {
+    background-color: #ece1cd;
+    background-image: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url('../images/site/bananas.jpg');
+    background-repeat: repeat-x;
+}
 
-.bg-yellow {
+/* Card and Modal Colors */
+.bg-card-body {
     background: #FFFACD
 }
 
-.bg-yellow-dark {
+.bg-card-body-dark {
     background: #fde0b6
 }
 
-.bg-gray {
+.bg-card-header {
     background: gray;
 }
-.bg-gray-dark {
+
+.bg-card-footer {
+    background-color: #5a512c
+}
+
+.bg-card-features {
     background-color: #423b20
 }
+/* End Card and Modal Colors */
 
 .bg-info-subtle {
    background-color: #cff4fc;
 }
 
+/* Focused Elements */
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+/*  btn-primary Defaults */
 .btn-primary {
     color: #fff !important;
     background-color: #3bb61e !important;
@@ -68,5 +86,123 @@
     border-color: var(--pagination-disabled-border, #808080);
     color: var(--pagination-disabled-text, #6c757d);
 }
-
 /* #endregion Pagination */
+
+/* Footer */
+.footer-nav-link {
+    color: #ffffffcc;
+    transition: color 0.2s, background-color 0.2s;
+    padding: 2px 6px;
+}
+
+    .footer-nav-link:hover {
+        color: #fff;
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+.footer-fs {
+    font-size: 0.85rem;
+}
+/* End Footer */
+
+/* #region Enhanced Table Styling */
+
+/*
+ * ENHANCED TABLE IMPLEMENTATION GUIDE
+ * ===================================
+ *
+ * USAGE PATTERN:
+ * 1. Container: <div class="table-responsive enhanced-table-container">
+ * 2. Table:     <table class="table enhanced-table">
+ * 3. Rows:      <tr class="enhanced-table-row">
+ *
+ * FEATURES:
+ * - Smooth hover transitions with accent color left border
+ * - No layout shifting (border-left reserves space via transparent border)
+ * - Subtle background highlighting and box shadow on hover
+ * - Mobile responsive with horizontal scroll support
+ * - Alternative color schemes: .admin-style, .warning-style, .danger-style
+ */
+
+/* Enhanced table row with hover effects and left border indicator */
+.enhanced-table-row {
+    transition: all 0.3s ease-in-out;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+}
+
+    .enhanced-table-row:hover {
+        background-color: rgba(40,167,69,0.05) !important;
+        border-left: 3px solid #28a745;
+        box-shadow: 0 2px 8px rgba(40,167,69,0.15);
+    }
+
+/* Enhanced table container - allow horizontal scroll if needed */
+.enhanced-table-container {
+    overflow-x: auto;
+}
+
+/* Enhanced table class for easy application */
+.enhanced-table .enhanced-table-row {
+    transition: all 0.3s ease-in-out;
+    border-left: 3px solid transparent;
+}
+
+    .enhanced-table .enhanced-table-row:hover {
+        background-color: rgba(40,167,69,0.05) !important;
+        border-left: 3px solid #28a745;
+        box-shadow: 0 2px 8px rgba(40,167,69,0.15);
+    }
+
+/* Alternative color schemes for different contexts */
+.enhanced-table-row.admin-style:hover {
+    background-color: rgba(13, 110, 253, 0.05) !important;
+    border-left: 3px solid #0d6efd;
+    box-shadow: 0 2px 8px rgba(13, 110, 253, 0.15);
+}
+
+.enhanced-table-row.warning-style:hover {
+    background-color: rgba(255, 193, 7, 0.05) !important;
+    border-left: 3px solid #ffc107;
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.15);
+}
+
+.enhanced-table-row.danger-style:hover {
+    background-color: rgba(220, 53, 69, 0.05) !important;
+    border-left: 3px solid #dc3545;
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.15);
+}
+
+/* Responsive table fixes for mobile */
+@media (max-width: 767px) {
+    .table-responsive {
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table td, .table th {
+        white-space: nowrap;
+        min-width: auto;
+    }
+
+    .enhanced-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .enhanced-table td {
+        white-space: nowrap;
+    }
+}
+
+/* Force text wrapping for title columns that exceed length limit */
+.enhanced-table td.title-wrap {
+    max-width: 300px !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+}
+
+/* #endregion Enhanced Table Styling */
+
+

@@ -1,4 +1,4 @@
-@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
 @inject SignInManager<IdentityUser> SignInManager
 @inject Ape.Services.SecureConfigurationService ConfigService
 
@@ -15,12 +15,12 @@
                 <ul class="navbar-nav flex-nowrap pt-2" style="max-width:160px;">
                     <li class="nav-item text-light mb-2">
                         <a class="rounded-2 text-light footer-nav-link footer-fs text-nowrap px-2" style="text-decoration:none;" asp-area="" asp-controller="Info" asp-action="Index">
-                            Home
+                            🏠 Welcome
                         </a>
                     </li>
                     <li class="nav-item text-light mb-2">
                         <a class="rounded-2 text-light footer-nav-link footer-fs text-nowrap px-2" style="text-decoration:none;" asp-controller="Info" asp-action="Contact">
-                            Contact
+                            📧 Contact
                         </a>
                     </li>
                 </ul>
@@ -38,22 +38,22 @@
                             <ul class="dropdown-menu ps-lg-2 border-0 bg-transparent ps-4" aria-labelledby="membersFooterDropdown" style="margin-top: 0; width:180px;">
                                 <li class="nav-item text-light mb-2">
                                     <a class="rounded-2 text-light footer-nav-link footer-fs text-nowrap ps-2" style="text-decoration:none;" asp-area="Identity" asp-page="/Account/Manage/Index">
-                                        Account Management
+                                        ⚙️ Account Management
                                     </a>
                                 </li>
                                 <li class="nav-item text-light mb-2">
                                     <a class="rounded-2 text-light footer-nav-link footer-fs text-nowrap ps-2" style="text-decoration:none;" asp-controller="Document" asp-action="Browse">
-                                        Document Library
+                                        📚 Document Library
                                     </a>
                                 </li>
                                 <li class="nav-item text-light mb-2">
                                     <a class="rounded-2 text-light footer-nav-link footer-fs text-nowrap ps-2" style="text-decoration:none;" asp-controller="Gallery" asp-action="Browse">
-                                        Image Gallery
+                                        🖼️ Galleries
                                     </a>
                                 </li>
                                 <li class="nav-item text-light mb-2">
                                     <a class="rounded-2 text-light footer-nav-link footer-fs text-nowrap ps-2" style="text-decoration:none;" asp-controller="Links" asp-action="MoreLinks">
-                                        More Links
+                                        🔗 More Links
                                     </a>
                                 </li>
                             </ul>
@@ -67,12 +67,12 @@
                 <ul class="navbar-nav ms-auto flex-nowrap px-2 pt-2" style="max-width:160px">
                     <li class="nav-item text-light mb-2">
                         <a class="rounded-2 text-light footer-nav-link footer-fs text-nowrap px-2" style="text-decoration:none;" asp-controller="Info" asp-action="Privacy">
-                            Privacy
+                            🛡️ Privacy
                         </a>
                     </li>
                     <li class="nav-item text-light mb-2">
                         <a class="rounded-2 text-light footer-nav-link footer-fs text-nowrap px-2" style="text-decoration:none;" asp-controller="Info" asp-action="TOS">
-                            Terms of Service
+                            📄 Terms of Service
                         </a>
                     </li>
                 </ul>
