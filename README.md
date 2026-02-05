@@ -100,9 +100,111 @@ A production-ready ASP.NET Core MVC framework with comprehensive authentication,
 ## Prerequisites
 
 - [.NET 10.0 SDK](https://dotnet.microsoft.com/download) or later
-- SQL Server (LocalDB for development, full SQL Server for production)
+- SQL Server (LocalDB, Docker, or cloud-hosted)
 - Azure Communication Services account (optional, for Azure email)
 - SMTP server access (for fallback/primary email)
+
+## Cross-Platform Development
+
+This project runs on **Windows**, **macOS**, and **Linux**. The .NET 10.0 SDK and ASP.NET Core are fully cross-platform.
+
+### Platform Support Matrix
+
+| Component | Windows | macOS | Linux |
+|-----------|---------|-------|-------|
+| .NET 10.0 SDK | ✅ | ✅ | ✅ |
+| ASP.NET Core | ✅ | ✅ | ✅ |
+| Entity Framework Core | ✅ | ✅ | ✅ |
+| Visual Studio | ✅ | ✅ (for Mac) | ❌ |
+| VS Code + C# Dev Kit | ✅ | ✅ | ✅ |
+| SQL Server LocalDB | ✅ | ❌ | ❌ |
+| SQL Server (Docker) | ✅ | ✅ | ✅ |
+
+### Install .NET SDK
+
+#### Windows
+Download from [dotnet.microsoft.com](https://dotnet.microsoft.com/download) or use winget:
+```bash
+winget install Microsoft.DotNet.SDK.10
+```
+
+#### macOS
+```bash
+brew install dotnet
+```
+
+#### Linux (Ubuntu/Debian)
+```bash
+sudo apt update
+sudo apt install dotnet-sdk-10.0
+```
+
+#### Linux (Fedora)
+```bash
+sudo dnf install dotnet-sdk-10.0
+```
+
+### Database Setup for Mac/Linux
+
+Since SQL Server LocalDB is Windows-only, use Docker to run SQL Server locally:
+
+```bash
+# Pull and run SQL Server container
+docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=YourStrong!Pass123" \
+  -p 1433:1433 --name sqlserver \
+  -d mcr.microsoft.com/mssql/server:2022-latest
+
+# Verify it's running
+docker ps
+```
+
+Then set your environment variables to connect:
+```bash
+export DB_SERVER_ILLUSTRATE=localhost
+export DB_NAME_ILLUSTRATE=aspnet-Ape
+export DB_USER_ILLUSTRATE=sa
+export DB_PASSWORD_ILLUSTRATE=YourStrong!Pass123
+export MASTER_CREDENTIAL_KEY_ILLUSTRATE=YourSecure32CharacterOrLongerKey!
+```
+
+#### Alternative: Azure SQL Database
+For cloud-hosted development, create an Azure SQL Database and use those connection details in your environment variables.
+
+### VS Code Setup (All Platforms)
+
+1. Install [VS Code](https://code.visualstudio.com/)
+2. Install the **C# Dev Kit** extension (includes C# extension)
+3. Open the project folder
+4. Press `F5` to debug or use terminal:
+   ```bash
+   cd Ape
+   dotnet run
+   ```
+
+### Quick Start (Mac/Linux)
+
+```bash
+# Clone repository
+git clone https://github.com/MikishVaughn/Ape.git
+cd Ape
+
+# Start SQL Server in Docker (if not using cloud DB)
+docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=YourStrong!Pass123" \
+  -p 1433:1433 --name sqlserver -d mcr.microsoft.com/mssql/server:2022-latest
+
+# Set environment variables
+export DB_SERVER_ILLUSTRATE=localhost
+export DB_NAME_ILLUSTRATE=aspnet-Ape
+export DB_USER_ILLUSTRATE=sa
+export DB_PASSWORD_ILLUSTRATE=YourStrong!Pass123
+export MASTER_CREDENTIAL_KEY_ILLUSTRATE=$(openssl rand -base64 32)
+
+# Run the application
+cd Ape
+dotnet run
+```
+
+The application will automatically create the database and apply migrations on first run.
 
 ## Installation
 
