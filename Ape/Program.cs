@@ -39,6 +39,7 @@ builder.Services.AddScoped<ISystemSettingsService, SystemSettingsService>();
 builder.Services.AddScoped<IDocumentManagementService, DocumentManagementService>();
 builder.Services.AddScoped<IImageOptimizationService, ImageOptimizationService>();
 builder.Services.AddScoped<IGalleryManagementService, GalleryManagementService>();
+builder.Services.AddScoped<ILinksManagementService, LinksManagementService>();
 
 builder.Services.AddControllersWithViews();
 

@@ -1,4 +1,4 @@
-@model List<Ape.Models.CategoryLink>
+@model List<Ape.Models.ViewModels.LinkViewModel>
 @{
     ViewData["Title"] = "Manage Category Links";
 }
@@ -58,10 +58,10 @@
                             <label for="categoryId" class="form-label">Choose a category to manage its links</label>
                             <select class="form-select" id="categoryId" name="categoryId" onchange="this.form.submit()">
                                 <option value="">-- Select a Category --</option>
-                                @foreach (var category in (ViewBag.LinkCategories as List<Ape.Models.LinkCategory>) ?? new List<Ape.Models.LinkCategory>())
+                                @foreach (var category in (ViewBag.LinkCategories as List<Ape.Models.ViewModels.LinkCategoryViewModel>) ?? new List<Ape.Models.ViewModels.LinkCategoryViewModel>())
                                 {
-                                    var isSelected = ViewBag.SelectedCategoryId != null && ViewBag.SelectedCategoryId.ToString() == category.CategoryID.ToString();
-                                    <option value="@category.CategoryID" selected="@isSelected">
+                                    var isSelected = ViewBag.SelectedCategoryId != null && ViewBag.SelectedCategoryId.ToString() == category.CategoryId.ToString();
+                                    <option value="@category.CategoryId" selected="@isSelected">
                                         @category.CategoryName@(category.IsAdminOnly ? " (Admin Only)" : "")
                                     </option>
                                 }
@@ -133,7 +133,7 @@
                                         @for (int i = 0; i < Model.Count; i++)
                                         {
                                             var link = Model[i];
-                                            <tr data-link-id="@link.LinkID">
+                                            <tr data-link-id="@link.LinkId">
                                                 <td class="text-center">
                                                     <div class="d-flex align-items-center justify-content-center">
                                                         <span class="drag-handle me-2" title="Drag to reorder">
@@ -160,13 +160,13 @@
                                                 <td>
                                                     <!-- Edit Button -->
                                                     <button type="button" class="btn btn-sm btn-outline-primary me-1"
-                                                            onclick="editLink(@link.LinkID, '@Html.Raw(Html.Encode(link.LinkName))', '@Html.Raw(Html.Encode(link.LinkUrl))')"
+                                                            onclick="editLink(@link.LinkId, '@Html.Raw(Html.Encode(link.LinkName))', '@Html.Raw(Html.Encode(link.LinkUrl))')"
                                                             title="Edit Link">
                                                         Edit
                                                     </button>
                                                     <!-- Delete Button -->
                                                     <button type="button" class="btn btn-sm btn-outline-danger"
-                                                            onclick="confirmDeleteLink(@link.LinkID, '@Html.Raw(Html.Encode(link.LinkName))')"
+                                                            onclick="confirmDeleteLink(@link.LinkId, '@Html.Raw(Html.Encode(link.LinkName))')"
                                                             title="Delete Link">
                                                         Delete
                                                     </button>

@@ -1,4 +1,4 @@
-﻿@model List<Ape.Models.LinkCategory>
+﻿@model List<Ape.Models.ViewModels.LinkCategoryViewModel>
 @{
     ViewData["Title"] = "More Links";
 }
@@ -67,16 +67,16 @@
                     <!-- Desktop/Tablet: Column-based layout -->
                     <div class="masonry-columns-desktop">
                         @{
-                            var columns = new List<List<Ape.Models.LinkCategory>> { new(), new(), new() };
+                            var columns = new List<List<Ape.Models.ViewModels.LinkCategoryViewModel>> { new(), new(), new() };
 
                             for (int i = 0; i < sortedCategories.Count; i++)
                             {
                                 var category = sortedCategories[i];
                                 var columnIndex = i % 3;
 
-                                if (category.CategoryLinks.Count > 10)
+                                if (category.LinkCount > 10)
                                 {
-                                    var columnSizes = columns.Select((col, idx) => new { Index = idx, TotalLinks = col.Sum(c => Math.Max(1, c.CategoryLinks.Count)) }).OrderBy(x => x.TotalLinks).First();
+                                    var columnSizes = columns.Select((col, idx) => new { Index = idx, TotalLinks = col.Sum(c => Math.Max(1, c.LinkCount)) }).OrderBy(x => x.TotalLinks).First();
                                     columnIndex = columnSizes.Index;
                                 }
 
@@ -101,10 +101,10 @@
                                                 </h5>
                                             </div>
                                             <div class="card-body bg-card-body">
-                                                @if (category.CategoryLinks.Any())
+                                                @if (category.Links.Any())
                                                 {
                                                     <ul class="list-unstyled mb-0">
-                                                        @foreach (var link in category.CategoryLinks)
+                                                        @foreach (var link in category.Links)
                                                         {
                                                             <li>
                                                                 <a href="@link.LinkUrl"
@@ -148,10 +148,10 @@
                                         </h5>
                                     </div>
                                     <div class="card-body">
-                                        @if (category.CategoryLinks.Any())
+                                        @if (category.Links.Any())
                                         {
                                             <ul class="list-unstyled mb-0">
-                                                @foreach (var link in category.CategoryLinks)
+                                                @foreach (var link in category.Links)
                                                 {
                                                     <li>
                                                         <a href="@link.LinkUrl"

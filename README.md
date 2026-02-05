@@ -2,6 +2,22 @@
 
 A production-ready ASP.NET Core MVC framework with comprehensive authentication, role-based access control, document management, and administrative tools. This framework provides a solid foundation for building secure, enterprise-grade web applications.
 
+## Quick Start Feature Matrix
+
+| Feature | Status | Access Level | Key Files |
+|---------|--------|--------------|-----------|
+| User Authentication | ✅ | Public | `Areas/Identity/` |
+| Role Management | ✅ | Admin | ASP.NET Identity |
+| Two-Factor Auth | ✅ | All Users | `Manage/EnableAuthenticator` |
+| Document Library | ✅ | Member/Admin | `DocumentController`, `IDocumentManagementService` |
+| Photo Gallery | ✅ | Member/Admin | `GalleryController`, `IGalleryManagementService` |
+| Links Directory | ✅ | Public/Admin | `LinksController`, `ILinksManagementService` |
+| Credential Vault | ✅ | Admin | `SystemCredentialsController`, `CredentialEncryptionService` |
+| Email (Dual Provider) | ✅ | System | `EnhancedEmailService` |
+| Contact Form | ✅ | Public | `InfoController` |
+| Health Checks | ✅ | Public | `GET /health`, `/health/live`, `/health/ready` |
+| Activity Tracking | ✅ | Admin | `ActivityTrackingMiddleware` |
+
 ## Live Demo
 
 **[https://Illustrate.net](https://Illustrate.net)**
@@ -265,7 +281,8 @@ Ape/
 │   ├── EmailLogController.cs      # Email log viewer
 │   ├── EmailTestController.cs     # Email testing tools
 │   ├── ContactFormSettingsController.cs  # Contact recipients
-│   └── ActiveUsersController.cs   # User activity dashboard
+│   ├── ActiveUsersController.cs   # User activity dashboard
+│   └── HealthController.cs        # Health check endpoints
 ├── Data/
 │   ├── ApplicationDbContext.cs    # EF Core context
 │   └── Migrations/                # Database migrations
@@ -288,6 +305,7 @@ Ape/
 │   ├── EnhancedEmailService.cs          # Email sending (Azure + SMTP)
 │   ├── DocumentManagementService.cs     # Document operations
 │   ├── GalleryManagementService.cs      # Gallery operations
+│   ├── LinksManagementService.cs        # Links directory operations
 │   ├── ImageOptimizationService.cs      # Image processing
 │   └── SystemSettingsService.cs         # Settings management
 ├── Middleware/
@@ -404,6 +422,64 @@ dotnet ef migrations remove
 dotnet ef migrations script
 ```
 
+## Health Check Endpoints
+
+The application includes health check endpoints for monitoring and container orchestration:
+
+### `GET /health`
+Returns comprehensive health status including database, encryption, and email configuration.
+
+```json
+{
+  "status": "Healthy",
+  "timestamp": "2026-01-28T12:00:00Z",
+  "version": "1.0.0",
+  "database": { "name": "Database", "status": "Healthy", "message": "Connected. 5 users in database." },
+  "encryption": { "name": "Encryption", "status": "Healthy", "message": "Master key configured and encryption working." },
+  "email": { "name": "Email", "status": "Healthy", "message": "Both SMTP and Azure Email configured (dual-provider)." }
+}
+```
+
+### `GET /health/live`
+Kubernetes liveness probe - returns 200 if the application is running.
+
+### `GET /health/ready`
+Kubernetes readiness probe - returns 200 if database is connected and ready to serve traffic.
+
+## Environment Variables Checklist
+
+Use this checklist when deploying to a new environment:
+
+### Required
+- [ ] `MASTER_CREDENTIAL_KEY_ILLUSTRATE` - 32+ character encryption master key
+
+### Database (Production)
+- [ ] `DB_SERVER_ILLUSTRATE` - SQL Server hostname
+- [ ] `DB_NAME_ILLUSTRATE` - Database name
+- [ ] `DB_USER_ILLUSTRATE` - Database user
+- [ ] `DB_PASSWORD_ILLUSTRATE` - Database password
+
+### Optional (Configured via System Credentials UI)
+- [ ] Azure Email connection string
+- [ ] SMTP server settings
+- [ ] Site name for email templates
+
+### Generate a New Master Key
+
+You can generate a cryptographically secure master key using PowerShell:
+
+```powershell
+[Convert]::ToBase64String([System.Security.Cryptography.RandomNumberGenerator]::GetBytes(32))
+```
+
+Or in C#:
+```csharp
+var key = Ape.Services.CredentialEncryptionService.GenerateNewMasterKey();
+Console.WriteLine(key);
+```
+
+> **Warning**: Changing the master key after credentials are stored will make them unreadable. Export credentials before key rotation.
+
 ## Troubleshooting
 
 ### Email Not Sending
@@ -427,6 +503,150 @@ dotnet ef migrations script
 1. Check folder permissions on `/ProtectedFiles/` and `/wwwroot/Galleries/`
 2. Verify file size limits in web.config/IIS settings
 3. Ensure correct file types (PDF for documents, images for gallery)
+
+## Building Your Own Features
+
+This framework follows consistent patterns. Use this guide when adding new functionality.
+
+### Pattern: Service Layer Architecture
+
+All features follow the Controller → Service → DbContext pattern:
+
+```
+┌─────────────┐     ┌──────────────────────┐     ┌─────────────────────┐
+│ Controller  │────▶│ IFeatureService      │────▶│ ApplicationDbContext│
+│ (HTTP/Auth) │     │ (Business Logic)     │     │ (Data Access)       │
+└─────────────┘     └──────────────────────┘     └─────────────────────┘
+```
+
+### Step 1: Create the Entity Model
+
+```csharp
+// Models/MyEntity.cs
+public class MyEntity
+{
+    [Key]
+    public int Id { get; set; }
+
+    [Required]
+    public required string Name { get; set; }
+
+    public int SortOrder { get; set; }
+}
+```
+
+### Step 2: Add to DbContext
+
+```csharp
+// Data/ApplicationDbContext.cs
+public DbSet<MyEntity> MyEntities { get; set; }
+```
+
+### Step 3: Create ViewModels
+
+```csharp
+// Models/ViewModels/MyFeatureViewModels.cs
+public class MyEntityViewModel
+{
+    public int Id { get; set; }
+    public required string Name { get; set; }
+}
+
+public class MyEntityOperationResult
+{
+    public bool Success { get; set; }
+    public string? Message { get; set; }
+
+    public static MyEntityOperationResult Succeeded(string? message = null)
+        => new() { Success = true, Message = message };
+
+    public static MyEntityOperationResult Failed(string message)
+        => new() { Success = false, Message = message };
+}
+```
+
+### Step 4: Create Service Interface & Implementation
+
+```csharp
+// Services/IMyFeatureService.cs
+public interface IMyFeatureService
+{
+    Task<List<MyEntityViewModel>> GetAllAsync();
+    Task<MyEntityOperationResult> CreateAsync(string name);
+}
+
+// Services/MyFeatureService.cs
+public class MyFeatureService(
+    ApplicationDbContext context,
+    ILogger<MyFeatureService> logger) : IMyFeatureService
+{
+    // Implementation using primary constructor pattern
+}
+```
+
+### Step 5: Register in Program.cs
+
+```csharp
+builder.Services.AddScoped<IMyFeatureService, MyFeatureService>();
+```
+
+### Step 6: Create Controller
+
+```csharp
+// Controllers/MyFeatureController.cs
+public class MyFeatureController(
+    IMyFeatureService service,
+    ILogger<MyFeatureController> logger) : Controller
+{
+    [Authorize(Roles = "Admin,Manager")]
+    public async Task<IActionResult> Index()
+    {
+        var items = await service.GetAllAsync();
+        return View(items);
+    }
+}
+```
+
+### Step 7: Generate Migration
+
+```bash
+dotnet ef migrations add AddMyEntity
+dotnet ef database update
+```
+
+### Naming Conventions
+
+| Type | Pattern | Example |
+|------|---------|---------|
+| Entity | Singular noun | `GalleryImage` |
+| DbSet | Plural | `GalleryImages` |
+| Service Interface | `IFeatureManagementService` | `IGalleryManagementService` |
+| Service Class | `FeatureManagementService` | `GalleryManagementService` |
+| Controller | `FeatureController` | `GalleryController` |
+| ViewModels | `FeatureViewModels.cs` | `GalleryViewModels.cs` |
+| Operation Result | `FeatureOperationResult` | `GalleryImageOperationResult` |
+
+### Authorization Patterns
+
+```csharp
+// Controller-level (all actions)
+[Authorize(Roles = "Admin")]
+public class AdminOnlyController : Controller { }
+
+// Action-level
+[Authorize(Roles = "Admin,Manager")]
+public IActionResult ManageItems() { }
+
+// Public access
+[AllowAnonymous]
+public IActionResult PublicPage() { }
+
+// Check in views
+@if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+{
+    <a href="...">Manage</a>
+}
+```
 
 ## Contributing
 

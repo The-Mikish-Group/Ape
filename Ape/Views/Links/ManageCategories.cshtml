@@ -1,4 +1,4 @@
-@model List<Ape.Models.LinkCategory>
+@model List<Ape.Models.ViewModels.LinkCategoryViewModel>
 @{
     ViewData["Title"] = "Manage Link Categories";
 }
@@ -99,7 +99,7 @@
                                     @for (int i = 0; i < Model.Count; i++)
                                     {
                                         var category = Model[i];
-                                        <tr data-category-id="@category.CategoryID">
+                                        <tr data-category-id="@category.CategoryId">
                                             <td class="text-center">
                                                 <div class="d-flex align-items-center justify-content-center">
                                                     <span class="drag-handle me-2" title="Drag to reorder">
@@ -122,24 +122,24 @@
                                                 }
                                             </td>
                                             <td class="text-center">
-                                                <a href="@Url.Action("ManageLinks", new { categoryId = category.CategoryID })"
+                                                <a href="@Url.Action("ManageLinks", new { categoryId = category.CategoryId })"
                                                    class="badge bg-primary text-decoration-none">
-                                                    @category.CategoryLinks.Count links
+                                                    @category.LinkCount links
                                                 </a>
                                             </td>
                                             <td>
                                                 <div class="d-flex gap-2">
                                                     <!-- Manage Links Button -->
-                                                    <a href="@Url.Action("ManageLinks", new { categoryId = category.CategoryID })"
+                                                    <a href="@Url.Action("ManageLinks", new { categoryId = category.CategoryId })"
                                                        class="btn btn-sm btn-outline-primary" title="Manage Links for @category.CategoryName">
                                                         Links
                                                     </a>
 
                                                     <!-- Delete Button -->
                                                     <button type="button" class="btn btn-sm btn-outline-danger"
-                                                            data-category-id="@category.CategoryID"
+                                                            data-category-id="@category.CategoryId"
                                                             data-category-name="@category.CategoryName"
-                                                            data-link-count="@category.CategoryLinks.Count"
+                                                            data-link-count="@category.LinkCount"
                                                             onclick="confirmDelete(this)"
                                                             title="Delete Category: @category.CategoryName">
                                                         Delete
