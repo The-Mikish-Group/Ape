@@ -26,13 +26,13 @@
             <div class="text-center mb-3">
                 <form asp-action="TestEmail" method="post" class="d-inline">
                     <input type="hidden" name="testEmail" id="azureTestEmail">
-                    <button type="submit" class="btn btn-primary me-2">Test Azure (with SMTP fallback)</button>
+                    <button type="submit" class="btn btn-primary mb-2 me-2">Test Azure (with SMTP fallback)</button>
                 </form>
                 <form asp-action="TestSmtpEmail" method="post" class="d-inline">
                     <input type="hidden" name="testEmail" id="smtpTestEmail">
-                    <button type="submit" class="btn btn-warning me-2">Test SMTP Only</button>
+                    <button type="submit" class="btn btn-warning mb-2 me-2">Test SMTP Only</button>
                 </form>
-                <a asp-controller="Info" asp-action="Index" class="btn btn-secondary">Back to Home</a>
+                <a asp-controller="Info" asp-action="Index" class="btn btn-secondary mb-2">Back to Home</a>
             </div>
             <script>
                 document.getElementById('testEmail').addEventListener('input', function() {
@@ -121,8 +121,8 @@
                     Azure will be tried first. If it fails, SMTP will be used automatically.
                 </div>
 
-                <div class="mt-3">
-                    <a href="/EmailTest/ShowVars" class="btn btn-outline-secondary me-2">
+                <div class="text-center mt-3">
+                    <a href="/EmailTest/ShowVars" class="btn btn-outline-secondary mb-2 me-2">
                         View Detailed Diagnostics
                     </a>
                     <a href="/SystemCredentials" class="btn btn-outline-primary">
