@@ -1,7 +1,7 @@
 ﻿/* Background Color and Image */
 body {
     background-color: #ece1cd;
-    background-image: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url('../images/site/bananas.jpg');
+    background-image: linear-gradient(rgba(255,255,255,0.6), rgba(255,255,255,0.6)), url('../images/site/background.jpg');
     background-repeat: repeat-x;
 }
 
