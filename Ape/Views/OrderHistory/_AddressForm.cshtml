@@ -1,0 +1,42 @@
+@model dynamic
+
+<div class="mb-3">
+    <label class="form-label">Full Name <span class="text-danger">*</span></label>
+    <input type="text" class="form-control" name="FullName" value="@Model.FullName" required />
+</div>
+<div class="mb-3">
+    <label class="form-label">Address Line 1 <span class="text-danger">*</span></label>
+    <input type="text" class="form-control" name="AddressLine1" value="@Model.AddressLine1" required />
+</div>
+<div class="mb-3">
+    <label class="form-label">Address Line 2</label>
+    <input type="text" class="form-control" name="AddressLine2" value="@Model.AddressLine2" />
+</div>
+<div class="row mb-3">
+    <div class="col-md-5">
+        <label class="form-label">City <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="City" value="@Model.City" required />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">State</label>
+        <input type="text" class="form-control" name="State" value="@Model.State" />
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">ZIP Code <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" name="ZipCode" value="@Model.ZipCode" required />
+    </div>
+</div>
+<div class="row mb-3">
+    <div class="col-md-6">
+        <label class="form-label">Country</label>
+        <input type="text" class="form-control" name="Country" value="@(Model.Country ?? "US")" />
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Phone</label>
+        <input type="tel" class="form-control" name="Phone" value="@Model.Phone" />
+    </div>
+</div>
+<div class="form-check mb-3">
+    <input class="form-check-input" type="checkbox" name="IsDefault" value="true" id="isDefault" checked="@Model.IsDefault" />
+    <label class="form-check-label" for="isDefault">Set as default address</label>
+</div>

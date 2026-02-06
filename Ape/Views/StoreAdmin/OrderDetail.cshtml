@@ -1,0 +1,244 @@
+@model Ape.Models.ViewModels.OrderDetailViewModel
+
+<div class="container-fluid mt-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2><i class="bi bi-receipt"></i> Order @Model.OrderNumber</h2>
+        <a asp-action="Orders" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to Orders</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Status & Actions -->
+            <div class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong>Status: <span class="badge @Model.StatusBadgeClass">@Model.Status</span></strong>
+                    <div>
+                        @if (Model.IsPaid)
+                        {
+                            <span class="badge bg-success"><i class="bi bi-check-circle"></i> Paid via @Model.PaymentGateway</span>
+                        }
+                        @if (Model.PaidDate.HasValue)
+                        {
+                            <small class="text-muted ms-2">@Model.PaidDate.Value.ToString("MMM dd, yyyy h:mm tt")</small>
+                        }
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-auto">
+                            <form asp-action="UpdateOrderStatus" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="orderId" value="@Model.OrderId" />
+                                <div class="input-group input-group-sm">
+                                    <select name="status" class="form-select form-select-sm">
+                                        @foreach (var status in Enum.GetValues<Ape.Models.OrderStatus>())
+                                        {
+                                            <option value="@((int)status)" selected="@(Model.Status == status)">@status</option>
+                                        }
+                                    </select>
+                                    <button type="submit" class="btn btn-primary btn-sm">Update Status</button>
+                                </div>
+                            </form>
+                        </div>
+                        @if (Model.IsPaid && Model.Status != Ape.Models.OrderStatus.Refunded)
+                        {
+                            <div class="col-auto ms-auto">
+                                <form asp-action="RefundOrder" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to refund this order?');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="orderId" value="@Model.OrderId" />
+                                    <input type="hidden" name="reason" value="Admin refund" />
+                                    <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-arrow-counterclockwise"></i> Refund</button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="card mb-3">
+                <div class="card-header"><strong>Order Items</strong></div>
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr><th>Product</th><th>SKU</th><th>Type</th><th>Qty</th><th>Price</th><th>Total</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr>
+                                    <td>@item.ProductName</td>
+                                    <td><small class="text-muted">@item.SKU</small></td>
+                                    <td>
+                                        <span class="badge @(item.ProductType == Ape.Models.ProductType.Physical ? "bg-primary" : item.ProductType == Ape.Models.ProductType.Digital ? "bg-info" : "bg-success")">
+                                            @item.ProductType
+                                        </span>
+                                    </td>
+                                    <td>@item.Quantity</td>
+                                    <td>@item.UnitPrice.ToString("C")</td>
+                                    <td>@item.LineTotal.ToString("C")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tracking -->
+            @if (Model.HasPhysicalItems)
+            {
+                <div class="card mb-3">
+                    <div class="card-header"><strong><i class="bi bi-truck"></i> Shipping & Tracking</strong></div>
+                    <div class="card-body">
+                        @if (!string.IsNullOrEmpty(Model.ShipToName))
+                        {
+                            <p class="mb-1"><strong>Ship To:</strong> @Model.ShipToName</p>
+                            <p class="mb-3 text-muted">@Model.ShipToAddress</p>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.TrackingNumber))
+                        {
+                            <div class="alert alert-success">
+                                <strong>@Model.ShippingCarrier:</strong> @Model.TrackingNumber
+                                @if (Model.ShippedDate.HasValue) { <br /><small>Shipped: @Model.ShippedDate.Value.ToString("MMM dd, yyyy")</small> }
+                                @if (Model.DeliveredDate.HasValue) { <br /><small>Delivered: @Model.DeliveredDate.Value.ToString("MMM dd, yyyy")</small> }
+                            </div>
+                        }
+
+                        <form asp-action="AddTracking" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="orderId" value="@Model.OrderId" />
+                            <div class="row g-2">
+                                <div class="col-md-4">
+                                    <input type="text" name="carrier" class="form-control form-control-sm" placeholder="Carrier (e.g., USPS, UPS)" value="@Model.ShippingCarrier" />
+                                </div>
+                                <div class="col-md-5">
+                                    <input type="text" name="trackingNumber" class="form-control form-control-sm" placeholder="Tracking Number" value="@Model.TrackingNumber" />
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="submit" class="btn btn-primary btn-sm w-100"><i class="bi bi-truck"></i> Update Tracking</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            <!-- Admin Notes -->
+            <div class="card mb-3">
+                <div class="card-header"><strong>Admin Notes</strong></div>
+                <div class="card-body">
+                    <form asp-action="UpdateAdminNotes" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="orderId" value="@Model.OrderId" />
+                        <textarea name="notes" class="form-control form-control-sm mb-2" rows="3">@Model.AdminNotes</textarea>
+                        <button type="submit" class="btn btn-sm btn-primary"><i class="bi bi-save"></i> Save Notes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Order Summary -->
+            <div class="card mb-3">
+                <div class="card-header"><strong>Order Summary</strong></div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Subtotal</span><span>@Model.Subtotal.ToString("C")</span>
+                    </div>
+                    @if (Model.ShippingCost > 0)
+                    {
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Shipping</span><span>@Model.ShippingCost.ToString("C")</span>
+                        </div>
+                    }
+                    @if (Model.TaxAmount > 0)
+                    {
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Tax</span><span>@Model.TaxAmount.ToString("C")</span>
+                        </div>
+                    }
+                    <hr />
+                    <div class="d-flex justify-content-between fw-bold fs-5">
+                        <span>Total</span><span>@Model.TotalAmount.ToString("C")</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Details -->
+            <div class="card mb-3">
+                <div class="card-header"><strong>Payment Details</strong></div>
+                <div class="card-body small">
+                    <p class="mb-1"><strong>Gateway:</strong> @(Model.PaymentGateway ?? "N/A")</p>
+                    <p class="mb-1"><strong>Transaction:</strong> @(Model.PaymentTransactionId ?? "N/A")</p>
+                    <p class="mb-0"><strong>Email:</strong> @(Model.CustomerEmail ?? "N/A")</p>
+                </div>
+            </div>
+
+            <!-- Refund Info -->
+            @if (Model.RefundedAmount.HasValue && Model.RefundedAmount > 0)
+            {
+                <div class="card mb-3 border-danger">
+                    <div class="card-header bg-danger text-white"><strong>Refund Details</strong></div>
+                    <div class="card-body small">
+                        <p class="mb-1"><strong>Amount:</strong> @Model.RefundedAmount.Value.ToString("C")</p>
+                        <p class="mb-1"><strong>Date:</strong> @Model.RefundedDate?.ToString("MMM dd, yyyy")</p>
+                        <p class="mb-0"><strong>Transaction:</strong> @Model.RefundTransactionId</p>
+                        @if (!string.IsNullOrEmpty(Model.RefundReason))
+                        {
+                            <p class="mb-0 mt-1"><strong>Reason:</strong> @Model.RefundReason</p>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Customer Notes -->
+            @if (!string.IsNullOrEmpty(Model.CustomerNotes))
+            {
+                <div class="card mb-3">
+                    <div class="card-header"><strong>Customer Notes</strong></div>
+                    <div class="card-body">
+                        <p class="mb-0 small">@Model.CustomerNotes</p>
+                    </div>
+                </div>
+            }
+
+            <!-- Order Timeline -->
+            <div class="card mb-3">
+                <div class="card-header"><strong>Timeline</strong></div>
+                <div class="card-body small">
+                    <p class="mb-1"><i class="bi bi-calendar-plus"></i> Placed: @Model.OrderDate.ToString("MMM dd, yyyy h:mm tt")</p>
+                    @if (Model.PaidDate.HasValue)
+                    {
+                        <p class="mb-1"><i class="bi bi-credit-card"></i> Paid: @Model.PaidDate.Value.ToString("MMM dd, yyyy h:mm tt")</p>
+                    }
+                    @if (Model.ShippedDate.HasValue)
+                    {
+                        <p class="mb-1"><i class="bi bi-truck"></i> Shipped: @Model.ShippedDate.Value.ToString("MMM dd, yyyy h:mm tt")</p>
+                    }
+                    @if (Model.DeliveredDate.HasValue)
+                    {
+                        <p class="mb-1"><i class="bi bi-check-circle"></i> Delivered: @Model.DeliveredDate.Value.ToString("MMM dd, yyyy h:mm tt")</p>
+                    }
+                    @if (Model.RefundedDate.HasValue)
+                    {
+                        <p class="mb-1"><i class="bi bi-arrow-counterclockwise"></i> Refunded: @Model.RefundedDate.Value.ToString("MMM dd, yyyy h:mm tt")</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/store.css" asp-append-version="true" />
+}

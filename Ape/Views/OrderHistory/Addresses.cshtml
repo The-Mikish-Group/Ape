@@ -1,0 +1,61 @@
+@model List<Ape.Models.ViewModels.ShippingAddressViewModel>
+
+<div class="container mt-3">
+    <h2><i class="bi bi-geo-alt"></i> My Addresses</h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">@TempData["SuccessMessage"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">@TempData["ErrorMessage"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    <a asp-action="AddAddress" class="btn btn-success mb-3"><i class="bi bi-plus-lg"></i> Add Address</a>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-geo-alt display-1"></i>
+            <p class="mt-3">No saved addresses.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var addr in Model)
+            {
+                <div class="col-md-6">
+                    <div class="card @(addr.IsDefault ? "border-primary" : "")">
+                        <div class="card-body">
+                            @if (addr.IsDefault) { <span class="badge bg-primary mb-2">Default</span> }
+                            <h6>@addr.FullName</h6>
+                            <p class="mb-1">@addr.AddressLine1</p>
+                            @if (!string.IsNullOrEmpty(addr.AddressLine2)) { <p class="mb-1">@addr.AddressLine2</p> }
+                            <p class="mb-1">@addr.City, @addr.State @addr.ZipCode</p>
+                            <p class="mb-0 text-muted">@addr.Country</p>
+                            @if (!string.IsNullOrEmpty(addr.Phone)) { <p class="mb-0 text-muted"><i class="bi bi-telephone"></i> @addr.Phone</p> }
+                        </div>
+                        <div class="card-footer">
+                            <a asp-action="EditAddress" asp-route-id="@addr.AddressId" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
+                            @if (!addr.IsDefault)
+                            {
+                                <form asp-action="SetDefaultAddress" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@addr.AddressId" />
+                                    <button type="submit" class="btn btn-sm btn-outline-success"><i class="bi bi-star"></i> Set Default</button>
+                                </form>
+                            }
+                            <form asp-action="DeleteAddress" method="post" class="d-inline" onsubmit="return confirm('Delete this address?');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@addr.AddressId" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

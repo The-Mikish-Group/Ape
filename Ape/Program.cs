@@ -41,6 +41,15 @@ builder.Services.AddScoped<IImageOptimizationService, ImageOptimizationService>(
 builder.Services.AddScoped<IGalleryManagementService, GalleryManagementService>();
 builder.Services.AddScoped<ILinksManagementService, LinksManagementService>();
 
+// Store services
+builder.Services.AddScoped<IProductCatalogService, ProductCatalogService>();
+builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
+builder.Services.AddScoped<IShippingAddressService, ShippingAddressService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IDigitalDeliveryService, DigitalDeliveryService>();
+builder.Services.AddScoped<IStorePaymentService, StorePaymentService>();
+builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -104,6 +113,30 @@ using (var scope = app.Services.CreateScope())
         else if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
         {
             await userManager.AddToRoleAsync(adminUser, "Admin");
+        }
+    }
+}
+
+// Seed default store settings
+using (var scope = app.Services.CreateScope())
+{
+    var settingsService = scope.ServiceProvider.GetRequiredService<ISystemSettingsService>();
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    var storeSettings = new Dictionary<string, (string Value, string Description)>
+    {
+        ["Store__FlatRateShipping"] = ("5.99", "Flat rate shipping cost for physical items"),
+        ["Store__FreeShippingThreshold"] = ("", "Order total for free shipping (empty = disabled)"),
+        ["Store__StoreName"] = ("Shop", "Store display name"),
+        ["Store__StoreEnabled"] = ("true", "Enable or disable the storefront")
+    };
+
+    foreach (var (key, (value, description)) in storeSettings)
+    {
+        var existing = await settingsService.GetSettingAsync(key, "");
+        if (string.IsNullOrEmpty(existing))
+        {
+            await settingsService.SetSettingAsync(key, value, description, "System");
         }
     }
 }

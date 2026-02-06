@@ -17,6 +17,12 @@ A production-ready ASP.NET Core MVC framework with comprehensive authentication,
 | Contact Form | ✅ | Public | `InfoController` |
 | Health Checks | ✅ | Public | `GET /health`, `/health/live`, `/health/ready` |
 | Activity Tracking | ✅ | Admin | `ActivityTrackingMiddleware` |
+| Online Store | ✅ | Public/Member/Admin | `StoreController`, `IProductCatalogService` |
+| Shopping Cart | ✅ | Member | `CartController`, `IShoppingCartService` |
+| Checkout & Payments | ✅ | Member | `CheckoutController`, `IStorePaymentService` |
+| Order Management | ✅ | Admin/Member | `StoreAdminController`, `IOrderService` |
+| Digital Downloads | ✅ | Member | `DigitalDownloadController`, `IDigitalDeliveryService` |
+| Subscriptions | ✅ | Member | `SubscriptionController`, `ISubscriptionService` |
 
 ## Live Demo
 
@@ -82,6 +88,25 @@ A production-ready ASP.NET Core MVC framework with comprehensive authentication,
 - **Email Log Viewer**: Search, filter, and manage sent email records
 - **System Settings**: Key-value configuration storage
 
+### Online Store / E-Commerce
+- **Product Catalog**: Physical, digital, and subscription product types
+- **Category Management**: Hierarchical product categories with images
+- **Product Images**: Multiple images per product with primary image selection
+- **Digital Products**: Secure file storage and token-based download delivery
+- **Inventory Tracking**: Stock management with low-stock alerts for physical products
+- **Shopping Cart**: Persistent cart with stock validation and free shipping thresholds
+- **Checkout Flow**: Smart checkout (skips shipping for digital-only orders)
+- **Payment Processing**: Stripe (card payments) and PayPal integration
+- **Subscription Billing**: Recurring payments via Stripe Subscriptions and PayPal
+- **Member Pricing**: Discounted prices for active subscribers
+- **Order Management**: Full order lifecycle (pending → processing → shipped → delivered)
+- **Shipping & Tracking**: Carrier and tracking number management with email notifications
+- **Digital Delivery**: Secure download links with count limits and expiry dates
+- **Refunds**: Admin-initiated refunds via Stripe and PayPal
+- **Sales Reports**: Date-range reporting with revenue breakdowns by product type
+- **Email Notifications**: Order confirmation, shipping updates sent automatically
+- **Webhook Support**: Stripe and PayPal webhooks for payment event handling
+
 ### UI/UX
 - **Responsive Layout**: Mobile-friendly design
 - **Partial Header/Footer**: Modular layout with sticky footer
@@ -95,6 +120,7 @@ A production-ready ASP.NET Core MVC framework with comprehensive authentication,
 - **Authentication**: ASP.NET Core Identity
 - **Email**: Azure Communication Services + SMTP
 - **Image Processing**: SixLabors.ImageSharp
+- **Payments**: Stripe.net (card + subscriptions), PayPal REST API
 - **Frontend**: Bootstrap, jQuery
 
 ## Prerequisites
@@ -318,6 +344,29 @@ After logging in as Admin, navigate to **System Credentials** to configure email
 |----------------|-------------|
 | `SITE_NAME` | Your site name (used in email templates) |
 
+#### Stripe Payment Processing
+| Credential Key | Description |
+|----------------|-------------|
+| `Stripe__SecretKey` | Stripe secret API key |
+| `Stripe__PublishableKey` | Stripe publishable key (client-side) |
+| `Stripe__WebhookSecret` | Stripe webhook endpoint secret |
+
+#### PayPal Payment Processing
+| Credential Key | Description |
+|----------------|-------------|
+| `PayPal__ClientId` | PayPal REST API client ID |
+| `PayPal__ClientSecret` | PayPal REST API client secret |
+| `PayPal__Mode` | `sandbox` or `live` |
+| `PayPal__WebhookId` | PayPal webhook ID for verification |
+
+#### Store Settings (System Settings)
+| Setting Key | Default | Description |
+|-------------|---------|-------------|
+| `Store__FlatRateShipping` | `5.99` | Flat shipping rate for physical items |
+| `Store__FreeShippingThreshold` | *(empty)* | Order total for free shipping (empty = disabled) |
+| `Store__StoreName` | `Shop` | Store display name |
+| `Store__StoreEnabled` | `true` | Enable/disable the storefront |
+
 ### Contact Form Recipients
 
 1. Navigate to **Admin > Contact Form Settings**
@@ -384,7 +433,16 @@ Ape/
 │   ├── EmailTestController.cs     # Email testing tools
 │   ├── ContactFormSettingsController.cs  # Contact recipients
 │   ├── ActiveUsersController.cs   # User activity dashboard
-│   └── HealthController.cs        # Health check endpoints
+│   ├── HealthController.cs        # Health check endpoints
+│   ├── StoreController.cs         # Public storefront browsing
+│   ├── CartController.cs          # Shopping cart (AJAX)
+│   ├── CheckoutController.cs      # Checkout + payment flow
+│   ├── OrderHistoryController.cs  # Customer orders + addresses
+│   ├── SubscriptionController.cs  # Subscription management
+│   ├── DigitalDownloadController.cs    # Secure file downloads
+│   ├── StoreAdminController.cs    # Admin: products, orders, reports
+│   ├── StoreStripeWebhookController.cs # Stripe webhook handler
+│   └── StorePayPalWebhookController.cs # PayPal webhook handler
 ├── Data/
 │   ├── ApplicationDbContext.cs    # EF Core context
 │   └── Migrations/                # Database migrations
@@ -400,6 +458,20 @@ Ape/
 │   ├── EmailLog.cs                # Email sending log
 │   ├── SystemSetting.cs           # System settings
 │   ├── UserProfiles.cs            # Extended user data
+│   ├── StoreCategory.cs           # Store product categories
+│   ├── Product.cs                 # Products (physical/digital/subscription)
+│   ├── ProductImage.cs            # Product images
+│   ├── DigitalProductFile.cs      # Downloadable files
+│   ├── ShoppingCart.cs            # Shopping carts
+│   ├── ShoppingCartItem.cs        # Cart line items
+│   ├── Order.cs                   # Customer orders
+│   ├── OrderItem.cs               # Order line items
+│   ├── CustomerDownload.cs        # Digital download tokens
+│   ├── Subscription.cs            # Recurring subscriptions
+│   ├── CustomerPaymentMethod.cs   # Payment method storage
+│   ├── ShippingAddress.cs         # Customer addresses
+│   ├── PaymentResult.cs           # Payment result DTO
+│   ├── PayPal/                    # PayPal API models
 │   └── ViewModels/                # View-specific models
 ├── Services/
 │   ├── CredentialEncryptionService.cs   # AES-256 encryption
@@ -409,15 +481,27 @@ Ape/
 │   ├── GalleryManagementService.cs      # Gallery operations
 │   ├── LinksManagementService.cs        # Links directory operations
 │   ├── ImageOptimizationService.cs      # Image processing
-│   └── SystemSettingsService.cs         # Settings management
+│   ├── SystemSettingsService.cs         # Settings management
+│   ├── ProductCatalogService.cs         # Product/category CRUD
+│   ├── ShoppingCartService.cs           # Cart operations
+│   ├── OrderService.cs                  # Order lifecycle
+│   ├── ShippingAddressService.cs        # Address management
+│   ├── StorePaymentService.cs           # Stripe + PayPal payments
+│   ├── DigitalDeliveryService.cs        # Download token management
+│   ├── SubscriptionService.cs           # Subscription management
+│   └── PayPalApiClient.cs              # PayPal REST API client
 ├── Middleware/
 │   └── ActivityTrackingMiddleware.cs    # User activity tracking
 ├── Views/                         # Razor views
 ├── wwwroot/
-│   ├── css/                       # Stylesheets
+│   ├── css/                       # Stylesheets (includes store.css)
+│   ├── js/                        # JavaScript (includes store.js)
 │   ├── Galleries/                 # Uploaded gallery images
-│   └── Images/                    # Site images
-├── ProtectedFiles/                # Uploaded PDF documents
+│   ├── Images/                    # Site images
+│   └── store/                     # Product and category images
+├── ProtectedFiles/
+│   ├── PDFs/                      # Uploaded PDF documents
+│   └── store/                     # Digital product files (secure)
 ├── Program.cs                     # Application startup
 └── appsettings.json              # Configuration
 ```
@@ -443,6 +527,20 @@ Ape/
 - `GalleryImages` - Gallery images
 - `LinkCategories` - Link groups
 - `CategoryLinks` - Individual links
+
+### Store Tables
+- `StoreCategories` - Hierarchical product categories
+- `Products` - Products (Physical, Digital, Subscription types)
+- `ProductImages` - Multiple images per product
+- `DigitalProductFiles` - Downloadable files (stored outside wwwroot)
+- `ShippingAddresses` - Customer shipping addresses
+- `ShoppingCarts` - Persistent shopping carts
+- `ShoppingCartItems` - Cart line items
+- `Orders` - Purchase records with shipping/payment/refund info
+- `OrderItems` - Order line items (product snapshot)
+- `CustomerDownloads` - Token-based digital download access
+- `Subscriptions` - Recurring subscriptions (Stripe/PayPal)
+- `CustomerPaymentMethods` - Stored payment gateway customer IDs
 
 ## Security Considerations
 
@@ -772,5 +870,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Version**: 1.0.0
-**Last Updated**: January 2026
+**Version**: 2.0.0
+**Last Updated**: February 2026

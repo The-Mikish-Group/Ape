@@ -1,0 +1,110 @@
+@model Ape.Models.ViewModels.CheckoutViewModel
+
+<div class="container mt-3">
+    <h2><i class="bi bi-lock"></i> Checkout</h2>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <form asp-action="PlaceOrder" method="post">
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-lg-7">
+                <!-- Shipping Address (only for physical items) -->
+                @if (Model.RequiresShipping)
+                {
+                    <div class="card mb-3">
+                        <div class="card-header"><strong><i class="bi bi-geo-alt"></i> Shipping Address</strong></div>
+                        <div class="card-body">
+                            @if (Model.Addresses.Any())
+                            {
+                                @foreach (var addr in Model.Addresses)
+                                {
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="shippingAddressId" value="@addr.AddressId"
+                                               id="addr-@addr.AddressId" checked="@(addr.AddressId == Model.SelectedAddressId)" />
+                                        <label class="form-check-label" for="addr-@addr.AddressId">
+                                            <strong>@addr.FullName</strong> — @addr.FormattedAddress
+                                            @if (addr.IsDefault) { <span class="badge bg-primary ms-1">Default</span> }
+                                        </label>
+                                    </div>
+                                }
+                                <a asp-controller="OrderHistory" asp-action="AddAddress" class="btn btn-sm btn-outline-secondary mt-2">
+                                    <i class="bi bi-plus"></i> Add New Address
+                                </a>
+                            }
+                            else
+                            {
+                                <p class="text-warning"><i class="bi bi-exclamation-triangle"></i> You need a shipping address for physical items.</p>
+                                <a asp-controller="OrderHistory" asp-action="AddAddress" class="btn btn-success">
+                                    <i class="bi bi-plus-lg"></i> Add Shipping Address
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> This order contains only digital items. No shipping address needed.
+                    </div>
+                }
+
+                <!-- Order Notes -->
+                <div class="card mb-3">
+                    <div class="card-header"><strong>Order Notes</strong></div>
+                    <div class="card-body">
+                        <textarea name="customerNotes" class="form-control" rows="2" maxlength="1000" placeholder="Any special instructions? (optional)"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <!-- Order Summary -->
+                <div class="card">
+                    <div class="card-header"><strong>Order Summary</strong></div>
+                    <div class="card-body">
+                        @foreach (var item in Model.Cart.Items)
+                        {
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>@item.ProductName <small class="text-muted">x @item.Quantity</small></span>
+                                <span>@item.LineTotal.ToString("C")</span>
+                            </div>
+                        }
+                        <hr />
+                        <div class="d-flex justify-content-between">
+                            <span>Subtotal</span>
+                            <span>@Model.Cart.Subtotal.ToString("C")</span>
+                        </div>
+                        @if (Model.RequiresShipping)
+                        {
+                            <div class="d-flex justify-content-between">
+                                <span>Shipping</span>
+                                <span>@(Model.Cart.ShippingCost == 0 ? "FREE" : Model.Cart.ShippingCost.ToString("C"))</span>
+                            </div>
+                        }
+                        <hr />
+                        <div class="d-flex justify-content-between fw-bold fs-5">
+                            <span>Total</span>
+                            <span>@Model.Cart.Total.ToString("C")</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        @if (!Model.RequiresShipping || Model.Addresses.Any())
+                        {
+                            <button type="submit" class="btn btn-success btn-lg w-100">
+                                <i class="bi bi-credit-card"></i> Continue to Payment
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/store.css" asp-append-version="true" />
+}

@@ -1,0 +1,68 @@
+@model List<Ape.Models.ViewModels.OrderViewModel>
+
+<div class="container mt-3">
+    <h2><i class="bi bi-receipt"></i> My Orders</h2>
+
+    <div class="mb-3">
+        <a asp-action="Addresses" class="btn btn-outline-secondary"><i class="bi bi-geo-alt"></i> Manage Addresses</a>
+        <a asp-action="Downloads" class="btn btn-outline-info"><i class="bi bi-download"></i> My Downloads</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-receipt display-1"></i>
+            <p class="mt-3">You haven't placed any orders yet.</p>
+            <a asp-controller="Store" asp-action="Browse" class="btn btn-primary"><i class="bi bi-shop"></i> Start Shopping</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Date</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Tracking</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                            <td><strong>@order.OrderNumber</strong></td>
+                            <td>@order.OrderDate.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                @order.ItemCount item(s)
+                                @if (order.HasPhysicalItems) { <span class="badge bg-primary ms-1">Physical</span> }
+                                @if (order.HasDigitalItems) { <span class="badge bg-info ms-1">Digital</span> }
+                            </td>
+                            <td>@order.TotalAmount.ToString("C")</td>
+                            <td><span class="badge @order.StatusBadgeClass">@order.Status</span></td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(order.TrackingNumber))
+                                {
+                                    <small>@order.ShippingCarrier: @order.TrackingNumber</small>
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="Detail" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> View
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/store.css" asp-append-version="true" />
+}

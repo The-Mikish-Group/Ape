@@ -1,0 +1,303 @@
+@model Ape.Models.ViewModels.EditProductModel
+@{
+    var categories = ViewData["Categories"] as List<Ape.Models.ViewModels.StoreCategoryViewModel> ?? [];
+    var productImages = ViewData["ProductImages"] as List<Ape.Models.ViewModels.ProductImageViewModel> ?? [];
+    var digitalFiles = ViewData["DigitalFiles"] as List<Ape.Models.ViewModels.DigitalFileViewModel> ?? [];
+    var productType = (Ape.Models.ProductType)(ViewData["ProductType"] ?? Model.ProductType);
+}
+
+<div class="container mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Products">Products</a></li>
+            <li class="breadcrumb-item active">Edit Product</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2><i class="bi bi-pencil"></i> @ViewData["Title"]</h2>
+        <span class="badge @(productType switch { Ape.Models.ProductType.Physical => "bg-primary", Ape.Models.ProductType.Digital => "bg-info", _ => "bg-success" }) fs-6">@productType</span>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">@TempData["SuccessMessage"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">@TempData["ErrorMessage"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    <form asp-action="EditProduct" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="ProductID" value="@Model.ProductID" />
+        <input type="hidden" name="ProductType" value="@((int)Model.ProductType)" />
+
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Basic Info -->
+                <div class="card mb-3">
+                    <div class="card-header"><strong>Basic Information</strong></div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label for="Name" class="form-label">Product Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="Name" name="Name" value="@Model.Name" required />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="SKU" class="form-label">SKU</label>
+                                <input type="text" class="form-control" id="SKU" name="SKU" value="@Model.SKU" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ShortDescription" class="form-label">Short Description</label>
+                            <input type="text" class="form-control" id="ShortDescription" name="ShortDescription" value="@Model.ShortDescription" maxlength="500" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="Description" class="form-label">Full Description</label>
+                            <textarea class="form-control" id="Description" name="Description" rows="6">@Model.Description</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Images -->
+                <div class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <strong>Images</strong>
+                    </div>
+                    <div class="card-body">
+                        @if (productImages.Any())
+                        {
+                            <div class="row g-2 mb-3">
+                                @foreach (var img in productImages)
+                                {
+                                    <div class="col-auto">
+                                        <div class="card" style="width:120px;">
+                                            <img src="@img.ThumbnailUrl" alt="@img.AltText" class="card-img-top" style="height:100px;object-fit:cover;" />
+                                            <div class="card-body p-1 text-center">
+                                                @if (img.IsPrimary)
+                                                {
+                                                    <span class="badge bg-success mb-1">Primary</span>
+                                                }
+                                                else
+                                                {
+                                                    <form asp-action="SetPrimaryImage" method="post" class="d-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="productId" value="@Model.ProductID" />
+                                                        <input type="hidden" name="imageId" value="@img.ImageId" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-success mb-1" title="Set Primary"><i class="bi bi-star"></i></button>
+                                                    </form>
+                                                }
+                                                <form asp-action="DeleteProductImage" method="post" class="d-inline" onsubmit="return confirm('Delete this image?');">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="productId" value="@Model.ProductID" />
+                                                    <input type="hidden" name="imageId" value="@img.ImageId" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger mb-1" title="Delete"><i class="bi bi-trash"></i></button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        <form asp-action="UploadProductImages" method="post" enctype="multipart/form-data">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="productId" value="@Model.ProductID" />
+                            <div class="input-group">
+                                <input type="file" class="form-control" name="images" multiple accept="image/*" />
+                                <button type="submit" class="btn btn-outline-primary"><i class="bi bi-upload"></i> Upload</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Digital Files (Digital products only) -->
+                @if (productType == Ape.Models.ProductType.Digital)
+                {
+                    <div class="card mb-3">
+                        <div class="card-header"><strong>Digital Files</strong></div>
+                        <div class="card-body">
+                            @if (digitalFiles.Any())
+                            {
+                                <table class="table table-sm mb-3">
+                                    <thead><tr><th>File</th><th>Size</th><th>Uploaded</th><th></th></tr></thead>
+                                    <tbody>
+                                        @foreach (var file in digitalFiles)
+                                        {
+                                            <tr>
+                                                <td><i class="bi bi-file-earmark"></i> @file.OriginalFileName</td>
+                                                <td>@file.FormattedFileSize</td>
+                                                <td>@file.UploadedDate.ToString("MMM dd, yyyy")</td>
+                                                <td>
+                                                    <form asp-action="DeleteDigitalFile" method="post" class="d-inline" onsubmit="return confirm('Delete this file?');">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="productId" value="@Model.ProductID" />
+                                                        <input type="hidden" name="fileId" value="@file.FileId" />
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            <form asp-action="UploadDigitalFile" method="post" enctype="multipart/form-data">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="productId" value="@Model.ProductID" />
+                                <div class="input-group">
+                                    <input type="file" class="form-control" name="digitalFile" />
+                                    <button type="submit" class="btn btn-outline-primary"><i class="bi bi-upload"></i> Upload</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="col-md-4">
+                <!-- Status -->
+                <div class="card mb-3">
+                    <div class="card-header"><strong>Status</strong></div>
+                    <div class="card-body">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" name="IsActive" value="true" id="IsActive" checked="@Model.IsActive" />
+                            <label class="form-check-label" for="IsActive">Active (visible in store)</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" name="IsFeatured" value="true" id="IsFeatured" checked="@Model.IsFeatured" />
+                            <label class="form-check-label" for="IsFeatured">Featured</label>
+                        </div>
+                        <div class="mb-2">
+                            <label for="SortOrder" class="form-label">Sort Order</label>
+                            <input type="number" class="form-control form-control-sm" id="SortOrder" name="SortOrder" value="@Model.SortOrder" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing -->
+                <div class="card mb-3">
+                    <div class="card-header"><strong>Pricing</strong></div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="Price" class="form-label">Price <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="Price" name="Price" value="@Model.Price" step="0.01" min="0" required />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="CompareAtPrice" class="form-label">Compare at Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="CompareAtPrice" name="CompareAtPrice" value="@Model.CompareAtPrice" step="0.01" min="0" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="MemberPrice" class="form-label">Member Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="MemberPrice" name="MemberPrice" value="@Model.MemberPrice" step="0.01" min="0" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="CostPrice" class="form-label">Cost Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="CostPrice" name="CostPrice" value="@Model.CostPrice" step="0.01" min="0" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category -->
+                <div class="card mb-3">
+                    <div class="card-header"><strong>Category</strong></div>
+                    <div class="card-body">
+                        <select name="CategoryID" class="form-select">
+                            <option value="">No Category</option>
+                            @foreach (var cat in categories)
+                            {
+                                <option value="@cat.CategoryId" selected="@(Model.CategoryID == cat.CategoryId)">@cat.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Type-specific cards -->
+                @if (productType == Ape.Models.ProductType.Physical)
+                {
+                    <div class="card mb-3">
+                        <div class="card-header"><strong>Inventory</strong></div>
+                        <div class="card-body">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" name="TrackInventory" value="true" id="TrackInventory" checked="@Model.TrackInventory" />
+                                <label class="form-check-label" for="TrackInventory">Track inventory</label>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Stock Quantity</label>
+                                <input type="number" class="form-control" name="StockQuantity" value="@Model.StockQuantity" min="0" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Low Stock Threshold</label>
+                                <input type="number" class="form-control" name="LowStockThreshold" value="@Model.LowStockThreshold" min="0" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Weight (lbs)</label>
+                                <input type="number" class="form-control" name="Weight" value="@Model.Weight" step="0.01" min="0" />
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (productType == Ape.Models.ProductType.Digital)
+                {
+                    <div class="card mb-3">
+                        <div class="card-header"><strong>Download Settings</strong></div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Max Downloads</label>
+                                <input type="number" class="form-control" name="MaxDownloads" value="@Model.MaxDownloads" min="1" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Download Expiry (days)</label>
+                                <input type="number" class="form-control" name="DownloadExpiryDays" value="@Model.DownloadExpiryDays" min="1" />
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (productType == Ape.Models.ProductType.Subscription)
+                {
+                    <div class="card mb-3">
+                        <div class="card-header"><strong>Subscription Billing</strong></div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Billing Interval</label>
+                                <select class="form-select" name="BillingInterval">
+                                    <option value="month" selected="@(Model.BillingInterval == "month")">Monthly</option>
+                                    <option value="year" selected="@(Model.BillingInterval == "year")">Yearly</option>
+                                    <option value="week" selected="@(Model.BillingInterval == "week")">Weekly</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Interval Count</label>
+                                <input type="number" class="form-control" name="BillingIntervalCount" value="@Model.BillingIntervalCount" min="1" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Stripe Price ID</label>
+                                <input type="text" class="form-control" name="StripePriceId" value="@Model.StripePriceId" placeholder="price_..." />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">PayPal Plan ID</label>
+                                <input type="text" class="form-control" name="PayPalPlanId" value="@Model.PayPalPlanId" placeholder="P-..." />
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <button type="submit" class="btn btn-primary btn-lg"><i class="bi bi-check-lg"></i> Save Changes</button>
+            <a asp-action="Products" class="btn btn-outline-secondary btn-lg ms-2">Back to Products</a>
+        </div>
+    </form>
+</div>

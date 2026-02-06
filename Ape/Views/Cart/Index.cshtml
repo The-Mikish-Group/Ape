@@ -1,0 +1,139 @@
+@model Ape.Models.ViewModels.CartViewModel
+
+<div class="container mt-3">
+    <h2><i class="bi bi-cart3"></i> Shopping Cart</h2>
+
+    @if (!Model.Items.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-cart display-1 text-muted"></i>
+            <p class="mt-3 text-muted">Your cart is empty.</p>
+            <a asp-controller="Store" asp-action="Browse" class="btn btn-primary"><i class="bi bi-shop"></i> Continue Shopping</a>
+        </div>
+    }
+    else
+    {
+        @Html.AntiForgeryToken()
+
+        @if (Model.HasOutOfStockItems)
+        {
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i> Some items in your cart are out of stock. Please remove them before checkout.
+            </div>
+        }
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="width:80px;"></th>
+                                    <th>Product</th>
+                                    <th style="width:120px;">Price</th>
+                                    <th style="width:130px;">Qty</th>
+                                    <th style="width:100px;">Total</th>
+                                    <th style="width:50px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr class="@(!item.IsInStock ? "table-danger" : "")">
+                                        <td>
+                                            @if (item.ThumbnailUrl != null)
+                                            {
+                                                <img src="@item.ThumbnailUrl" alt="@item.ProductName" class="rounded" style="width:60px;height:60px;object-fit:cover;" />
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-controller="Store" asp-action="Product" asp-route-slug="@item.ProductSlug" class="text-decoration-none fw-bold">@item.ProductName</a>
+                                            <br /><span class="badge @(item.ProductType == Ape.Models.ProductType.Physical ? "bg-primary" : "bg-info") small">@item.ProductType</span>
+                                            @if (!item.IsInStock)
+                                            {
+                                                <br /><span class="badge bg-danger">Out of Stock</span>
+                                            }
+                                        </td>
+                                        <td>@item.UnitPrice.ToString("C")</td>
+                                        <td>
+                                            @if (item.ProductType == Ape.Models.ProductType.Digital)
+                                            {
+                                                <span>1</span>
+                                            }
+                                            else
+                                            {
+                                                <div class="input-group input-group-sm">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="updateCartQuantity(@item.CartItemId, @(item.Quantity - 1))">-</button>
+                                                    <input type="text" class="form-control text-center store-cart-qty" value="@item.Quantity" readonly />
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="updateCartQuantity(@item.CartItemId, @(item.Quantity + 1))">+</button>
+                                                </div>
+                                            }
+                                        </td>
+                                        <td class="fw-bold">@item.LineTotal.ToString("C")</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="removeFromCart(@item.CartItemId)" title="Remove">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a asp-controller="Store" asp-action="Browse" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Continue Shopping</a>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header"><strong>Order Summary</strong></div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal (@Model.ItemCount items)</span>
+                            <span>@Model.Subtotal.ToString("C")</span>
+                        </div>
+                        @if (Model.HasPhysicalItems)
+                        {
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Shipping</span>
+                                <span>@(Model.ShippingCost == 0 ? "FREE" : Model.ShippingCost.ToString("C"))</span>
+                            </div>
+                            @if (Model.FreeShippingMessage != null)
+                            {
+                                <small class="text-success"><i class="bi bi-truck"></i> @Model.FreeShippingMessage</small>
+                            }
+                        }
+                        <hr />
+                        <div class="d-flex justify-content-between fw-bold fs-5">
+                            <span>Total</span>
+                            <span>@Model.Total.ToString("C")</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        @if (Model.HasOutOfStockItems)
+                        {
+                            <button class="btn btn-secondary w-100" disabled>Remove out-of-stock items to checkout</button>
+                        }
+                        else
+                        {
+                            <a asp-controller="Checkout" asp-action="Index" class="btn btn-success btn-lg w-100">
+                                <i class="bi bi-lock"></i> Proceed to Checkout
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/store.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/store.js" asp-append-version="true"></script>
+}

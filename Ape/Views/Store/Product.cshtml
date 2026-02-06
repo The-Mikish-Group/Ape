@@ -1,0 +1,172 @@
+@model Ape.Models.ViewModels.ProductDetailViewModel
+@{
+    var product = Model.Product;
+}
+
+<div class="container mt-3">
+    <partial name="_StoreBreadcrumbs" model="Model.Breadcrumbs" />
+
+    <div class="row">
+        <!-- Product Images -->
+        <div class="col-md-6 mb-4">
+            @if (product.Images.Any())
+            {
+                <!-- Main Image -->
+                <div class="mb-3">
+                    <img id="mainProductImage" src="@(product.PrimaryImageUrl ?? product.Images.First().ImageUrl)"
+                         alt="@product.Name" class="img-fluid rounded shadow-sm w-100" style="max-height:500px;object-fit:contain;" />
+                </div>
+                @if (product.Images.Count > 1)
+                {
+                    <div class="d-flex gap-2 flex-wrap">
+                        @foreach (var img in product.Images)
+                        {
+                            <img src="@img.ThumbnailUrl" alt="@img.AltText" class="rounded store-thumb-selector"
+                                 style="width:80px;height:80px;object-fit:cover;cursor:pointer;"
+                                 onclick="document.getElementById('mainProductImage').src='@img.ImageUrl'" />
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height:400px;">
+                    <i class="bi bi-image display-1 text-muted"></i>
+                </div>
+            }
+        </div>
+
+        <!-- Product Info -->
+        <div class="col-md-6">
+            <span class="badge @product.ProductTypeBadgeClass mb-2">@product.ProductType</span>
+            @if (product.IsOnSale) { <span class="badge bg-danger mb-2">Sale</span> }
+            @if (product.ShowMemberPrice) { <span class="badge bg-success mb-2">Member Price</span> }
+
+            <h1>@product.Name</h1>
+
+            @if (product.CategoryName != null)
+            {
+                <p class="text-muted">
+                    <a asp-action="Browse" asp-route-category="@product.CategorySlug" class="text-decoration-none">@product.CategoryName</a>
+                </p>
+            }
+
+            @if (!string.IsNullOrEmpty(product.ShortDescription))
+            {
+                <p class="lead">@product.ShortDescription</p>
+            }
+
+            <!-- Price -->
+            <div class="mb-3">
+                @if (product.ShowMemberPrice)
+                {
+                    <span class="text-decoration-line-through text-muted fs-5">@product.Price.ToString("C")</span>
+                    <span class="fs-3 fw-bold text-success ms-2">@product.DisplayPrice.ToString("C")</span>
+                    <span class="badge bg-success">Member Price</span>
+                }
+                else if (product.IsOnSale)
+                {
+                    <span class="text-decoration-line-through text-muted fs-5">@product.CompareAtPrice?.ToString("C")</span>
+                    <span class="fs-3 fw-bold text-danger ms-2">@product.Price.ToString("C")</span>
+                }
+                else
+                {
+                    <span class="fs-3 fw-bold">@product.DisplayPrice.ToString("C")</span>
+                }
+
+                @if (product.ProductType == Ape.Models.ProductType.Subscription && product.BillingInterval != null)
+                {
+                    <span class="text-muted">/ @product.BillingInterval</span>
+                }
+            </div>
+
+            <!-- Availability / Actions -->
+            @if (product.ProductType == Ape.Models.ProductType.Physical)
+            {
+                if (!product.IsInStock)
+                {
+                    <div class="alert alert-danger"><i class="bi bi-x-circle"></i> Out of Stock</div>
+                }
+                else
+                {
+                    @if (product.IsLowStock)
+                    {
+                        <p class="text-warning"><i class="bi bi-exclamation-triangle"></i> Only @product.StockQuantity left in stock!</p>
+                    }
+                    <form id="addToCartForm" class="mb-3">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <label class="form-label mb-0">Qty:</label>
+                            <input type="number" id="cartQuantity" value="1" min="1" max="@(product.TrackInventory ? product.StockQuantity : 99)" class="form-control" style="width:80px;" />
+                        </div>
+                        <button type="button" class="btn btn-primary btn-lg w-100" onclick="addToCart(@product.ProductId)">
+                            <i class="bi bi-cart-plus"></i> Add to Cart
+                        </button>
+                    </form>
+                }
+            }
+            else if (product.ProductType == Ape.Models.ProductType.Digital)
+            {
+                <form id="addToCartForm" class="mb-3">
+                    <button type="button" class="btn btn-info btn-lg w-100 text-white" onclick="addToCart(@product.ProductId)">
+                        <i class="bi bi-cart-plus"></i> Add to Cart
+                    </button>
+                </form>
+            }
+            else if (product.ProductType == Ape.Models.ProductType.Subscription)
+            {
+                <a asp-controller="Subscription" asp-action="Subscribe" asp-route-productId="@product.ProductId" class="btn btn-success btn-lg w-100">
+                    <i class="bi bi-arrow-repeat"></i> Subscribe Now
+                </a>
+            }
+
+            <div id="cartMessage" class="mt-2" style="display:none;"></div>
+
+            <hr />
+
+            <!-- Product Details -->
+            <div class="small text-muted">
+                <p><strong>SKU:</strong> @product.SKU</p>
+                @if (product.Weight.HasValue) { <p><strong>Weight:</strong> @product.Weight lbs</p> }
+            </div>
+        </div>
+    </div>
+
+    <!-- Description -->
+    @if (!string.IsNullOrEmpty(product.Description))
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header"><strong>Description</strong></div>
+                    <div class="card-body">
+                        <div class="store-product-description">@Html.Raw(product.Description?.Replace("\n", "<br />") ?? "")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Related Products -->
+    @if (Model.RelatedProducts.Any())
+    {
+        <div class="mt-4">
+            <h4>Related Products</h4>
+            <div class="row g-3">
+                @foreach (var related in Model.RelatedProducts)
+                {
+                    <div class="col-6 col-md-3">
+                        <partial name="_ProductCard" model="related" />
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/store.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/store.js" asp-append-version="true"></script>
+}

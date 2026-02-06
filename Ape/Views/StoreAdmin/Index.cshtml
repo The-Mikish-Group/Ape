@@ -1,0 +1,180 @@
+@model Ape.Models.ViewModels.StoreAdminDashboardViewModel
+
+<div class="container-fluid mt-3">
+    <h2><i class="bi bi-shop"></i> Store Administration</h2>
+
+    <!-- Stats Cards -->
+    <div class="row g-3 mt-2">
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h3 class="mb-0">@Model.TotalRevenue.ToString("C")</h3>
+                    <small>Total Revenue</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h3 class="mb-0">@Model.TotalOrders</h3>
+                    <small>Total Orders</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body text-center">
+                    <h3 class="mb-0">@Model.PendingOrders</h3>
+                    <small>Pending Orders</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h3 class="mb-0">@Model.TodayRevenue.ToString("C")</h3>
+                    <small>Today's Revenue</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="row g-3 mt-2">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5><i class="bi bi-box-seam text-primary"></i> Products</h5>
+                    <p class="mb-2 text-muted small">Manage your product catalog</p>
+                    <a asp-action="Products" class="btn btn-primary btn-sm">Manage Products</a>
+                    <a asp-action="CreateProduct" class="btn btn-outline-primary btn-sm ms-1">Add Product</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5><i class="bi bi-folder text-success"></i> Categories</h5>
+                    <p class="mb-2 text-muted small">Organize products into categories</p>
+                    <a asp-action="Categories" class="btn btn-success btn-sm">Manage Categories</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5>
+                        <i class="bi bi-box text-warning"></i> Inventory
+                        @if (Model.LowStockCount > 0)
+                        {
+                            <span class="badge bg-danger ms-1">@Model.LowStockCount low</span>
+                        }
+                    </h5>
+                    <p class="mb-2 text-muted small">Track stock levels and low inventory</p>
+                    <a asp-action="Inventory" class="btn btn-warning btn-sm">View Inventory</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mt-1">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5><i class="bi bi-receipt text-info"></i> Orders</h5>
+                    <p class="mb-2 text-muted small">View and manage customer orders</p>
+                    <a asp-action="Orders" class="btn btn-info text-white btn-sm">Manage Orders</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5><i class="bi bi-arrow-repeat text-secondary"></i> Subscriptions</h5>
+                    <p class="mb-2 text-muted small">View active subscriptions</p>
+                    <a asp-action="Subscriptions" class="btn btn-secondary btn-sm">View Subscriptions</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5><i class="bi bi-graph-up text-dark"></i> Sales Report</h5>
+                    <p class="mb-2 text-muted small">Revenue and sales analytics</p>
+                    <a asp-action="SalesReport" class="btn btn-dark btn-sm">View Report</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Orders -->
+    @if (Model.RecentOrders.Any())
+    {
+        <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <strong>Recent Orders</strong>
+                <a asp-action="Orders" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr><th>Order</th><th>Date</th><th>Total</th><th>Status</th><th>Payment</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.RecentOrders)
+                        {
+                            <tr>
+                                <td><strong>@order.OrderNumber</strong></td>
+                                <td>@order.OrderDate.ToString("MMM dd")</td>
+                                <td>@order.TotalAmount.ToString("C")</td>
+                                <td><span class="badge @order.StatusBadgeClass">@order.Status</span></td>
+                                <td>
+                                    @if (order.IsPaid)
+                                    {
+                                        <span class="badge bg-success">@order.PaymentGateway</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">Unpaid</span>
+                                    }
+                                </td>
+                                <td><a asp-action="OrderDetail" asp-route-id="@order.OrderId" class="btn btn-sm btn-outline-primary">View</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+    <!-- Low Stock Alerts -->
+    @if (Model.LowStockProducts.Any())
+    {
+        <div class="card mt-3">
+            <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                <strong><i class="bi bi-exclamation-triangle"></i> Low Stock Alerts</strong>
+                <a asp-action="Inventory" class="btn btn-sm btn-dark">Manage Inventory</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead><tr><th>Product</th><th>SKU</th><th>Stock</th><th>Threshold</th></tr></thead>
+                    <tbody>
+                        @foreach (var product in Model.LowStockProducts)
+                        {
+                            <tr class="@(product.StockQuantity <= 0 ? "table-danger" : "table-warning")">
+                                <td>@product.Name</td>
+                                <td><small>@product.SKU</small></td>
+                                <td><strong>@product.StockQuantity</strong></td>
+                                <td>@product.LowStockThreshold</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/store.css" asp-append-version="true" />
+}

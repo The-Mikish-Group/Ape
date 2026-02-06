@@ -1,0 +1,17 @@
+@model Ape.Models.ViewModels.StoreCategoryTreeNode
+
+<a asp-controller="Store" asp-action="Browse" asp-route-category="@Model.Slug"
+   class="list-group-item list-group-item-action @(Model.IsSelected ? "active" : "")">
+    <i class="bi bi-folder@(Model.Children.Any() ? "-fill" : "")"></i>
+    @Model.Name
+    <span class="badge bg-secondary float-end">@Model.ProductCount</span>
+</a>
+@if (Model.Children.Any())
+{
+    <div class="ps-3">
+        @foreach (var child in Model.Children)
+        {
+            @await Html.PartialAsync("_CategorySidebarNode", child)
+        }
+    </div>
+}

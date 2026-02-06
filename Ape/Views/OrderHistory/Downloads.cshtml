@@ -1,0 +1,62 @@
+@model List<Ape.Models.ViewModels.DownloadLinkViewModel>
+
+<div class="container mt-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2><i class="bi bi-download"></i> My Downloads</h2>
+        <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to Orders</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-download display-1"></i>
+            <p class="mt-3">You don't have any digital downloads yet.</p>
+            <a asp-controller="Store" asp-action="Browse" class="btn btn-primary"><i class="bi bi-shop"></i> Browse Store</a>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var dl in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card h-100 @(dl.CanDownload ? "border-info" : "border-secondary")">
+                        <div class="card-body">
+                            <h6 class="card-title">@dl.ProductName</h6>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    @dl.OriginalFileName<br />
+                                    Downloads: @dl.DownloadCount / @dl.MaxDownloads
+                                    @if (dl.ExpiresDate.HasValue)
+                                    {
+                                        <br /><text>Expires: @dl.ExpiresDate.Value.ToString("MMM dd, yyyy")</text>
+                                    }
+                                </small>
+                            </p>
+                        </div>
+                        <div class="card-footer text-center">
+                            @if (dl.CanDownload)
+                            {
+                                <a href="/download/@dl.DownloadToken" class="btn btn-info text-white btn-sm w-100">
+                                    <i class="bi bi-download"></i> Download
+                                </a>
+                            }
+                            else if (dl.IsExpired)
+                            {
+                                <span class="badge bg-danger w-100 py-2">Expired</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary w-100 py-2">Download Limit Reached</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/store.css" asp-append-version="true" />
+}

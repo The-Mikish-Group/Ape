@@ -51,8 +51,24 @@
                             <!-- More Links-->
                             <li><a class="dropdown-item" asp-controller="Links" asp-action="MoreLinks">🔗 More Links</a></li>
 
+                            <li><hr class="dropdown-divider" /></li>
+
+                            <!-- Shop -->
+                            <li><a class="dropdown-item" asp-controller="Store" asp-action="Index"><i class="bi bi-shop me-1"></i>Shop</a></li>
+
                         </ul>
                     </li>
+
+                    <!-- Cart Icon (logged-in users) -->
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-light position-relative" asp-controller="Cart" asp-action="Index">
+                                <i class="bi bi-cart3"></i>
+                                <span id="cartBadge" class="store-cart-badge badge rounded-pill bg-danger" style="display:none;">0</span>
+                            </a>
+                        </li>
+                    }
                     
                     <!-- Manage Dropdown (Admin and Manager) -->
                     @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
@@ -76,6 +92,12 @@
                                 <!-- Active Users -->
                                 <li><a class="dropdown-item" asp-controller="ActiveUsers" asp-action="Index">
                                         <span class="icon-pair" aria-hidden="true"><span>👨‍👩‍👧</span><span>⚡</span></span>Active Users
+                                    </a>
+                                </li>
+
+                                <!-- Store Admin -->
+                                <li><a class="dropdown-item" asp-controller="StoreAdmin" asp-action="Index">
+                                        <i class="bi bi-shop me-1"></i>Store Admin
                                     </a>
                                 </li>
 
@@ -174,8 +196,23 @@
                                         📚 Document Library
                                     </a>
                                 </li>
-                                
-                                <!-- Divider Bar -->
+
+                                <li><hr class="dropdown-divider" /></li>
+
+                                <!-- My Orders -->
+                                <li>
+                                    <a class="dropdown-item" asp-controller="OrderHistory" asp-action="Index">
+                                        <i class="bi bi-receipt me-1"></i>My Orders
+                                    </a>
+                                </li>
+
+                                <!-- My Subscription -->
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Subscription" asp-action="Manage">
+                                        <i class="bi bi-arrow-repeat me-1"></i>My Subscription
+                                    </a>
+                                </li>
+
                                 <li><hr class="dropdown-divider" /></li>
 
                                 <!-- Account Management -->

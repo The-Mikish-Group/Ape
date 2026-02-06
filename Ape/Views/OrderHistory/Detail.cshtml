@@ -1,0 +1,187 @@
+@model Ape.Models.ViewModels.OrderDetailViewModel
+
+<div class="container mt-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2><i class="bi bi-receipt"></i> Order @Model.OrderNumber</h2>
+        <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to Orders</a>
+    </div>
+
+    <!-- Order Status -->
+    <div class="card mb-3">
+        <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+                <span class="badge @Model.StatusBadgeClass fs-6">@Model.Status</span>
+                <span class="ms-2 text-muted">Placed on @Model.OrderDate.ToString("MMMM dd, yyyy 'at' h:mm tt")</span>
+            </div>
+            <div>
+                @if (Model.IsPaid)
+                {
+                    <span class="badge bg-success"><i class="bi bi-check-circle"></i> Paid via @Model.PaymentGateway</span>
+                }
+                else
+                {
+                    <span class="badge bg-warning text-dark"><i class="bi bi-clock"></i> Payment Pending</span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Order Items -->
+            <div class="card mb-3">
+                <div class="card-header"><strong>Order Items</strong></div>
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr><th>Product</th><th>Type</th><th>Qty</th><th>Price</th><th>Total</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr>
+                                    <td>@item.ProductName</td>
+                                    <td>
+                                        <span class="badge @(item.ProductType == Ape.Models.ProductType.Physical ? "bg-primary" : item.ProductType == Ape.Models.ProductType.Digital ? "bg-info" : "bg-success")">
+                                            @item.ProductType
+                                        </span>
+                                    </td>
+                                    <td>@item.Quantity</td>
+                                    <td>@item.UnitPrice.ToString("C")</td>
+                                    <td>@item.LineTotal.ToString("C")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Digital Downloads -->
+            @if (Model.HasDigitalItems && Model.Downloads.Any())
+            {
+                <div class="card mb-3 border-info">
+                    <div class="card-header bg-info text-white"><strong><i class="bi bi-download"></i> Downloads</strong></div>
+                    <div class="card-body">
+                        @foreach (var dl in Model.Downloads)
+                        {
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <strong>@dl.ProductName</strong>
+                                    <br /><small class="text-muted">@dl.OriginalFileName — @dl.DownloadCount/@dl.MaxDownloads downloads used</small>
+                                    @if (dl.ExpiresDate.HasValue)
+                                    {
+                                        <br /><small class="text-muted">Expires: @dl.ExpiresDate.Value.ToString("MMM dd, yyyy")</small>
+                                    }
+                                </div>
+                                @if (dl.CanDownload)
+                                {
+                                    <a href="/download/@dl.DownloadToken" class="btn btn-info text-white btn-sm">
+                                        <i class="bi bi-download"></i> Download
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@(dl.IsExpired ? "Expired" : "Limit Reached")</span>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Shipping Info -->
+            @if (Model.HasPhysicalItems)
+            {
+                <div class="card mb-3">
+                    <div class="card-header"><strong><i class="bi bi-truck"></i> Shipping</strong></div>
+                    <div class="card-body">
+                        @if (!string.IsNullOrEmpty(Model.ShipToName))
+                        {
+                            <p class="mb-1"><strong>@Model.ShipToName</strong></p>
+                            <p class="mb-2 text-muted">@Model.ShipToAddress</p>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.TrackingNumber))
+                        {
+                            <div class="alert alert-info mb-0">
+                                <strong>@Model.ShippingCarrier:</strong> @Model.TrackingNumber
+                                @if (Model.ShippedDate.HasValue)
+                                {
+                                    <br /><small>Shipped on @Model.ShippedDate.Value.ToString("MMM dd, yyyy")</small>
+                                }
+                                @if (Model.DeliveredDate.HasValue)
+                                {
+                                    <br /><small>Delivered on @Model.DeliveredDate.Value.ToString("MMM dd, yyyy")</small>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted mb-0">Tracking information will be available once your order ships.</p>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Order Summary -->
+            <div class="card mb-3">
+                <div class="card-header"><strong>Order Summary</strong></div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span>Subtotal</span>
+                        <span>@Model.Subtotal.ToString("C")</span>
+                    </div>
+                    @if (Model.ShippingCost > 0)
+                    {
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Shipping</span>
+                            <span>@Model.ShippingCost.ToString("C")</span>
+                        </div>
+                    }
+                    @if (Model.TaxAmount > 0)
+                    {
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Tax</span>
+                            <span>@Model.TaxAmount.ToString("C")</span>
+                        </div>
+                    }
+                    <hr />
+                    <div class="d-flex justify-content-between fw-bold fs-5">
+                        <span>Total</span>
+                        <span>@Model.TotalAmount.ToString("C")</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Refund Info -->
+            @if (Model.RefundedAmount.HasValue && Model.RefundedAmount > 0)
+            {
+                <div class="card mb-3 border-danger">
+                    <div class="card-header bg-danger text-white"><strong>Refund</strong></div>
+                    <div class="card-body">
+                        <p>Amount: <strong>@Model.RefundedAmount.Value.ToString("C")</strong></p>
+                        @if (Model.RefundedDate.HasValue)
+                        {
+                            <p class="mb-0">Date: @Model.RefundedDate.Value.ToString("MMM dd, yyyy")</p>
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.CustomerNotes))
+            {
+                <div class="card mb-3">
+                    <div class="card-header"><strong>Your Notes</strong></div>
+                    <div class="card-body">
+                        <p class="mb-0">@Model.CustomerNotes</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/store.css" asp-append-version="true" />
+}

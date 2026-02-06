@@ -1,0 +1,24 @@
+@{
+    ViewData["Title"] = "My Subscription";
+}
+
+<div class="container mt-3">
+    <h2><i class="bi bi-arrow-repeat"></i> My Subscription</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="text-center py-5">
+                <i class="bi bi-star display-1 text-muted"></i>
+                <h4 class="mt-3">No Active Subscription</h4>
+                <p class="text-muted">Subscribe to unlock member pricing and exclusive benefits.</p>
+                <a asp-controller="Store" asp-action="Browse" asp-route-type="2" class="btn btn-success btn-lg">
+                    <i class="bi bi-star"></i> View Subscription Plans
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/store.css" asp-append-version="true" />
+}

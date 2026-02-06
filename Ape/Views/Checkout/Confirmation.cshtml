@@ -1,0 +1,77 @@
+@model Ape.Models.ViewModels.OrderConfirmationViewModel
+
+<div class="container mt-3">
+    <div class="text-center mb-4">
+        <i class="bi bi-check-circle-fill text-success display-1"></i>
+        <h2 class="mt-3">Thank You For Your Order!</h2>
+        <p class="lead text-muted">Order <strong>@Model.OrderNumber</strong> has been placed successfully.</p>
+        <p>Total: <strong>@Model.TotalAmount.ToString("C")</strong> paid via @Model.PaymentGateway</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Order Items -->
+            <div class="card mb-3">
+                <div class="card-header"><strong>Order Items</strong></div>
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead><tr><th>Product</th><th>Type</th><th>Qty</th><th>Total</th></tr></thead>
+                        <tbody>
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr>
+                                    <td>@item.ProductName</td>
+                                    <td><span class="badge @(item.ProductType == Ape.Models.ProductType.Physical ? "bg-primary" : item.ProductType == Ape.Models.ProductType.Digital ? "bg-info" : "bg-success")">@item.ProductType</span></td>
+                                    <td>@item.Quantity</td>
+                                    <td>@item.LineTotal.ToString("C")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Digital Downloads -->
+            @if (Model.HasDigitalItems && Model.Downloads.Any())
+            {
+                <div class="card mb-3 border-info">
+                    <div class="card-header bg-info text-white"><strong><i class="bi bi-download"></i> Your Downloads</strong></div>
+                    <div class="card-body">
+                        @foreach (var download in Model.Downloads)
+                        {
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <strong>@download.ProductName</strong>
+                                    <br /><small class="text-muted">@download.OriginalFileName — Expires: @download.ExpiresDate?.ToString("MMM dd, yyyy")</small>
+                                </div>
+                                @if (download.CanDownload)
+                                {
+                                    <a href="/download/@download.DownloadToken" class="btn btn-info text-white btn-sm">
+                                        <i class="bi bi-download"></i> Download
+                                    </a>
+                                }
+                            </div>
+                        }
+                        <small class="text-muted">Downloads are also available from your <a asp-controller="OrderHistory" asp-action="Index">order history</a>.</small>
+                    </div>
+                </div>
+            }
+
+            @if (Model.HasPhysicalItems)
+            {
+                <div class="alert alert-info">
+                    <i class="bi bi-truck"></i> Physical items will be shipped soon. You'll receive tracking information via email and in your order history.
+                </div>
+            }
+
+            <div class="text-center mt-3">
+                <a asp-controller="OrderHistory" asp-action="Index" class="btn btn-outline-primary me-2"><i class="bi bi-receipt"></i> View My Orders</a>
+                <a asp-controller="Store" asp-action="Index" class="btn btn-primary"><i class="bi bi-shop"></i> Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/store.css" asp-append-version="true" />
+}

@@ -1,0 +1,28 @@
+@model Ape.Models.ViewModels.CreateShippingAddressModel
+
+<div class="container mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Addresses">Addresses</a></li>
+            <li class="breadcrumb-item active">Add Address</li>
+        </ol>
+    </nav>
+
+    <h2><i class="bi bi-plus-lg"></i> Add Address</h2>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <div class="row">
+        <div class="col-md-8">
+            <form asp-action="AddAddress" method="post">
+                @Html.AntiForgeryToken()
+                <partial name="_AddressForm" model="new { FullName = Model.FullName, AddressLine1 = Model.AddressLine1, AddressLine2 = Model.AddressLine2, City = Model.City, State = Model.State, ZipCode = Model.ZipCode, Country = Model.Country, Phone = Model.Phone, IsDefault = Model.IsDefault }" />
+                <button type="submit" class="btn btn-success"><i class="bi bi-check-lg"></i> Save Address</button>
+                <a asp-action="Addresses" class="btn btn-outline-secondary ms-2">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

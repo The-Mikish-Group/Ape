@@ -1,0 +1,64 @@
+@model Ape.Models.ViewModels.ProductViewModel
+
+<div class="card h-100 store-product-card">
+    <a asp-controller="Store" asp-action="Product" asp-route-slug="@Model.Slug" class="text-decoration-none">
+        @if (Model.PrimaryThumbnailUrl != null)
+        {
+            <img src="@Model.PrimaryThumbnailUrl" alt="@Model.Name" class="card-img-top" style="height:200px;object-fit:cover;" />
+        }
+        else
+        {
+            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:200px;">
+                <i class="bi bi-image display-4 text-muted"></i>
+            </div>
+        }
+    </a>
+
+    <!-- Badges -->
+    <div class="position-absolute top-0 start-0 p-2">
+        @if (Model.IsOnSale) { <span class="badge bg-danger">Sale</span> }
+        @if (Model.ShowMemberPrice) { <span class="badge bg-success">Member Price</span> }
+        @if (Model.IsFeatured) { <span class="badge bg-warning text-dark">Featured</span> }
+    </div>
+    <div class="position-absolute top-0 end-0 p-2">
+        <span class="badge @Model.ProductTypeBadgeClass">@Model.ProductType</span>
+    </div>
+
+    <div class="card-body d-flex flex-column">
+        <a asp-controller="Store" asp-action="Product" asp-route-slug="@Model.Slug" class="text-decoration-none text-dark">
+            <h6 class="card-title mb-1">@Model.Name</h6>
+        </a>
+        @if (Model.CategoryName != null)
+        {
+            <small class="text-muted mb-2">@Model.CategoryName</small>
+        }
+        <div class="mt-auto">
+            <!-- Price -->
+            @if (Model.ShowMemberPrice)
+            {
+                <span class="text-decoration-line-through text-muted small">@Model.Price.ToString("C")</span>
+                <span class="fw-bold text-success">@Model.DisplayPrice.ToString("C")</span>
+            }
+            else if (Model.IsOnSale)
+            {
+                <span class="text-decoration-line-through text-muted small">@Model.CompareAtPrice?.ToString("C")</span>
+                <span class="fw-bold text-danger">@Model.Price.ToString("C")</span>
+            }
+            else
+            {
+                <span class="fw-bold">@Model.DisplayPrice.ToString("C")</span>
+            }
+
+            @if (Model.ProductType == Ape.Models.ProductType.Subscription && Model.BillingInterval != null)
+            {
+                <small class="text-muted">/ @Model.BillingInterval</small>
+            }
+
+            <!-- Stock status for physical products -->
+            @if (Model.ProductType == Ape.Models.ProductType.Physical && Model.TrackInventory && !Model.IsInStock)
+            {
+                <br /><span class="badge bg-danger mt-1">Out of Stock</span>
+            }
+        </div>
+    </div>
+</div>

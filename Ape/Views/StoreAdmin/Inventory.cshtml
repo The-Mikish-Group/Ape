@@ -1,0 +1,82 @@
+@model List<Ape.Models.ViewModels.ProductViewModel>
+@{
+    ViewData["Title"] = "Inventory Management";
+    var lowStock = ViewData["LowStockProducts"] as List<Ape.Models.ViewModels.ProductViewModel> ?? [];
+}
+
+<div class="container-fluid mt-3">
+    <h2><i class="bi bi-box"></i> Inventory Management</h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">@TempData["SuccessMessage"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">@TempData["ErrorMessage"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    @if (lowStock.Any())
+    {
+        <div class="alert alert-warning">
+            <strong><i class="bi bi-exclamation-triangle"></i> Low Stock Alert!</strong> @lowStock.Count product(s) are at or below their low stock threshold.
+        </div>
+    }
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Product</th>
+                        <th>SKU</th>
+                        <th>Current Stock</th>
+                        <th>Low Threshold</th>
+                        <th>Status</th>
+                        <th>Adjust Stock</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in Model)
+                    {
+                        var isLow = product.TrackInventory && product.StockQuantity <= product.LowStockThreshold;
+                        var isOut = product.TrackInventory && product.StockQuantity == 0;
+                        <tr class="@(isOut ? "table-danger" : isLow ? "table-warning" : "")">
+                            <td><strong>@product.Name</strong></td>
+                            <td><code>@product.SKU</code></td>
+                            <td>
+                                @if (product.TrackInventory)
+                                {
+                                    <strong>@product.StockQuantity</strong>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Not tracked</span>
+                                }
+                            </td>
+                            <td>@product.LowStockThreshold</td>
+                            <td>
+                                @if (!product.TrackInventory) { <span class="badge bg-secondary">Not Tracked</span> }
+                                else if (isOut) { <span class="badge bg-danger">Out of Stock</span> }
+                                else if (isLow) { <span class="badge bg-warning text-dark">Low Stock</span> }
+                                else { <span class="badge bg-success">In Stock</span> }
+                            </td>
+                            <td>
+                                @if (product.TrackInventory)
+                                {
+                                    <form asp-action="AdjustStock" method="post" class="d-flex align-items-center gap-1">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="productId" value="@product.ProductId" />
+                                        <input type="number" name="adjustment" class="form-control form-control-sm" style="width:80px;" placeholder="+/-" required />
+                                        <input type="text" name="reason" class="form-control form-control-sm" style="width:150px;" placeholder="Reason" />
+                                        <button type="submit" class="btn btn-sm btn-outline-primary">Adjust</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

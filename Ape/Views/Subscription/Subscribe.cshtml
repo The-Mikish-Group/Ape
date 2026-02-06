@@ -1,0 +1,162 @@
+@model Ape.Models.ViewModels.SubscribeViewModel
+
+<div class="container mt-3">
+    <h2><i class="bi bi-arrow-repeat"></i> Subscribe</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h4 class="mb-0">@Model.Product.Name</h4>
+                    <div class="fs-3 fw-bold mt-1 text-success">
+                        @Model.Product.Price.ToString("C")/@(Model.Product.BillingInterval ?? "month")
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.Product.ShortDescription))
+                    {
+                        <p class="text-muted">@Model.Product.ShortDescription</p>
+                    }
+
+                    @if (!Model.StripeEnabled && !Model.PayPalEnabled)
+                    {
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i> No payment gateways are configured for subscriptions.
+                        </div>
+                    }
+
+                    @if (Model.StripeEnabled)
+                    {
+                        <div class="mb-4">
+                            <h5><i class="bi bi-credit-card"></i> Pay with Card</h5>
+                            <div id="card-element" class="form-control py-3 mb-2"></div>
+                            <div id="card-errors" class="text-danger small mb-2"></div>
+                            <button id="stripeSubBtn" type="button" class="btn btn-success w-100" onclick="handleStripeSubscription()">
+                                <i class="bi bi-lock"></i> Subscribe — @Model.Product.Price.ToString("C")/@(Model.Product.BillingInterval ?? "month")
+                            </button>
+                        </div>
+                    }
+
+                    @if (Model.StripeEnabled && Model.PayPalEnabled)
+                    {
+                        <div class="text-center my-3"><span class="text-muted">— OR —</span></div>
+                    }
+
+                    @if (Model.PayPalEnabled)
+                    {
+                        <div class="mb-3">
+                            <h5><i class="bi bi-paypal"></i> Subscribe with PayPal</h5>
+                            <div id="paypal-button-container"></div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div id="subscriptionMessage" class="mt-3" style="display:none;"></div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/store.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    @if (Model.StripeEnabled)
+    {
+        <script src="https://js.stripe.com/v3/"></script>
+    }
+    @if (Model.PayPalEnabled)
+    {
+        <script src="https://www.paypal.com/sdk/js?client-id=@Model.PayPalClientId&vault=true&intent=subscription"></script>
+    }
+    <script>
+        const productId = @Model.Product.ProductId;
+
+        @if (Model.StripeEnabled)
+        {
+            <text>
+            const stripe = Stripe('@Model.StripePublishableKey');
+            const elements = stripe.elements();
+            const cardElement = elements.create('card', {
+                style: { base: { fontSize: '16px', color: '#32325d' } }
+            });
+            cardElement.mount('#card-element');
+
+            cardElement.on('change', function(event) {
+                document.getElementById('card-errors').textContent = event.error ? event.error.message : '';
+            });
+
+            async function handleStripeSubscription() {
+                const btn = document.getElementById('stripeSubBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Processing...';
+
+                const clientSecret = '@Model.StripeClientSecret';
+                const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+                    payment_method: { card: cardElement }
+                });
+
+                if (error) {
+                    document.getElementById('card-errors').textContent = error.message;
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-lock"></i> Subscribe — @Model.Product.Price.ToString("C")/@(Model.Product.BillingInterval ?? "month")';
+                    return;
+                }
+
+                // Confirm subscription with server
+                const response = await fetch('/Subscription/ConfirmStripeSubscription', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId: productId, stripeSubscriptionId: '@Model.StripeSubscriptionId' })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    window.location.href = '/Subscription/Manage';
+                } else {
+                    showMessage('error', result.message);
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-lock"></i> Subscribe';
+                }
+            }
+            </text>
+        }
+
+        @if (Model.PayPalEnabled)
+        {
+            <text>
+            paypal.Buttons({
+                style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'subscribe' },
+                createSubscription: async function(data, actions) {
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+                    const response = await fetch('/Subscription/CreatePayPalSubscription?productId=' + productId, {
+                        method: 'POST',
+                        headers: { 'RequestVerificationToken': token }
+                    });
+                    const result = await response.json();
+                    if (!result.success) {
+                        showMessage('error', result.message);
+                        return;
+                    }
+                    // Redirect to PayPal approval
+                    window.location.href = result.approvalUrl;
+                },
+                onApprove: function(data) {
+                    window.location.href = '/Subscription/PayPalSubscriptionReturn?productId=' + productId + '&subscription_id=' + data.subscriptionID;
+                },
+                onError: function(err) {
+                    showMessage('error', 'PayPal subscription failed. Please try again.');
+                }
+            }).render('#paypal-button-container');
+            </text>
+        }
+
+        function showMessage(type, message) {
+            const div = document.getElementById('subscriptionMessage');
+            div.style.display = 'block';
+            div.className = 'mt-3 alert alert-' + (type === 'error' ? 'danger' : 'success');
+            div.textContent = message;
+        }
+    </script>
+}

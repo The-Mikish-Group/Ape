@@ -1,0 +1,91 @@
+@model List<Ape.Models.ViewModels.SubscriptionListViewModel>
+
+<div class="container-fluid mt-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2><i class="bi bi-arrow-repeat"></i> Manage Subscriptions</h2>
+        <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Dashboard</a>
+    </div>
+
+    <!-- Filters -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <form method="get" class="row g-2 align-items-end">
+                <div class="col-auto">
+                    <label class="form-label small">Status</label>
+                    <select name="status" class="form-select form-select-sm">
+                        <option value="">All Statuses</option>
+                        @foreach (var status in Enum.GetValues<Ape.Models.SubscriptionStatus>())
+                        {
+                            <option value="@((int)status)" selected="@(ViewData["FilterStatus"] != null && (Ape.Models.SubscriptionStatus)ViewData["FilterStatus"]! == status)">@status</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i> Filter</button>
+                    <a asp-action="Subscriptions" class="btn btn-outline-secondary btn-sm">Clear</a>
+                </div>
+                <div class="col-auto ms-auto">
+                    <span class="text-muted small">@ViewData["TotalCount"] subscription(s)</span>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-arrow-repeat display-4"></i>
+            <p class="mt-2">No subscriptions found.</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Plan</th>
+                        <th>Amount</th>
+                        <th>Gateway</th>
+                        <th>Status</th>
+                        <th>Renewal</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var sub in Model)
+                    {
+                        <tr>
+                            <td><small>@sub.UserEmail</small></td>
+                            <td>@sub.ProductName</td>
+                            <td>@sub.Amount.ToString("C")/@(sub.BillingInterval ?? "month")</td>
+                            <td><span class="badge bg-secondary">@sub.PaymentGateway</span></td>
+                            <td><span class="badge @sub.StatusBadgeClass">@sub.Status</span></td>
+                            <td>@(sub.CurrentPeriodEnd?.ToString("MMM dd, yyyy") ?? "—")</td>
+                            <td>@sub.CreatedDate.ToString("MMM dd, yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if ((int)(ViewData["TotalPages"] ?? 1) > 1)
+        {
+            <nav>
+                <ul class="pagination justify-content-center">
+                    @for (var i = 1; i <= (int)(ViewData["TotalPages"] ?? 1); i++)
+                    {
+                        <li class="page-item @(i == (int)(ViewData["CurrentPage"] ?? 1) ? "active" : "")">
+                            <a class="page-link" asp-action="Subscriptions" asp-route-page="@i" asp-route-status="@ViewData["FilterStatus"]">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/store.css" asp-append-version="true" />
+}

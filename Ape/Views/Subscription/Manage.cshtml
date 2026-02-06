@@ -1,0 +1,116 @@
+@model Ape.Models.ViewModels.SubscriptionDetailViewModel
+
+<div class="container mt-3">
+    <h2><i class="bi bi-arrow-repeat"></i> My Subscription</h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong>@Model.ProductName</strong>
+                    <span class="badge @Model.StatusBadgeClass">@Model.Status</span>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="fs-3 fw-bold text-success">@Model.BillingDisplay</div>
+                        <small class="text-muted">via @Model.PaymentGateway</small>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.ProductDescription))
+                    {
+                        <p class="text-muted">@Model.ProductDescription</p>
+                    }
+
+                    <hr />
+
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <small class="text-muted">Current Period Start</small>
+                            <div>@(Model.CurrentPeriodStart?.ToString("MMM dd, yyyy") ?? "—")</div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Renewal Date</small>
+                            <div class="fw-bold">@(Model.CurrentPeriodEnd?.ToString("MMM dd, yyyy") ?? "—")</div>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <p class="small text-muted mb-0">
+                        <i class="bi bi-calendar-plus"></i> Subscribed since @Model.CreatedDate.ToString("MMMM dd, yyyy")
+                    </p>
+
+                    @if (Model.CancelledDate.HasValue)
+                    {
+                        <p class="small text-danger mt-1 mb-0">
+                            <i class="bi bi-x-circle"></i> Cancelled on @Model.CancelledDate.Value.ToString("MMMM dd, yyyy")
+                            @if (!string.IsNullOrEmpty(Model.CancelReason))
+                            {
+                                <text>— @Model.CancelReason</text>
+                            }
+                        </p>
+                    }
+                </div>
+
+                @if (Model.Status == Ape.Models.SubscriptionStatus.Active)
+                {
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-outline-danger btn-sm w-100" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                            <i class="bi bi-x-circle"></i> Cancel Subscription
+                        </button>
+                    </div>
+                }
+            </div>
+
+            <div class="text-center mt-3">
+                <a asp-controller="Store" asp-action="Index" class="btn btn-outline-primary"><i class="bi bi-shop"></i> Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Modal -->
+@if (Model.Status == Ape.Models.SubscriptionStatus.Active)
+{
+    <div class="modal fade" id="cancelModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form asp-action="Cancel" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="modal-header">
+                        <h5 class="modal-title">Cancel Subscription</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to cancel your subscription? You will lose access to member benefits including:</p>
+                        <ul>
+                            <li>Member pricing discounts</li>
+                            <li>Exclusive member content</li>
+                        </ul>
+                        <div class="mb-3">
+                            <label class="form-label">Reason (optional)</label>
+                            <textarea name="reason" class="form-control" rows="2" maxlength="500" placeholder="Please let us know why you're cancelling..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Keep Subscription</button>
+                        <button type="submit" class="btn btn-danger">Cancel Subscription</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/store.css" asp-append-version="true" />
+}

@@ -1,0 +1,83 @@
+@model Ape.Models.ViewModels.StoreHomeViewModel
+
+<div class="container mt-3">
+    <!-- Hero Banner -->
+    <div class="bg-primary text-white rounded-3 p-5 mb-4 text-center">
+        <h1 class="display-5 fw-bold"><i class="bi bi-shop"></i> @Model.StoreName</h1>
+        <p class="lead mb-3">Browse our collection of products, digital downloads, and membership plans.</p>
+        <a asp-action="Browse" class="btn btn-light btn-lg"><i class="bi bi-grid"></i> Browse All Products</a>
+    </div>
+
+    <!-- Featured Products -->
+    @if (Model.FeaturedProducts.Any())
+    {
+        <h3 class="mb-3"><i class="bi bi-star"></i> Featured Products</h3>
+        <div class="row g-3 mb-4">
+            @foreach (var product in Model.FeaturedProducts)
+            {
+                <div class="col-6 col-md-4 col-lg-3">
+                    <partial name="_ProductCard" model="product" />
+                </div>
+            }
+        </div>
+    }
+
+    <!-- Categories -->
+    @if (Model.Categories.Any())
+    {
+        <h3 class="mb-3"><i class="bi bi-folder"></i> Shop by Category</h3>
+        <div class="row g-3 mb-4">
+            @foreach (var cat in Model.Categories)
+            {
+                <div class="col-6 col-md-4 col-lg-3">
+                    <a asp-action="Browse" asp-route-category="@cat.Slug" class="text-decoration-none">
+                        <div class="card h-100 store-category-card">
+                            @if (cat.ImageUrl != null)
+                            {
+                                <img src="@cat.ImageUrl" alt="@cat.Name" class="card-img-top" style="height:150px;object-fit:cover;" />
+                            }
+                            else
+                            {
+                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:150px;">
+                                    <i class="bi bi-folder display-4 text-muted"></i>
+                                </div>
+                            }
+                            <div class="card-body text-center">
+                                <h6 class="card-title text-dark">@cat.Name</h6>
+                                <small class="text-muted">@cat.ProductCount product(s)</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    }
+
+    <!-- Subscription Plans -->
+    @if (Model.SubscriptionProducts.Any())
+    {
+        <div class="bg-light rounded-3 p-4 mb-4">
+            <h3 class="mb-3 text-center"><i class="bi bi-arrow-repeat"></i> Membership Plans</h3>
+            <p class="text-center text-muted mb-4">Subscribe and get exclusive member pricing on all products!</p>
+            <div class="row g-3 justify-content-center">
+                @foreach (var sub in Model.SubscriptionProducts)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-success">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">@sub.Name</h5>
+                                <p class="card-text text-muted">@sub.ShortDescription</p>
+                                <div class="display-6 text-success mb-2">@sub.Price.ToString("C")<small class="fs-6">/@sub.BillingInterval</small></div>
+                                <a asp-action="Product" asp-route-slug="@sub.Slug" class="btn btn-success"><i class="bi bi-arrow-repeat"></i> Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/store.css" asp-append-version="true" />
+}

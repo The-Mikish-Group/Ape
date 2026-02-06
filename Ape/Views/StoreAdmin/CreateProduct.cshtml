@@ -1,0 +1,220 @@
+@model Ape.Models.ViewModels.CreateProductModel
+@{
+    var categories = ViewData["Categories"] as List<Ape.Models.ViewModels.StoreCategoryViewModel> ?? [];
+}
+
+<div class="container mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Products">Products</a></li>
+            <li class="breadcrumb-item active">Create Product</li>
+        </ol>
+    </nav>
+
+    <h2><i class="bi bi-plus-lg"></i> Create Product</h2>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <form asp-action="CreateProduct" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <!-- Product Type Selector -->
+        <div class="card mb-3">
+            <div class="card-header"><strong>Product Type</strong></div>
+            <div class="card-body">
+                <div class="btn-group" role="group">
+                    <input type="radio" class="btn-check" name="ProductType" id="typePhysical" value="0" checked="@(Model.ProductType == Ape.Models.ProductType.Physical)" onchange="toggleProductType()" />
+                    <label class="btn btn-outline-primary" for="typePhysical"><i class="bi bi-box-seam"></i> Physical</label>
+
+                    <input type="radio" class="btn-check" name="ProductType" id="typeDigital" value="1" checked="@(Model.ProductType == Ape.Models.ProductType.Digital)" onchange="toggleProductType()" />
+                    <label class="btn btn-outline-info" for="typeDigital"><i class="bi bi-file-earmark-arrow-down"></i> Digital</label>
+
+                    <input type="radio" class="btn-check" name="ProductType" id="typeSubscription" value="2" checked="@(Model.ProductType == Ape.Models.ProductType.Subscription)" onchange="toggleProductType()" />
+                    <label class="btn btn-outline-success" for="typeSubscription"><i class="bi bi-arrow-repeat"></i> Subscription</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Basic Info -->
+                <div class="card mb-3">
+                    <div class="card-header"><strong>Basic Information</strong></div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="Name" class="form-label">Product Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="Name" name="Name" value="@Model.Name" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="ShortDescription" class="form-label">Short Description</label>
+                            <input type="text" class="form-control" id="ShortDescription" name="ShortDescription" value="@Model.ShortDescription" maxlength="500" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="Description" class="form-label">Full Description</label>
+                            <textarea class="form-control" id="Description" name="Description" rows="6">@Model.Description</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Images -->
+                <div class="card mb-3">
+                    <div class="card-header"><strong>Images</strong></div>
+                    <div class="card-body">
+                        <input type="file" class="form-control" name="images" multiple accept="image/*" />
+                        <small class="text-muted">Upload one or more images. First image becomes the primary.</small>
+                    </div>
+                </div>
+
+                <!-- Digital File -->
+                <div class="card mb-3 d-none" id="digitalFileCard">
+                    <div class="card-header"><strong>Digital File</strong></div>
+                    <div class="card-body">
+                        <input type="file" class="form-control" name="digitalFile" />
+                        <small class="text-muted">Upload the file customers will download after purchase.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <!-- Pricing -->
+                <div class="card mb-3">
+                    <div class="card-header"><strong>Pricing</strong></div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="Price" class="form-label">Price <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="Price" name="Price" value="@Model.Price" step="0.01" min="0" required />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="CompareAtPrice" class="form-label">Compare at Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="CompareAtPrice" name="CompareAtPrice" value="@Model.CompareAtPrice" step="0.01" min="0" />
+                            </div>
+                            <small class="text-muted">Original price for sale display</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="MemberPrice" class="form-label">Member Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="MemberPrice" name="MemberPrice" value="@Model.MemberPrice" step="0.01" min="0" />
+                            </div>
+                            <small class="text-muted">Discounted price for active subscribers</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="CostPrice" class="form-label">Cost Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="CostPrice" name="CostPrice" value="@Model.CostPrice" step="0.01" min="0" />
+                            </div>
+                            <small class="text-muted">For profit tracking (not shown to customers)</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category -->
+                <div class="card mb-3">
+                    <div class="card-header"><strong>Category</strong></div>
+                    <div class="card-body">
+                        <select name="CategoryID" class="form-select">
+                            <option value="">No Category</option>
+                            @foreach (var cat in categories)
+                            {
+                                <option value="@cat.CategoryId" selected="@(Model.CategoryID == cat.CategoryId)">@cat.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Physical: Inventory -->
+                <div class="card mb-3" id="inventoryCard">
+                    <div class="card-header"><strong>Inventory</strong></div>
+                    <div class="card-body">
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="TrackInventory" value="true" id="TrackInventory" checked="@Model.TrackInventory" />
+                            <label class="form-check-label" for="TrackInventory">Track inventory</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="StockQuantity" class="form-label">Stock Quantity</label>
+                            <input type="number" class="form-control" id="StockQuantity" name="StockQuantity" value="@Model.StockQuantity" min="0" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="LowStockThreshold" class="form-label">Low Stock Threshold</label>
+                            <input type="number" class="form-control" id="LowStockThreshold" name="LowStockThreshold" value="@Model.LowStockThreshold" min="0" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="Weight" class="form-label">Weight (lbs)</label>
+                            <input type="number" class="form-control" id="Weight" name="Weight" value="@Model.Weight" step="0.01" min="0" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Digital: Download Settings -->
+                <div class="card mb-3 d-none" id="downloadSettingsCard">
+                    <div class="card-header"><strong>Download Settings</strong></div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="MaxDownloads" class="form-label">Max Downloads</label>
+                            <input type="number" class="form-control" id="MaxDownloads" name="MaxDownloads" value="@Model.MaxDownloads" min="1" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="DownloadExpiryDays" class="form-label">Download Expiry (days)</label>
+                            <input type="number" class="form-control" id="DownloadExpiryDays" name="DownloadExpiryDays" value="@Model.DownloadExpiryDays" min="1" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subscription: Billing -->
+                <div class="card mb-3 d-none" id="subscriptionCard">
+                    <div class="card-header"><strong>Subscription Billing</strong></div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="BillingInterval" class="form-label">Billing Interval</label>
+                            <select class="form-select" id="BillingInterval" name="BillingInterval">
+                                <option value="month">Monthly</option>
+                                <option value="year">Yearly</option>
+                                <option value="week">Weekly</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="BillingIntervalCount" class="form-label">Interval Count</label>
+                            <input type="number" class="form-control" id="BillingIntervalCount" name="BillingIntervalCount" value="@Model.BillingIntervalCount" min="1" />
+                            <small class="text-muted">e.g., 1 = every month, 3 = every 3 months</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="StripePriceId" class="form-label">Stripe Price ID</label>
+                            <input type="text" class="form-control" id="StripePriceId" name="StripePriceId" value="@Model.StripePriceId" placeholder="price_..." />
+                        </div>
+                        <div class="mb-3">
+                            <label for="PayPalPlanId" class="form-label">PayPal Plan ID</label>
+                            <input type="text" class="form-control" id="PayPalPlanId" name="PayPalPlanId" value="@Model.PayPalPlanId" placeholder="P-..." />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <button type="submit" class="btn btn-success btn-lg"><i class="bi bi-check-lg"></i> Create Product</button>
+            <a asp-action="Products" class="btn btn-outline-secondary btn-lg ms-2">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+    function toggleProductType() {
+        const type = document.querySelector('input[name="ProductType"]:checked')?.value;
+        document.getElementById('inventoryCard').classList.toggle('d-none', type !== '0');
+        document.getElementById('digitalFileCard').classList.toggle('d-none', type !== '1');
+        document.getElementById('downloadSettingsCard').classList.toggle('d-none', type !== '1');
+        document.getElementById('subscriptionCard').classList.toggle('d-none', type !== '2');
+    }
+    toggleProductType();
+</script>
+}

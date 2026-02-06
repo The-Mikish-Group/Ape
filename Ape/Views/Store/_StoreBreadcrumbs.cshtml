@@ -1,0 +1,21 @@
+@model List<Ape.Models.ViewModels.StoreBreadcrumbItem>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        @foreach (var crumb in Model)
+        {
+            if (crumb.IsCurrent)
+            {
+                <li class="breadcrumb-item active" aria-current="page">@crumb.Name</li>
+            }
+            else if (crumb.Slug != null)
+            {
+                <li class="breadcrumb-item"><a asp-controller="Store" asp-action="Browse" asp-route-category="@crumb.Slug">@crumb.Name</a></li>
+            }
+            else
+            {
+                <li class="breadcrumb-item"><a asp-controller="Store" asp-action="Index">@crumb.Name</a></li>
+            }
+        }
+    </ol>
+</nav>

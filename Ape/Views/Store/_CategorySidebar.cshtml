@@ -1,0 +1,14 @@
+@model List<Ape.Models.ViewModels.StoreCategoryTreeNode>
+
+<div class="card mb-3">
+    <div class="card-header py-2"><strong>Categories</strong></div>
+    <div class="list-group list-group-flush">
+        <a asp-controller="Store" asp-action="Browse" class="list-group-item list-group-item-action">
+            <i class="bi bi-grid"></i> All Products
+        </a>
+        @foreach (var node in Model)
+        {
+            @await Html.PartialAsync("_CategorySidebarNode", node)
+        }
+    </div>
+</div>

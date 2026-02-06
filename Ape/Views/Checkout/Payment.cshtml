@@ -1,0 +1,170 @@
+@model Ape.Models.ViewModels.PaymentViewModel
+
+<div class="container mt-3">
+    <h2><i class="bi bi-credit-card"></i> Payment</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <strong>Order @Model.OrderNumber</strong>
+                    <div class="fs-3 fw-bold mt-1">@Model.TotalAmount.ToString("C")</div>
+                </div>
+                <div class="card-body">
+                    @if (!Model.StripeEnabled && !Model.PayPalEnabled)
+                    {
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i> No payment gateways are configured. Please contact the administrator.
+                        </div>
+                    }
+
+                    <!-- Stripe Payment -->
+                    @if (Model.StripeEnabled)
+                    {
+                        <div class="mb-4">
+                            <h5><i class="bi bi-credit-card"></i> Pay with Card</h5>
+                            <div id="card-element" class="form-control py-3 mb-2"></div>
+                            <div id="card-errors" class="text-danger small mb-2"></div>
+                            <button id="stripePayBtn" type="button" class="btn btn-primary w-100" onclick="handleStripePayment()">
+                                <i class="bi bi-lock"></i> Pay @Model.TotalAmount.ToString("C")
+                            </button>
+                        </div>
+                    }
+
+                    @if (Model.StripeEnabled && Model.PayPalEnabled)
+                    {
+                        <div class="text-center my-3"><span class="text-muted">— OR —</span></div>
+                    }
+
+                    <!-- PayPal Payment -->
+                    @if (Model.PayPalEnabled)
+                    {
+                        <div class="mb-3">
+                            <h5><i class="bi bi-paypal"></i> Pay with PayPal</h5>
+                            <div id="paypal-button-container"></div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div id="paymentMessage" class="mt-3" style="display:none;"></div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/store.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    @if (Model.StripeEnabled)
+    {
+        <script src="https://js.stripe.com/v3/"></script>
+    }
+    @if (Model.PayPalEnabled)
+    {
+        <script src="https://www.paypal.com/sdk/js?client-id=@Model.PayPalClientId&currency=USD"></script>
+    }
+    <script>
+        const orderId = @Model.OrderId;
+        const orderNumber = '@Model.OrderNumber';
+        const totalAmount = '@Model.TotalAmount.ToString("F2")';
+
+        @if (Model.StripeEnabled)
+        {
+            <text>
+            const stripe = Stripe('@Model.StripePublishableKey');
+            const elements = stripe.elements();
+            const cardElement = elements.create('card', {
+                style: {
+                    base: { fontSize: '16px', color: '#32325d' }
+                }
+            });
+            cardElement.mount('#card-element');
+
+            cardElement.on('change', function(event) {
+                const errors = document.getElementById('card-errors');
+                errors.textContent = event.error ? event.error.message : '';
+            });
+
+            async function handleStripePayment() {
+                const btn = document.getElementById('stripePayBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Processing...';
+
+                const clientSecret = '@Model.ClientSecret';
+                const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+                    payment_method: { card: cardElement }
+                });
+
+                if (error) {
+                    document.getElementById('card-errors').textContent = error.message;
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-lock"></i> Pay @Model.TotalAmount.ToString("C")';
+                    return;
+                }
+
+                // Confirm with server
+                const response = await fetch('/Checkout/ConfirmStripePayment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId: orderId, paymentIntentId: paymentIntent.id })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    window.location.href = '/Checkout/Confirmation?orderNumber=' + result.orderNumber;
+                } else {
+                    showPaymentMessage('error', result.message);
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-lock"></i> Pay @Model.TotalAmount.ToString("C")';
+                }
+            }
+            </text>
+        }
+
+        @if (Model.PayPalEnabled)
+        {
+            <text>
+            paypal.Buttons({
+                createOrder: async function() {
+                    const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+                    const response = await fetch('/Checkout/CreatePayPalOrder?orderId=' + orderId, {
+                        method: 'POST',
+                        headers: { 'RequestVerificationToken': token }
+                    });
+                    const data = await response.json();
+                    if (!data.success) {
+                        showPaymentMessage('error', data.message);
+                        return;
+                    }
+                    return data.paypalOrderId;
+                },
+                onApprove: async function(data) {
+                    const response = await fetch('/Checkout/CapturePayPalOrder', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ orderId: orderId, payPalOrderId: data.orderID })
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        window.location.href = '/Checkout/Confirmation?orderNumber=' + result.orderNumber;
+                    } else {
+                        showPaymentMessage('error', result.message);
+                    }
+                },
+                onError: function(err) {
+                    showPaymentMessage('error', 'PayPal payment failed. Please try again.');
+                }
+            }).render('#paypal-button-container');
+            </text>
+        }
+
+        function showPaymentMessage(type, message) {
+            const div = document.getElementById('paymentMessage');
+            div.style.display = 'block';
+            div.className = 'mt-3 alert alert-' + (type === 'error' ? 'danger' : 'success');
+            div.textContent = message;
+        }
+    </script>
+}

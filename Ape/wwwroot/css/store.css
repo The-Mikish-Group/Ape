@@ -1,0 +1,97 @@
+/* ============================================================
+   Store Module Styles
+   ============================================================ */
+
+/* Product Cards */
+.store-product-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.store-product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.store-product-card .card-img-top {
+    transition: transform 0.3s ease;
+}
+
+.store-product-card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+/* Category Cards */
+.store-category-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.store-category-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Product Detail */
+.store-thumb-selector {
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.store-thumb-selector:hover {
+    border-color: var(--bs-primary);
+}
+
+.store-product-description {
+    line-height: 1.7;
+}
+
+/* Cart Badge */
+.store-cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    font-size: 0.65rem;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* Cart Quantity Input */
+.store-cart-qty {
+    width: 60px;
+    text-align: center;
+}
+
+/* Checkout Steps */
+.store-checkout-step {
+    opacity: 0.5;
+}
+
+.store-checkout-step.active {
+    opacity: 1;
+    font-weight: bold;
+}
+
+.store-checkout-step.completed {
+    opacity: 1;
+    color: var(--bs-success);
+}
+
+/* Order Status Badges */
+.store-status-pending { background-color: #ffc107; color: #000; }
+.store-status-processing { background-color: #0d6efd; color: #fff; }
+.store-status-shipped { background-color: #0dcaf0; color: #000; }
+.store-status-delivered { background-color: #198754; color: #fff; }
+.store-status-completed { background-color: #198754; color: #fff; }
+.store-status-cancelled { background-color: #6c757d; color: #fff; }
+.store-status-refunded { background-color: #dc3545; color: #fff; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .store-product-card .card-img-top {
+        height: 150px !important;
+    }
+}
