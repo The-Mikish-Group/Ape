@@ -63,15 +63,24 @@ public class CheckoutController(
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-        var (result, orderId) = await _orderService.CreateOrderFromCartAsync(userId, shippingAddressId, customerNotes);
-
-        if (!result.Success || !orderId.HasValue)
+        try
         {
-            TempData["ErrorMessage"] = result.Message;
+            var (result, orderId) = await _orderService.CreateOrderFromCartAsync(userId, shippingAddressId, customerNotes);
+
+            if (!result.Success || !orderId.HasValue)
+            {
+                TempData["ErrorMessage"] = result.Message;
+                return RedirectToAction(nameof(Index));
+            }
+
+            return RedirectToAction(nameof(Payment), new { orderId = orderId.Value });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "PlaceOrder failed for user {UserId}", userId);
+            TempData["ErrorMessage"] = $"Order creation failed: {ex.Message}";
             return RedirectToAction(nameof(Index));
         }
-
-        return RedirectToAction(nameof(Payment), new { orderId = orderId.Value });
     }
 
     public async Task<IActionResult> Payment(int orderId)

@@ -9,12 +9,14 @@ namespace Ape.Services;
 public class OrderService(
     ApplicationDbContext context,
     IShoppingCartService cartService,
+    ISubscriptionService subscriptionService,
     ISystemSettingsService settingsService,
     IEmailSender emailSender,
     ILogger<OrderService> logger) : IOrderService
 {
     private readonly ApplicationDbContext _context = context;
     private readonly IShoppingCartService _cartService = cartService;
+    private readonly ISubscriptionService _subscriptionService = subscriptionService;
     private readonly ISystemSettingsService _settingsService = settingsService;
     private readonly IEmailSender _emailSender = emailSender;
     private readonly ILogger<OrderService> _logger = logger;
@@ -50,7 +52,17 @@ public class OrderService(
                 return (StoreOperationResult.Failed("Shipping address not found."), null);
         }
 
-        var subtotal = cart.Items.Sum(i => i.UnitPrice * i.Quantity);
+        // Apply member pricing from current product data (not stored cart UnitPrice)
+        var isMember = await _subscriptionService.HasActiveSubscriptionAsync(userId);
+        decimal subtotal = 0;
+        foreach (var item in cart.Items)
+        {
+            if (item.Product == null) continue;
+            var price = isMember && item.Product.MemberPrice.HasValue && item.Product.MemberPrice < item.Product.Price
+                ? item.Product.MemberPrice.Value
+                : item.Product.Price;
+            subtotal += price * item.Quantity;
+        }
 
         // Calculate shipping
         decimal shippingCost = 0;
@@ -96,23 +108,29 @@ public class OrderService(
             order.ShippingMethod = "Flat Rate";
         }
 
-        _context.Orders.Add(order);
-
         // Create order items and decrement stock
         foreach (var cartItem in cart.Items)
         {
-            var orderItem = new OrderItem
+            if (cartItem.Product == null)
             {
-                OrderID = order.OrderID,
+                _logger.LogWarning("Cart item {CartItemId} has null product (ProductID: {ProductId})", cartItem.CartItemID, cartItem.ProductID);
+                continue;
+            }
+
+            var unitPrice = isMember && cartItem.Product.MemberPrice.HasValue && cartItem.Product.MemberPrice < cartItem.Product.Price
+                ? cartItem.Product.MemberPrice.Value
+                : cartItem.Product.Price;
+
+            order.Items.Add(new OrderItem
+            {
                 ProductID = cartItem.ProductID,
-                ProductName = cartItem.Product!.Name,
+                ProductName = cartItem.Product.Name,
                 SKU = cartItem.Product.SKU,
                 ProductType = cartItem.Product.ProductType,
                 Quantity = cartItem.Quantity,
-                UnitPrice = cartItem.UnitPrice,
-                LineTotal = cartItem.UnitPrice * cartItem.Quantity
-            };
-            _context.OrderItems.Add(orderItem);
+                UnitPrice = unitPrice,
+                LineTotal = unitPrice * cartItem.Quantity
+            });
 
             // Decrement stock for physical items
             if (cartItem.Product.ProductType == ProductType.Physical && cartItem.Product.TrackInventory)
@@ -123,6 +141,7 @@ public class OrderService(
             }
         }
 
+        _context.Orders.Add(order);
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Order {OrderNumber} created for user {UserId}. Total: {Total}", orderNumber, userId, order.TotalAmount);
