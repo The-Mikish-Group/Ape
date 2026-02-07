@@ -310,6 +310,7 @@ public class SubscribeViewModel
     public string? StripeClientSecret { get; set; }
     public string? StripeSubscriptionId { get; set; }
     public string? PayPalPlanId { get; set; }
+    public string? ErrorMessage { get; set; }
 }
 
 public class StoreOperationResult

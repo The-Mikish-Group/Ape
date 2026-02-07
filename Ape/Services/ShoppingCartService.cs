@@ -14,7 +14,7 @@ public class ShoppingCartService(
     private readonly ISystemSettingsService _settingsService = settingsService;
     private readonly ILogger<ShoppingCartService> _logger = logger;
 
-    public async Task<CartViewModel> GetCartAsync(string userId)
+    public async Task<CartViewModel> GetCartAsync(string userId, bool isMember = false)
     {
         var cart = await GetOrCreateCartAsync(userId);
 
@@ -34,8 +34,12 @@ public class ShoppingCartService(
                     ? "/store/products/" + (ci.Product.Images.FirstOrDefault(i => i.IsPrimary) ?? ci.Product.Images.First()).FileName
                     : null,
                 Quantity = ci.Quantity,
-                UnitPrice = ci.UnitPrice,
-                LineTotal = ci.UnitPrice * ci.Quantity,
+                UnitPrice = isMember && ci.Product.MemberPrice.HasValue && ci.Product.MemberPrice < ci.Product.Price
+                    ? ci.Product.MemberPrice.Value
+                    : ci.Product.Price,
+                LineTotal = (isMember && ci.Product.MemberPrice.HasValue && ci.Product.MemberPrice < ci.Product.Price
+                    ? ci.Product.MemberPrice.Value
+                    : ci.Product.Price) * ci.Quantity,
                 IsInStock = ci.Product.ProductType != ProductType.Physical || !ci.Product.TrackInventory || ci.Product.StockQuantity >= ci.Quantity,
                 AvailableStock = ci.Product.StockQuantity,
                 TrackInventory = ci.Product.TrackInventory

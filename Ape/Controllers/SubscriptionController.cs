@@ -43,6 +43,7 @@ public class SubscriptionController(
 
         string? stripeClientSecret = null;
         string? stripeSubscriptionId = null;
+        string? stripeError = null;
 
         if (stripeEnabled)
         {
@@ -52,6 +53,17 @@ public class SubscriptionController(
                 stripeClientSecret = result.ClientSecret;
                 stripeSubscriptionId = result.SubscriptionId;
             }
+            else
+            {
+                stripeError = result.ErrorMessage;
+                _logger.LogWarning("Stripe subscription setup failed for product {ProductId}: {Error}", productId, result.ErrorMessage);
+            }
+        }
+
+        if (stripeEnabled && string.IsNullOrEmpty(stripeClientSecret))
+        {
+            stripeEnabled = false;
+            stripeError ??= "Unable to initialize Stripe payment. Please try again.";
         }
 
         var viewModel = new SubscribeViewModel
@@ -63,7 +75,8 @@ public class SubscriptionController(
             PayPalClientId = paypalEnabled ? await _paymentService.GetPayPalClientIdAsync() : null,
             StripeClientSecret = stripeClientSecret,
             StripeSubscriptionId = stripeSubscriptionId,
-            PayPalPlanId = product.PayPalPlanId
+            PayPalPlanId = product.PayPalPlanId,
+            ErrorMessage = stripeError
         };
 
         ViewData["Title"] = $"Subscribe: {product.Name}";

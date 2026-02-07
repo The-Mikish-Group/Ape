@@ -250,10 +250,28 @@ public class StorePaymentService(
                     ["user_id"] = userId,
                     ["product_id"] = productId.ToString()
                 },
-                Expand = ["latest_invoice.payments.data.payment.payment_intent"]
+                Expand = ["latest_invoice"]
             });
 
-            var clientSecret = subscription.LatestInvoice?.Payments?.Data?.FirstOrDefault()?.Payment?.PaymentIntent?.ClientSecret;
+            // Fetch the invoice separately to get the payment intent client secret
+            // (expanding from subscription would be 5 levels deep, exceeding Stripe's 4-level limit)
+            string? clientSecret = null;
+            if (subscription.LatestInvoice?.Id != null)
+            {
+                var invoiceService = new InvoiceService();
+                var invoice = await invoiceService.GetAsync(subscription.LatestInvoice.Id, new InvoiceGetOptions
+                {
+                    Expand = ["payments.data.payment.payment_intent"]
+                });
+                clientSecret = invoice?.Payments?.Data?.FirstOrDefault()?.Payment?.PaymentIntent?.ClientSecret;
+            }
+
+            if (string.IsNullOrEmpty(clientSecret))
+            {
+                _logger.LogWarning("Stripe subscription {SubId} created but no client secret returned. Status: {Status}, Invoice: {InvoiceId}",
+                    subscription.Id, subscription.Status, subscription.LatestInvoice?.Id);
+                return PaymentResult.CreateFailure("Subscription created but payment confirmation is not available. Please contact support.");
+            }
 
             return new PaymentResult
             {

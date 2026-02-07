@@ -9,15 +9,18 @@ namespace Ape.Controllers;
 [Authorize]
 public class CartController(
     IShoppingCartService cartService,
+    ISubscriptionService subscriptionService,
     ILogger<CartController> logger) : Controller
 {
     private readonly IShoppingCartService _cartService = cartService;
+    private readonly ISubscriptionService _subscriptionService = subscriptionService;
     private readonly ILogger<CartController> _logger = logger;
 
     public async Task<IActionResult> Index()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-        var cart = await _cartService.GetCartAsync(userId);
+        var isMember = await _subscriptionService.HasActiveSubscriptionAsync(userId);
+        var cart = await _cartService.GetCartAsync(userId, isMember);
 
         ViewData["Title"] = "Shopping Cart";
         return View(cart);
@@ -30,7 +33,7 @@ public class CartController(
         if (userId == null)
             return Json(new { success = false, message = "Please log in to add items to your cart." });
 
-        var isMember = false; // Will integrate with ISubscriptionService in Phase 1E
+        var isMember = await _subscriptionService.HasActiveSubscriptionAsync(userId);
         var result = await _cartService.AddItemAsync(userId, request.ProductId, request.Quantity, isMember);
 
         return Json(new { success = result.Success, message = result.Message, cartCount = result.EntityId ?? 0 });

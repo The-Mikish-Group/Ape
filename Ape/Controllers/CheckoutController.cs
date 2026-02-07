@@ -13,6 +13,7 @@ public class CheckoutController(
     IOrderService orderService,
     IStorePaymentService paymentService,
     IDigitalDeliveryService deliveryService,
+    ISubscriptionService subscriptionService,
     ILogger<CheckoutController> logger) : Controller
 {
     private readonly IShoppingCartService _cartService = cartService;
@@ -20,12 +21,14 @@ public class CheckoutController(
     private readonly IOrderService _orderService = orderService;
     private readonly IStorePaymentService _paymentService = paymentService;
     private readonly IDigitalDeliveryService _deliveryService = deliveryService;
+    private readonly ISubscriptionService _subscriptionService = subscriptionService;
     private readonly ILogger<CheckoutController> _logger = logger;
 
     public async Task<IActionResult> Index()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-        var cart = await _cartService.GetCartAsync(userId);
+        var isMember = await _subscriptionService.HasActiveSubscriptionAsync(userId);
+        var cart = await _cartService.GetCartAsync(userId, isMember);
 
         if (!cart.Items.Any())
         {

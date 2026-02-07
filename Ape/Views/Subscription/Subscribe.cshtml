@@ -18,6 +18,14 @@
                         <p class="text-muted">@Model.Product.ShortDescription</p>
                     }
 
+                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <i class="bi bi-exclamation-circle"></i> @Model.ErrorMessage
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
                     @if (!Model.StripeEnabled && !Model.PayPalEnabled)
                     {
                         <div class="alert alert-warning">
