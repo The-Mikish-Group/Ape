@@ -31,16 +31,19 @@
                     <li class="nav-item dropdown">
 
                         <!-- Welcome Dropdown toggle -->
-                        <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
                             🏠 Welcome
                         </a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu ps-2" style="width: 250px;" data-bs-auto-close="outside">
 
                             <!-- Welcome -->
                             <li><a class="dropdown-item" asp-area="" asp-controller="Info" asp-action="Index">🏠 Welcome</a></li>
 
                             <!-- About -->
                             <li><a class="dropdown-item" asp-controller="Info" asp-action="About"><i class="bi bi-info-circle-fill ms-1 me-2" style="color: #0dcaf0;"></i>About</a></li>
+
+                            <!-- Contact Us -->
+                            <li><a class="dropdown-item" asp-controller="Info" asp-action="Contact">📧 Contact Us</a></li>
 
                             <li><hr class="dropdown-divider" /></li>
 
@@ -50,121 +53,120 @@
                             <!-- More Links-->
                             <li><a class="dropdown-item" asp-controller="Links" asp-action="MoreLinks">🔗 More Links</a></li>
 
-                            @* <li><hr class="dropdown-divider" /></li>
+                            <li><hr class="dropdown-divider" /></li>                           
+                            
+                            <!-- Manage Dropdown (Admin and Manager) -->
+                            @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                            {
+                                <!-- Manage Dropdown -->
+                                <li class="nav-item dropdown">
 
-                            <!-- Shop -->
-                            <li><a class="dropdown-item" asp-controller="Store" asp-action="Index">🛍️ Shop</a></li> *@
+                                    <!-- Manage Dropdown toggle -->
+                                    <a class="dropdown-item dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                                        ⚙️ Manage
+                                    </a>
+
+                                    <ul class="dropdown-menu ms-2 ps-2" style="width: 250px;" data-bs-auto-close="outside">
+
+                                        <!-- Store Admin -->
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="StoreAdmin" asp-action="Index">
+                                                🛍️ Manage Store
+                                            </a>
+                                        </li>
+
+                                        <!-- Manage Users -->
+                                        <li><a class="dropdown-item" asp-area="Identity" asp-page="/Users">
+                                                👨‍👩‍👧 Manage Members
+                                            </a>
+                                        </li>
+
+                                        <!-- Active Users -->
+                                        <li><a class="dropdown-item" asp-controller="ActiveUsers" asp-action="Index">
+                                                <span class="icon-pair" aria-hidden="true"><span>👨‍👩‍👧</span><span>⚡</span></span>Active Users
+                                            </a>
+                                        </li>                                        
+
+                                        <li><hr class="dropdown-divider" /></li>
+
+                                        <!-- Email Configuration Dropdown -->
+                                        <li class="nav-item dropdown">
+
+                                            <!-- Email Configuration toggle -->
+                                            <a class="dropdown-item dropdown-toggle" href="#" id="emailConfigDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                                                📧 Email Configuration
+                                            </a>
+
+
+                                            <ul class="dropdown-menu ms-2 ps-2" style="width: 240px;" aria-labelledby="emailConfigDropdown" data-bs-auto-close="outside">
+
+                                                <!-- Contact Form Recipients -->
+                                                <li>
+                                                    <a class="dropdown-item" asp-controller="ContactFormSettings" asp-action="Index">
+                                                        ✉️ Contact Form Recipients
+                                                    </a>
+                                                </li>                                       
+
+                                                <!-- Email Test -->
+                                                <li>
+                                                    <a class="dropdown-item" asp-controller="EmailTest" asp-action="Index">
+                                                        📧 Email Test
+                                                    </a>
+                                                </li>
+
+                                                <!-- Bar -->
+                                                <li><hr class="dropdown-divider mx-2" /></li>
+
+                                                <!-- Email Log -->
+                                                <li>
+                                                    <a class="dropdown-item" asp-controller="EmailLog" asp-action="Index">
+                                                        📋Email Activity Log
+                                                    </a>
+                                                </li>
+
+                                            </ul>
+                                        </li>
+
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <!-- Admin Tools Dropdown -->
+                                            <li class="nav-item dropdown">
+
+                                                <!-- Admin Tools Dropdown toggle -->
+                                                <a class="dropdown-item dropdown-toggle" href="#" id="adminToolsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                                                    🔨 Admin Tools
+                                                </a>
+
+                                                <ul class="dropdown-menu ms-2 ps-2" style="width: 220px;" aria-labelledby="adminToolsDropdown" data-bs-auto-close="outside">
+                                      
+                                                    <!-- System Credentials (Admin Only) -->
+                                                    <li>
+                                                        <a class="dropdown-item" asp-controller="SystemCredentials" asp-action="Index">
+                                                            🔑 System Credentials
+                                                        </a>
+                                                    </li>
+
+                                                    <!-- Manage Roles -->
+                                                    <li>
+                                                        <a class="dropdown-item" asp-area="Identity" asp-page="/RoleManagement">
+                                                            🔧 Manage Roles
+                                                        </a>
+                                                    </li>
+
+                                                </ul>
+
+                                            </li> 
+                                        }
+
+                                    </ul>
+                                </li>
+                            }
 
                         </ul>
 
                     </li>                    
                     
-                    <!-- Manage Dropdown (Admin and Manager) -->
-                    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
-                    {
-                        <!-- Manage Dropdown -->
-                        <li class="nav-item dropdown">
-
-                            <!-- Manage Dropdown toggle -->
-                            <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-                                ⚙️ Manage
-                            </a>
-
-                            <ul class="dropdown-menu ps-2" style="width: 250px;" data-bs-auto-close="outside">
-
-                                <!-- Manage Users -->
-                                <li><a class="dropdown-item" asp-area="Identity" asp-page="/Users">
-                                        👨‍👩‍👧 Manage Users
-                                    </a>
-                                </li>
-
-                                <!-- Active Users -->
-                                <li><a class="dropdown-item" asp-controller="ActiveUsers" asp-action="Index">
-                                        <span class="icon-pair" aria-hidden="true"><span>👨‍👩‍👧</span><span>⚡</span></span>Active Users
-                                    </a>
-                                </li>
-
-                                <!-- Store Admin -->
-                                <li><a class="dropdown-item" asp-controller="StoreAdmin" asp-action="Index">
-                                        🛍️ Store Admin
-                                    </a>
-                                </li>
-
-                                <li><hr class="dropdown-divider" /></li>
-
-                                <!-- Email Configuration Dropdown -->
-                                <li class="nav-item dropdown">
-
-                                    <!-- Email Configuration toggle -->
-                                    <a class="dropdown-item dropdown-toggle" href="#" id="emailConfigDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-                                        📧 Email Configuration
-                                    </a>
-
-
-                                    <ul class="dropdown-menu ms-2 ps-2" style="width: 240px;" aria-labelledby="emailConfigDropdown" data-bs-auto-close="outside">
-
-                                        <!-- Contact Form Recipients -->
-                                        <li>
-                                            <a class="dropdown-item" asp-controller="ContactFormSettings" asp-action="Index">
-                                                ✉️ Contact Form Recipients
-                                            </a>
-                                        </li>                                       
-
-                                        <!-- Email Test -->
-                                        <li>
-                                            <a class="dropdown-item" asp-controller="EmailTest" asp-action="Index">
-                                                📧 Email Test
-                                            </a>
-                                        </li>
-
-                                        <!-- Bar -->
-                                        <li><hr class="dropdown-divider mx-2" /></li>
-
-                                        <!-- Email Log -->
-                                        <li>
-                                            <a class="dropdown-item" asp-controller="EmailLog" asp-action="Index">
-                                                📋Email Activity Log
-                                            </a>
-                                        </li>
-
-                                    </ul>
-                                </li>
-
-                                @if (User.IsInRole("Admin"))
-                                {
-                                    <!-- Admin Tools Dropdown -->
-                                    <li class="nav-item dropdown">
-
-                                        <!-- Admin Tools Dropdown toggle -->
-                                        <a class="dropdown-item dropdown-toggle" href="#" id="adminToolsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-                                            🔨 Admin Tools
-                                        </a>
-
-                                        <ul class="dropdown-menu ms-2 ps-2" style="width: 220px;" aria-labelledby="adminToolsDropdown" data-bs-auto-close="outside">
-                                      
-                                            <!-- System Credentials (Admin Only) -->
-                                            <li>
-                                                <a class="dropdown-item" asp-controller="SystemCredentials" asp-action="Index">
-                                                    🔑 System Credentials
-                                                </a>
-                                            </li>
-
-                                            <!-- Manage Roles -->
-                                            <li>
-                                                <a class="dropdown-item" asp-area="Identity" asp-page="/RoleManagement">
-                                                    🔧 Manage Roles
-                                                </a>
-                                            </li>
-
-                                        </ul>
-
-                                    </li> 
-                                }
-
-                            </ul>
-                        </li>
-                    }
-
+                   
 
                     <!-- Members Dropdown -->
                     @if (User.IsInRole("Member"))
@@ -215,11 +217,6 @@
                         </li>
                     }
 
-
-                    <!-- Contact -->
-                    <li class="nav-item me-2">
-                        <a class="nav-link text-light" asp-controller="Info" asp-action="Contact">📧 Contact</a>
-                    </li>
 
                     <!-- Shop -->
                     <li class="nav-item me-2">

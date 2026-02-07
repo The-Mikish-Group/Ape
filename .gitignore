@@ -30,6 +30,11 @@ Desktop.ini
 *.log
 logs/
 
+## Uploaded store content
+Ape/ProtectedFiles/store/
+Ape/wwwroot/store/products/
+Ape/wwwroot/store/categories/
+
 ## Claude Code
 .claude/
 CLAUDE.md

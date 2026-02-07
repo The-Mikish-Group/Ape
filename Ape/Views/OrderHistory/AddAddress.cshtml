@@ -1,28 +1,56 @@
 @model Ape.Models.ViewModels.CreateShippingAddressModel
 
-<div class="container mt-3">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-action="Addresses">Addresses</a></li>
-            <li class="breadcrumb-item active">Add Address</li>
-        </ol>
-    </nav>
+<div class="container my-md-3">
 
-    <h2><i class="bi bi-plus-lg"></i> Add Address</h2>
+   <div class="row">
+        <div class="col-12 col-md-8 mx-auto p-0 text-center">
 
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-    }
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Addresses">Addresses</a></li>
+                    <li class="breadcrumb-item active">Add Address</li>
+                </ol>
+            </nav>
 
-    <div class="row">
-        <div class="col-md-8">
-            <form asp-action="AddAddress" method="post">
-                @Html.AntiForgeryToken()
-                <partial name="_AddressForm" model="new { FullName = Model.FullName, AddressLine1 = Model.AddressLine1, AddressLine2 = Model.AddressLine2, City = Model.City, State = Model.State, ZipCode = Model.ZipCode, Country = Model.Country, Phone = Model.Phone, IsDefault = Model.IsDefault }" />
-                <button type="submit" class="btn btn-success"><i class="bi bi-check-lg"></i> Save Address</button>
-                <a asp-action="Addresses" class="btn btn-outline-secondary ms-2">Cancel</a>
-            </form>
+                
+            <!-- Card Header -->
+            <div class="card-header rounded-top bg-card-header p-2">
+
+                <!-- Add Address -->
+                <h2 class="text-light"><i class="bi bi-plus-lg"></i> Add Address</h2>
+
+            </div>
+                
+            <!-- Card Body -->
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+            }
+
+            <div class="card-footer rounded-bottom bg-card-body text-start p-2">
+                    
+                <form asp-action="AddAddress" method="post">
+                    @Html.AntiForgeryToken()
+                    
+                    <!-- Partial Form -->
+                    <partial name="_AddressForm" model="new { FullName = Model.FullName, AddressLine1 = Model.AddressLine1, AddressLine2 = Model.AddressLine2, City = Model.City, State = Model.State, ZipCode = Model.ZipCode, Country = Model.Country, Phone = Model.Phone, IsDefault = Model.IsDefault }" />
+                     
+                    <!-- Buttons -->
+                    <div class="text-end">
+
+                        <!-- Cancel -->
+                        <a asp-action="Addresses" class="btn btn-secondary ms-2">Cancel</a>
+
+                        <!-- Save -->
+                        <button type="submit" class="btn btn-success"><i class="bi bi-check-lg"></i> Save Address</button>
+
+                    </div>
+                   
+                </form>
+              
+            </div>
+
         </div>
     </div>
 </div>

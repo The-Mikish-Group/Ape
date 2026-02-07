@@ -109,3 +109,16 @@ function updateCartBadge(count) {
         badge.style.display = count > 0 ? 'flex' : 'none';
     }
 }
+
+/**
+ * Load cart count on page load
+ */
+document.addEventListener('DOMContentLoaded', function () {
+    const badge = document.getElementById('cartBadge');
+    if (!badge) return;
+
+    fetch('/Cart/GetCartCount')
+        .then(r => r.json())
+        .then(data => updateCartBadge(data.count))
+        .catch(() => {});
+});
