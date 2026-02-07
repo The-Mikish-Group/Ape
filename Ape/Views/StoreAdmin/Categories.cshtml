@@ -20,23 +20,26 @@
             <table class="table table-hover mb-0">
                 <thead class="table-dark">
                     <tr>
+                        <th style="width:40px;"></th>
                         <th style="width:60px;">Image</th>
                         <th>Category Name</th>
                         <th>Slug</th>
                         <th>Products</th>
-                        <th>Sort</th>
                         <th>Status</th>
                         <th style="width:220px;">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="categoryTableBody">
                     @if (!Model.Any())
                     {
                         <tr><td colspan="7" class="text-center py-4 text-muted">No categories yet. Create one to get started.</td></tr>
                     }
                     @foreach (var cat in Model)
                     {
-                        <tr class="@(!cat.IsActive ? "table-secondary" : "")">
+                        <tr class="@(!cat.IsActive ? "table-secondary" : "")" data-category-id="@cat.CategoryId">
+                            <td class="align-middle">
+                                <span class="category-drag-handle" title="Drag to reorder">&#9776;</span>
+                            </td>
                             <td>
                                 @if (cat.ImageUrl != null)
                                 {
@@ -55,7 +58,6 @@
                             </td>
                             <td><code>@cat.Slug</code></td>
                             <td>@cat.ProductCount</td>
-                            <td>@cat.SortOrder</td>
                             <td>
                                 @if (cat.IsActive) { <span class="badge bg-success">Active</span> }
                                 else { <span class="badge bg-secondary">Inactive</span> }
@@ -174,3 +176,74 @@
         </div>
     </div>
 </div>
+
+<style>
+    .category-drag-handle {
+        cursor: grab;
+        color: #999;
+        font-size: 1.1rem;
+        padding: 0 4px;
+        user-select: none;
+    }
+    .category-drag-handle:hover {
+        color: #666;
+    }
+    .category-drag-handle:active {
+        cursor: grabbing;
+    }
+    .sortable-ghost {
+        opacity: 0.4;
+        background-color: #cfe2ff !important;
+    }
+    .sortable-chosen {
+        background-color: #e9ecef !important;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tbody = document.getElementById('categoryTableBody');
+        if (!tbody || tbody.rows.length === 0) return;
+
+        var csrfToken = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+        new Sortable(tbody, {
+            animation: 150,
+            handle: '.category-drag-handle',
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            onEnd: function () {
+                var rows = tbody.querySelectorAll('tr[data-category-id]');
+                var categoryIds = [];
+                var sortOrders = [];
+
+                rows.forEach(function (row, index) {
+                    categoryIds.push(parseInt(row.getAttribute('data-category-id')));
+                    sortOrders.push(index);
+                });
+
+                if (categoryIds.length === 0) return;
+
+                var formData = new FormData();
+                categoryIds.forEach(function (id) { formData.append('categoryIds', id); });
+                sortOrders.forEach(function (order) { formData.append('sortOrders', order); });
+                formData.append('__RequestVerificationToken', csrfToken);
+
+                fetch('@Url.Action("UpdateCategorySortOrder", "StoreAdmin")', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (!data.success) {
+                        console.error('Failed to save category order:', data.message);
+                    }
+                })
+                .catch(function (err) {
+                    console.error('Error saving category order:', err);
+                });
+            }
+        });
+    });
+</script>

@@ -315,6 +315,14 @@ public class StoreAdminController(
         return RedirectToAction(nameof(Categories));
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateCategorySortOrder(int[] categoryIds, int[] sortOrders)
+    {
+        var result = await _catalogService.UpdateCategorySortOrderAsync(categoryIds, sortOrders);
+        return Json(new { success = result.Success, message = result.Message });
+    }
+
     // ============================================================
     // Orders
     // ============================================================

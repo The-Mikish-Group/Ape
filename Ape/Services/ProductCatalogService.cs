@@ -246,6 +246,22 @@ public partial class ProductCatalogService(
         return StoreOperationResult.Succeeded(categoryId, "Category image uploaded.");
     }
 
+    public async Task<StoreOperationResult> UpdateCategorySortOrderAsync(int[] categoryIds, int[] sortOrders)
+    {
+        if (categoryIds.Length != sortOrders.Length)
+            return StoreOperationResult.Failed("Invalid sort order data.");
+
+        for (int i = 0; i < categoryIds.Length; i++)
+        {
+            var category = await _context.StoreCategories.FindAsync(categoryIds[i]);
+            if (category != null)
+                category.SortOrder = sortOrders[i];
+        }
+
+        await _context.SaveChangesAsync();
+        return StoreOperationResult.Succeeded(0, "Category order updated.");
+    }
+
     // ============================================================
     // Products
     // ============================================================

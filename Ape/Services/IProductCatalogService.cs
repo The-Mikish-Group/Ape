@@ -15,6 +15,7 @@ public interface IProductCatalogService
     Task<StoreOperationResult> UpdateCategoryAsync(EditStoreCategoryModel model);
     Task<StoreOperationResult> DeleteCategoryAsync(int categoryId);
     Task<StoreOperationResult> UploadCategoryImageAsync(int categoryId, IFormFile file);
+    Task<StoreOperationResult> UpdateCategorySortOrderAsync(int[] categoryIds, int[] sortOrders);
 
     // Products
     Task<List<ProductViewModel>> GetProductsAsync(int? categoryId = null, ProductType? productType = null,
