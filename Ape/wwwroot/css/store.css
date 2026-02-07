@@ -45,20 +45,6 @@
     line-height: 1.7;
 }
 
-/* Cart Badge */
-.store-cart-badge {
-    position: absolute;
-    top: -5px;
-    right: -8px;
-    font-size: 0.65rem;
-    min-width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-}
-
 /* Cart Quantity Input */
 .store-cart-qty {
     width: 60px;
