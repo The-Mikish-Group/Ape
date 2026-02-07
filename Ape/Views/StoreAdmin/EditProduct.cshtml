@@ -28,7 +28,7 @@
         <div class="alert alert-danger alert-dismissible fade show">@TempData["ErrorMessage"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     }
 
-    <form asp-action="EditProduct" method="post">
+    <form asp-action="EditProduct" method="post" id="editProductForm">
         @Html.AntiForgeryToken()
         <input type="hidden" name="ProductID" value="@Model.ProductID" />
         <input type="hidden" name="ProductType" value="@((int)Model.ProductType)" />
@@ -63,7 +63,7 @@
 
                 </div>
 
-                <!-- Images -->
+                <!-- Images (uses JS submissions to avoid nested forms) -->
                 <div class="card mb-3">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <strong>Images</strong>
@@ -84,33 +84,28 @@
                                                 }
                                                 else
                                                 {
-                                                    <form asp-action="SetPrimaryImage" method="post" class="d-inline">
-                                                        @Html.AntiForgeryToken()
-                                                        <input type="hidden" name="productId" value="@Model.ProductID" />
-                                                        <input type="hidden" name="imageId" value="@img.ImageId" />
-                                                        <button type="submit" class="btn btn-sm btn-outline-success mb-1" title="Set Primary"><i class="bi bi-star"></i></button>
-                                                    </form>
+                                                    <button type="button" class="btn btn-sm btn-outline-success mb-1" title="Set Primary"
+                                                            onclick="postStoreAction('@Url.Action("SetPrimaryImage", "StoreAdmin")', { productId: @Model.ProductID, imageId: @img.ImageId })">
+                                                        <i class="bi bi-star"></i>
+                                                    </button>
                                                 }
-                                                <form asp-action="DeleteProductImage" method="post" class="d-inline" onsubmit="return confirm('Delete this image?');">
-                                                    @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="productId" value="@Model.ProductID" />
-                                                    <input type="hidden" name="imageId" value="@img.ImageId" />
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger mb-1" title="Delete"><i class="bi bi-trash"></i></button>
-                                                </form>
+                                                <button type="button" class="btn btn-sm btn-outline-danger mb-1" title="Delete"
+                                                        onclick="if(confirm('Delete this image?')) postStoreAction('@Url.Action("DeleteProductImage", "StoreAdmin")', { productId: @Model.ProductID, imageId: @img.ImageId })">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
                                 }
                             </div>
                         }
-                        <form asp-action="UploadProductImages" method="post" enctype="multipart/form-data">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="productId" value="@Model.ProductID" />
-                            <div class="input-group">
-                                <input type="file" class="form-control" name="images" multiple accept="image/*" />
-                                <button type="submit" class="btn btn-outline-primary"><i class="bi bi-upload"></i> Upload</button>
-                            </div>
-                        </form>
+                        <div class="input-group">
+                            <input type="file" class="form-control" id="productImagesInput" multiple accept="image/*" />
+                            <button type="button" class="btn btn-outline-primary"
+                                    onclick="uploadStoreFile('@Url.Action("UploadProductImages", "StoreAdmin")', document.getElementById('productImagesInput'), 'images', { productId: @Model.ProductID })">
+                                <i class="bi bi-upload"></i> Upload
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -132,26 +127,23 @@
                                                 <td>@file.FormattedFileSize</td>
                                                 <td>@file.UploadedDate.ToString("MMM dd, yyyy")</td>
                                                 <td>
-                                                    <form asp-action="DeleteDigitalFile" method="post" class="d-inline" onsubmit="return confirm('Delete this file?');">
-                                                        @Html.AntiForgeryToken()
-                                                        <input type="hidden" name="productId" value="@Model.ProductID" />
-                                                        <input type="hidden" name="fileId" value="@file.FileId" />
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                                                    </form>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger" title="Delete"
+                                                            onclick="if(confirm('Delete this file?')) postStoreAction('@Url.Action("DeleteDigitalFile", "StoreAdmin")', { productId: @Model.ProductID, fileId: @file.FileId })">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
                                                 </td>
                                             </tr>
                                         }
                                     </tbody>
                                 </table>
                             }
-                            <form asp-action="UploadDigitalFile" method="post" enctype="multipart/form-data">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="productId" value="@Model.ProductID" />
-                                <div class="input-group">
-                                    <input type="file" class="form-control" name="digitalFile" />
-                                    <button type="submit" class="btn btn-outline-primary"><i class="bi bi-upload"></i> Upload</button>
-                                </div>
-                            </form>
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="digitalFileInput" />
+                                <button type="button" class="btn btn-outline-primary"
+                                        onclick="uploadStoreFile('@Url.Action("UploadDigitalFile", "StoreAdmin")', document.getElementById('digitalFileInput'), 'digitalFile', { productId: @Model.ProductID })">
+                                    <i class="bi bi-upload"></i> Upload
+                                </button>
+                            </div>
                         </div>
                     </div>
                 }
@@ -304,3 +296,62 @@
         </div>
     </form>
 </div>
+
+<script>
+    // Submit a POST action by creating a form outside the main EditProduct form
+    function postStoreAction(url, params) {
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = url;
+        form.style.display = 'none';
+        var token = document.querySelector('#editProductForm input[name="__RequestVerificationToken"]');
+        if (token) {
+            var inp = document.createElement('input');
+            inp.type = 'hidden';
+            inp.name = '__RequestVerificationToken';
+            inp.value = token.value;
+            form.appendChild(inp);
+        }
+        for (var key in params) {
+            var inp = document.createElement('input');
+            inp.type = 'hidden';
+            inp.name = key;
+            inp.value = params[key];
+            form.appendChild(inp);
+        }
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    // Submit a file upload by creating a multipart form outside the main EditProduct form
+    function uploadStoreFile(url, fileInput, fieldName, params) {
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alert('Please select a file first.');
+            return;
+        }
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = url;
+        form.enctype = 'multipart/form-data';
+        form.style.display = 'none';
+        var token = document.querySelector('#editProductForm input[name="__RequestVerificationToken"]');
+        if (token) {
+            var inp = document.createElement('input');
+            inp.type = 'hidden';
+            inp.name = '__RequestVerificationToken';
+            inp.value = token.value;
+            form.appendChild(inp);
+        }
+        for (var key in params) {
+            var inp = document.createElement('input');
+            inp.type = 'hidden';
+            inp.name = key;
+            inp.value = params[key];
+            form.appendChild(inp);
+        }
+        fileInput.name = fieldName;
+        form.appendChild(fileInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
