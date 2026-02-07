@@ -227,9 +227,8 @@
                     @if (SignInManager.IsSignedIn(User))
                     {
                         <li class="nav-item me-2">
-                            <a class="nav-link text-light position-relative" asp-controller="Cart" asp-action="Index">
-                                🛒
-                                <span id="cartBadge" class="store-cart-badge badge rounded-pill bg-danger" style="display:none;">0</span>
+                            <a class="nav-link text-light" asp-controller="Cart" asp-action="Index">
+                                🛒 <span id="cartBadge" class="badge rounded-pill bg-success" style="display:none;">0</span>
                             </a>
                         </li>
                     }

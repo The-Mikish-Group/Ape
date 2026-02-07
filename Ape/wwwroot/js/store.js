@@ -26,15 +26,15 @@ function addToCart(productId) {
         if (data.success) {
             if (msgDiv) {
                 msgDiv.style.display = 'block';
-                msgDiv.className = 'mt-2 alert alert-success';
-                msgDiv.innerHTML = '<i class="bi bi-check-circle"></i> ' + data.message;
+                msgDiv.className = 'mt-2 alert alert-success alert-dismissible fade show';
+                msgDiv.innerHTML = '<i class="bi bi-check-circle"></i> ' + data.message + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
             }
             updateCartBadge(data.cartCount);
         } else {
             if (msgDiv) {
                 msgDiv.style.display = 'block';
-                msgDiv.className = 'mt-2 alert alert-danger';
-                msgDiv.innerHTML = '<i class="bi bi-exclamation-circle"></i> ' + data.message;
+                msgDiv.className = 'mt-2 alert alert-warning alert-dismissible fade show';
+                msgDiv.innerHTML = '<i class="bi bi-exclamation-circle"></i> ' + data.message + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
             }
         }
     })
@@ -43,8 +43,8 @@ function addToCart(productId) {
         const msgDiv = document.getElementById('cartMessage');
         if (msgDiv) {
             msgDiv.style.display = 'block';
-            msgDiv.className = 'mt-2 alert alert-warning';
-            msgDiv.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Please <a href="/Identity/Account/Login">log in</a> to add items to your cart.';
+            msgDiv.className = 'mt-2 alert alert-warning alert-dismissible fade show';
+            msgDiv.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Please <a href="/Identity/Account/Login">log in</a> to add items to your cart.<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
         }
     });
 }
@@ -106,7 +106,7 @@ function updateCartBadge(count) {
     const badge = document.getElementById('cartBadge');
     if (badge) {
         badge.textContent = count;
-        badge.style.display = count > 0 ? 'flex' : 'none';
+        badge.style.display = count > 0 ? 'inline' : 'none';
     }
 }
 
