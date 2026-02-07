@@ -1,9 +1,9 @@
-@model Ape.Models.ViewModels.StoreHomeViewModel
+﻿@model Ape.Models.ViewModels.StoreHomeViewModel
 
 <div class="container mt-3">
     <!-- Hero Banner -->
-    <div class="bg-primary text-white rounded-3 p-5 mb-4 text-center">
-        <h1 class="display-5 fw-bold"><i class="bi bi-shop"></i> @Model.StoreName</h1>
+    <div class="bg-card-features text-white rounded-3 p-5 mb-4 text-center">
+        <h1 class="display-5 fw-bold">🛍️ @Model.StoreName</h1>
         <p class="lead mb-3">Browse our collection of products, digital downloads, and membership plans.</p>
         <a asp-action="Browse" class="btn btn-light btn-lg"><i class="bi bi-grid"></i> Browse All Products</a>
     </div>

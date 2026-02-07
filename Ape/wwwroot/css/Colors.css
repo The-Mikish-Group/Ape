@@ -96,7 +96,7 @@ body {
     }
 
 /*  btn-warning Defaults */
-.btn-warning {
+/*.btn-warning {
     color: #705103 !important;
     background-color: lightpink !important;
     border-color: black !important;
@@ -107,7 +107,7 @@ body {
         color: #705103 !important;
         background-color: #fa3f3f !important;
         border-color: black !important;
-    }
+    }*/
 
 /* #region Paginagion */
 .pagination .page-link {

@@ -29,7 +29,7 @@
 
                         <!-- Email -->
                         <div class="form-floating mb-3">
-                            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="" />
                             <label asp-for="Input.Email" class="form-label">Email</label>
                             <span asp-validation-for="Input.Email" class="text-danger"></span>
                         </div>
@@ -38,7 +38,7 @@
                         <div class="mb-3">
                             <div class="input-group">
                                 <input asp-for="Input.Password" id="password" type="password" class="form-control" autocomplete="off" aria-required="true" placeholder="password" />
-                                <button type="button" id="togglePassword" class="btn btn-sm btn-outline-secondary bg-red-lighter">
+                                <button type="button" id="togglePassword" class="btn btn-sm bg-red-lighter">
                                     <span id="passwordIcon" style="font-size: 1.4rem;">🙈</span>
                                 </button>
                             </div>
@@ -55,7 +55,7 @@
 
                         <!-- Forgot your Password -->
                         <div class="mb-4 text-center">
-                            <a class="btn btn-warning rounded-3 px-4 shadow" asp-page="./ForgotPassword" asp-route-returnUrl="@Model.ReturnUrl">
+                            <a class="btn btn-info rounded-3 px-4 shadow" asp-page="./ForgotPassword" asp-route-returnUrl="@Model.ReturnUrl">
                                 🔑 Forgot your password?
                             </a>
                         </div>
@@ -80,6 +80,12 @@
         </div>
     </div>
 </div>
+
+<style>
+    .bg-red-lighter {
+        background-color: #ecb3b8;
+    }
+</style>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
