@@ -11,11 +11,13 @@ public class OrderHistoryController(
     IShippingAddressService addressService,
     IOrderService orderService,
     IDigitalDeliveryService deliveryService,
+    ISubscriptionService subscriptionService,
     ILogger<OrderHistoryController> logger) : Controller
 {
     private readonly IShippingAddressService _addressService = addressService;
     private readonly IOrderService _orderService = orderService;
     private readonly IDigitalDeliveryService _deliveryService = deliveryService;
+    private readonly ISubscriptionService _subscriptionService = subscriptionService;
     private readonly ILogger<OrderHistoryController> _logger = logger;
 
     // ============================================================
@@ -26,9 +28,11 @@ public class OrderHistoryController(
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
         var orders = await _orderService.GetUserOrdersAsync(userId, page);
+        var subscription = await _subscriptionService.GetSubscriptionDetailAsync(userId);
 
         ViewData["Title"] = "My Orders";
         ViewData["CurrentPage"] = page;
+        ViewData["Subscription"] = subscription;
         return View(orders);
     }
 

@@ -1,4 +1,7 @@
 @model List<Ape.Models.ViewModels.OrderViewModel>
+@{
+    var subscription = ViewData["Subscription"] as Ape.Models.ViewModels.SubscriptionDetailViewModel;
+}
 
 <div class="container mt-3">
     <h2><i class="bi bi-receipt"></i> My Orders</h2>
@@ -6,7 +9,28 @@
     <div class="mb-3">
         <a asp-action="Addresses" class="btn btn-outline-secondary"><i class="bi bi-geo-alt"></i> Manage Addresses</a>
         <a asp-action="Downloads" class="btn btn-outline-info"><i class="bi bi-download"></i> My Downloads</a>
+        <a asp-controller="Subscription" asp-action="Manage" class="btn btn-outline-success"><i class="bi bi-arrow-repeat"></i> My Subscription</a>
     </div>
+
+    @if (subscription != null)
+    {
+        <div class="card mb-3 @(subscription.Status == Ape.Models.SubscriptionStatus.Active ? "border-success" : "border-secondary")">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <strong><i class="bi bi-arrow-repeat"></i> @subscription.ProductName</strong>
+                    <span class="badge @subscription.StatusBadgeClass ms-2">@subscription.Status</span>
+                    <div class="small text-muted mt-1">
+                        @subscription.BillingDisplay via @subscription.PaymentGateway
+                        @if (subscription.CurrentPeriodEnd.HasValue)
+                        {
+                            <text> &mdash; Renews @subscription.CurrentPeriodEnd.Value.ToString("MMM dd, yyyy")</text>
+                        }
+                    </div>
+                </div>
+                <a asp-controller="Subscription" asp-action="Manage" class="btn btn-sm btn-outline-success">Manage</a>
+            </div>
+        </div>
+    }
 
     @if (!Model.Any())
     {
