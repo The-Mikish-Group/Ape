@@ -1,9 +1,13 @@
 @model List<Ape.Models.ViewModels.SubscriptionListViewModel>
 
 <div class="container-fluid mt-3">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2><i class="bi bi-arrow-repeat"></i> Manage Subscriptions</h2>
-        <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Dashboard</a>
+
+    <!-- Manage Subscriptions Heading -->
+    <h2 class="text-center"><i class="bi bi-arrow-repeat"></i> Manage Subscriptions</h2>
+
+    <!-- Back to Dashboard button -->
+    <div class="text-center mb-3">        
+        <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Dashboard</a>
     </div>
 
     <!-- Filters -->
@@ -40,7 +44,7 @@
     }
     else
     {
-        <p class="text-muted"><em>Click any row to view subscription details</em></p>
+        <p class="text-muted m-0"><em>Click any row to view subscription details</em></p>
 
         <div class="table-responsive">
             <table class="table table-hover">
@@ -58,7 +62,7 @@
                 <tbody>
                     @foreach (var sub in Model)
                     {
-                        <tr class="sub-row" data-sub-id="@sub.SubscriptionId">
+                        <tr class="clickable-row" data-href="@Url.Action("SubscriptionDetail", new { id = sub.SubscriptionId })">
                             <td><small>@sub.UserEmail</small></td>
                             <td>@sub.ProductName</td>
                             <td>@sub.Amount.ToString("C")/@(sub.BillingInterval ?? "month")</td>
@@ -91,7 +95,7 @@
 @section Styles {
     <link rel="stylesheet" href="~/css/store.css" asp-append-version="true" />
     <style>
-        tbody tr.sub-row:hover {
+        tbody tr.clickable-row:hover {
             cursor: pointer;
             border: 2px solid green;
         }
@@ -101,12 +105,10 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('tr.sub-row').forEach(function (row) {
+            document.querySelectorAll('tr.clickable-row').forEach(function (row) {
                 row.addEventListener('click', function () {
-                    const id = this.dataset.subId;
-                    if (id) {
-                        window.location.href = '@Url.Action("SubscriptionDetail")/' + id;
-                    }
+                    var href = this.dataset.href;
+                    if (href) window.location.href = href;
                 });
             });
         });
