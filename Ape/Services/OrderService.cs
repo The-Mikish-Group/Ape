@@ -198,6 +198,7 @@ public class OrderService(
     {
         return await _context.Orders
             .AsNoTracking()
+            .Include(o => o.Items)
             .Where(o => o.UserId == userId)
             .OrderByDescending(o => o.OrderDate)
             .Skip((page - 1) * pageSize)
@@ -208,7 +209,7 @@ public class OrderService(
 
     public async Task<List<OrderViewModel>> GetAllOrdersAsync(OrderStatus? status = null, string? search = null, int page = 1, int pageSize = 25)
     {
-        var query = _context.Orders.AsNoTracking().AsQueryable();
+        var query = _context.Orders.AsNoTracking().Include(o => o.Items).AsQueryable();
 
         if (status.HasValue)
             query = query.Where(o => o.Status == status);
