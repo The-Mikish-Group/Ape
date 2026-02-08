@@ -1,9 +1,17 @@
 @model Ape.Models.ViewModels.OrderDetailViewModel
 
 <div class="container mt-3">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2><i class="bi bi-receipt"></i> Order @Model.OrderNumber</h2>
-        <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to Orders</a>
+    <!-- Print-only receipt header -->
+    <div class="print-receipt-header">
+        <h2>Receipt</h2>
+        <p>Order @Model.OrderNumber — @Model.OrderDate.ToString("MMMM dd, yyyy")</p>
+    </div>
+    <h2><i class="bi bi-receipt"></i> Order @Model.OrderNumber</h2>
+    <div class="justify-content-between text-center mb-3">        
+        <div class="no-print">
+            <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back to Orders</a>
+            <button type="button" class="btn btn-success me-2" onclick="window.print()"><i class="bi bi-printer"></i> Print Receipt</button>            
+        </div>
     </div>
 
     <!-- Order Status -->
@@ -75,7 +83,7 @@
                                 </div>
                                 @if (dl.CanDownload)
                                 {
-                                    <a href="/download/@dl.DownloadToken" class="btn btn-info text-white btn-sm">
+                                    <a href="/download/@dl.DownloadToken" class="btn btn-info text-white btn-sm no-print">
                                         <i class="bi bi-download"></i> Download
                                     </a>
                                 }
