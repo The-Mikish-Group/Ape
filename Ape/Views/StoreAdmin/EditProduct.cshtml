@@ -155,11 +155,11 @@
                     <div class="card-header"><strong>Status</strong></div>
                     <div class="card-body">
                         <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" name="IsActive" value="true" id="IsActive" checked="@Model.IsActive" />
+                            <input class="form-check-input" type="checkbox" name="IsActive" value="true" id="IsActive" checked="@(Model.IsActive ? "checked" : null)" />
                             <label class="form-check-label" for="IsActive">Active (visible in store)</label>
                         </div>
                         <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" name="IsFeatured" value="true" id="IsFeatured" checked="@Model.IsFeatured" />
+                            <input class="form-check-input" type="checkbox" name="IsFeatured" value="true" id="IsFeatured" checked="@(Model.IsFeatured ? "checked" : null)" />
                             <label class="form-check-label" for="IsFeatured">Featured</label>
                         </div>
                         <div class="mb-2">
@@ -212,7 +212,7 @@
                             <option value="">No Category</option>
                             @foreach (var cat in categories)
                             {
-                                <option value="@cat.CategoryId" selected="@(Model.CategoryID == cat.CategoryId)">@cat.Name</option>
+                                <option value="@cat.CategoryId" selected="@(Model.CategoryID == cat.CategoryId ? "selected" : null)">@cat.Name</option>
                             }
                         </select>
                     </div>
@@ -225,7 +225,7 @@
                         <div class="card-header"><strong>Inventory</strong></div>
                         <div class="card-body">
                             <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" name="TrackInventory" value="true" id="TrackInventory" checked="@Model.TrackInventory" />
+                                <input class="form-check-input" type="checkbox" name="TrackInventory" value="true" id="TrackInventory" checked="@(Model.TrackInventory ? "checked" : null)" />
                                 <label class="form-check-label" for="TrackInventory">Track inventory</label>
                             </div>
                             <div class="mb-3">
@@ -267,9 +267,9 @@
                             <div class="mb-3">
                                 <label class="form-label">Billing Interval</label>
                                 <select class="form-select" name="BillingInterval">
-                                    <option value="month" selected="@(Model.BillingInterval == "month")">Monthly</option>
-                                    <option value="year" selected="@(Model.BillingInterval == "year")">Yearly</option>
-                                    <option value="week" selected="@(Model.BillingInterval == "week")">Weekly</option>
+                                    <option value="month" selected="@(Model.BillingInterval == "month" ? "selected" : null)">Monthly</option>
+                                    <option value="year" selected="@(Model.BillingInterval == "year" ? "selected" : null)">Yearly</option>
+                                    <option value="week" selected="@(Model.BillingInterval == "week" ? "selected" : null)">Weekly</option>
                                 </select>
                             </div>
                             <div class="mb-3">

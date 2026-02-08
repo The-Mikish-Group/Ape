@@ -42,7 +42,7 @@
                                     <select name="status" class="form-select form-select-sm">
                                         @foreach (var status in Enum.GetValues<Ape.Models.OrderStatus>())
                                         {
-                                            <option value="@((int)status)" selected="@(Model.Status == status)">@status</option>
+                                            <option value="@((int)status)" selected="@(Model.Status == status ? "selected" : null)">@status</option>
                                         }
                                     </select>
                                     <button type="submit" class="btn btn-primary btn-sm">Update Status</button>

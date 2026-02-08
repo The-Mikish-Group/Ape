@@ -50,10 +50,10 @@
                     </form>
                     <!-- Sort -->
                     <select class="form-select form-select-sm" style="width:150px;" onchange="location.href=this.value">
-                        <option value="@Url.Action("Browse", new { category = Model.CurrentCategorySlug, type = Model.FilterProductType, sort = "name", search = Model.SearchQuery })" selected="@(Model.SortBy == "name")">Name</option>
-                        <option value="@Url.Action("Browse", new { category = Model.CurrentCategorySlug, type = Model.FilterProductType, sort = "price_asc", search = Model.SearchQuery })" selected="@(Model.SortBy == "price_asc")">Price: Low to High</option>
-                        <option value="@Url.Action("Browse", new { category = Model.CurrentCategorySlug, type = Model.FilterProductType, sort = "price_desc", search = Model.SearchQuery })" selected="@(Model.SortBy == "price_desc")">Price: High to Low</option>
-                        <option value="@Url.Action("Browse", new { category = Model.CurrentCategorySlug, type = Model.FilterProductType, sort = "newest", search = Model.SearchQuery })" selected="@(Model.SortBy == "newest")">Newest</option>
+                        <option value="@Url.Action("Browse", new { category = Model.CurrentCategorySlug, type = Model.FilterProductType, sort = "name", search = Model.SearchQuery })" selected="@(Model.SortBy == "name" ? "selected" : null)">Name</option>
+                        <option value="@Url.Action("Browse", new { category = Model.CurrentCategorySlug, type = Model.FilterProductType, sort = "price_asc", search = Model.SearchQuery })" selected="@(Model.SortBy == "price_asc" ? "selected" : null)">Price: Low to High</option>
+                        <option value="@Url.Action("Browse", new { category = Model.CurrentCategorySlug, type = Model.FilterProductType, sort = "price_desc", search = Model.SearchQuery })" selected="@(Model.SortBy == "price_desc" ? "selected" : null)">Price: High to Low</option>
+                        <option value="@Url.Action("Browse", new { category = Model.CurrentCategorySlug, type = Model.FilterProductType, sort = "newest", search = Model.SearchQuery })" selected="@(Model.SortBy == "newest" ? "selected" : null)">Newest</option>
                     </select>
                 </div>
             </div>

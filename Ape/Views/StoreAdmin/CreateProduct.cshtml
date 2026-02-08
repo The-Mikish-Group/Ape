@@ -26,13 +26,13 @@
             <div class="card-header"><strong>Product Type</strong></div>
             <div class="card-body">
                 <div class="btn-group" role="group">
-                    <input type="radio" class="btn-check" name="ProductType" id="typePhysical" value="0" checked="@(Model.ProductType == Ape.Models.ProductType.Physical)" onchange="toggleProductType()" />
+                    <input type="radio" class="btn-check" name="ProductType" id="typePhysical" value="0" checked="@(Model.ProductType == Ape.Models.ProductType.Physical ? "checked" : null)" onchange="toggleProductType()" />
                     <label class="btn btn-outline-primary" for="typePhysical"><i class="bi bi-box-seam"></i> Physical</label>
 
-                    <input type="radio" class="btn-check" name="ProductType" id="typeDigital" value="1" checked="@(Model.ProductType == Ape.Models.ProductType.Digital)" onchange="toggleProductType()" />
+                    <input type="radio" class="btn-check" name="ProductType" id="typeDigital" value="1" checked="@(Model.ProductType == Ape.Models.ProductType.Digital ? "checked" : null)" onchange="toggleProductType()" />
                     <label class="btn btn-outline-info" for="typeDigital"><i class="bi bi-file-earmark-arrow-down"></i> Digital</label>
 
-                    <input type="radio" class="btn-check" name="ProductType" id="typeSubscription" value="2" checked="@(Model.ProductType == Ape.Models.ProductType.Subscription)" onchange="toggleProductType()" />
+                    <input type="radio" class="btn-check" name="ProductType" id="typeSubscription" value="2" checked="@(Model.ProductType == Ape.Models.ProductType.Subscription ? "checked" : null)" onchange="toggleProductType()" />
                     <label class="btn btn-outline-success" for="typeSubscription"><i class="bi bi-arrow-repeat"></i> Subscription</label>
                 </div>
             </div>
@@ -125,7 +125,7 @@
                             <option value="">No Category</option>
                             @foreach (var cat in categories)
                             {
-                                <option value="@cat.CategoryId" selected="@(Model.CategoryID == cat.CategoryId)">@cat.Name</option>
+                                <option value="@cat.CategoryId" selected="@(Model.CategoryID == cat.CategoryId ? "selected" : null)">@cat.Name</option>
                             }
                         </select>
                     </div>
@@ -136,7 +136,7 @@
                     <div class="card-header"><strong>Inventory</strong></div>
                     <div class="card-body">
                         <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" name="TrackInventory" value="true" id="TrackInventory" checked="@Model.TrackInventory" />
+                            <input class="form-check-input" type="checkbox" name="TrackInventory" value="true" id="TrackInventory" checked="@(Model.TrackInventory ? "checked" : null)" />
                             <label class="form-check-label" for="TrackInventory">Track inventory</label>
                         </div>
                         <div class="mb-3">
