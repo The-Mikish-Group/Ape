@@ -29,7 +29,7 @@ This document provides the complete database schema for the Ape Framework. The S
 ```sql
 -- =====================================================
 -- APE FRAMEWORK DATABASE SCHEMA
--- Version: 1.0.0
+-- Version: 2.0.0
 -- Compatible with: SQL Server 2019+, Azure SQL
 -- =====================================================
 
@@ -393,7 +393,21 @@ CREATE TABLE [dbo].[__EFMigrationsHistory] (
 GO
 
 -- =====================================================
--- SECTION 3: SEED DATA
+-- SECTION 3: STORE TABLES
+-- =====================================================
+-- Note: The Store module tables are created automatically via EF Core
+-- migrations. Run `dotnet ef database update` to apply all migrations
+-- including store tables. The 13 store tables are:
+--
+--   StoreCategories, Products, ProductImages, DigitalProductFiles,
+--   ShoppingCarts, ShoppingCartItems, ShippingAddresses, Orders,
+--   OrderItems, CustomerDownloads, Subscriptions, SubscriptionPayments,
+--   CustomerPaymentMethods
+--
+-- See the Table Summary section below for details on each table.
+
+-- =====================================================
+-- SECTION 4: SEED DATA
 -- =====================================================
 
 -- Insert default roles
@@ -457,6 +471,8 @@ VALUES
 GO
 
 -- Mark migrations as applied (so EF doesn't try to re-run them)
+-- Note: Store module migrations also exist and are applied via `dotnet ef database update`.
+-- Only the core migrations are listed here; store migrations are managed by EF Core.
 INSERT INTO [dbo].[__EFMigrationsHistory] ([MigrationId], [ProductVersion])
 VALUES
     ('00000000000000_CreateIdentitySchema', '10.0.0'),
@@ -507,6 +523,24 @@ GO
 | LinkCategories | Link directory categories |
 | CategoryLinks | Links in categories |
 
+### Store Tables
+
+| Table | Purpose |
+|-------|---------|
+| StoreCategories | Hierarchical product categories with optional parent, image, and sort order |
+| Products | Products (Physical, Digital, Subscription) with pricing, inventory, and subscription config |
+| ProductImages | Product images with primary flag and sort order |
+| DigitalProductFiles | Downloadable files for digital products, stored in `ProtectedFiles/store/` |
+| ShoppingCarts | Persistent shopping carts tied to user accounts |
+| ShoppingCartItems | Line items within a shopping cart |
+| ShippingAddresses | Customer shipping addresses with default selection |
+| Orders | Purchase records with payment, shipping, and refund tracking |
+| OrderItems | Individual line items within an order |
+| CustomerDownloads | Download tokens for digital purchases with expiry and download limits |
+| Subscriptions | Recurring subscriptions with Stripe/PayPal integration and billing periods |
+| SubscriptionPayments | Payment history for subscriptions including refunds |
+| CustomerPaymentMethods | Stored Stripe customer IDs and PayPal emails per user |
+
 ---
 
 ## Access Level Values
@@ -542,7 +576,10 @@ The SystemCredentials table stores encrypted values. Before adding credentials:
 This script creates the database schema only. You also need:
 
 - `/ProtectedFiles/` directory for PDF documents
+- `/ProtectedFiles/store/` directory for digital product files
 - `/wwwroot/Galleries/` directory for gallery images
+- `/wwwroot/store/products/` directory for product images
+- `/wwwroot/store/categories/` directory for category images
 
 Ensure the application has write permissions to these directories.
 
@@ -576,6 +613,6 @@ SELECT * FROM SystemSettings;
 
 ---
 
-**Version:** 1.0.0
+**Version:** 2.0.0
 **Framework:** Ape Framework
 **Site:** https://Illustrate.net

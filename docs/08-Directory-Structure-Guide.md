@@ -58,6 +58,15 @@ Contains MVC controllers that handle HTTP requests and return responses.
 | `EmailTestController.cs` | Email configuration testing tools |
 | `ContactFormSettingsController.cs` | Configure contact form recipients |
 | `ActiveUsersController.cs` | Dashboard showing currently active users |
+| `StoreController.cs` | Public storefront browsing and product detail |
+| `CartController.cs` | Shopping cart (AJAX operations) |
+| `CheckoutController.cs` | Checkout flow and payment processing |
+| `OrderHistoryController.cs` | Customer order history, addresses, downloads |
+| `SubscriptionController.cs` | Subscription management (subscribe, manage, cancel) |
+| `DigitalDownloadController.cs` | Secure token-based file downloads |
+| `StoreAdminController.cs` | Admin: products, orders, inventory, subscriptions, reports |
+| `StoreStripeWebhookController.cs` | Stripe webhook handler |
+| `StorePayPalWebhookController.cs` | PayPal webhook handler |
 
 ---
 
@@ -80,6 +89,26 @@ Contains entity classes that map to database tables and view models for the UI.
 | `LinkCategory.cs` | Link directory categories | LinkCategories |
 | `CategoryLink.cs` | Individual links | CategoryLinks |
 
+#### Store Entity Models
+
+| File | Purpose | Database Table |
+|------|---------|----------------|
+| `StoreCategory.cs` | Store product categories (hierarchical) | StoreCategories |
+| `Product.cs` | Products (Physical, Digital, Subscription) | Products |
+| `ProductImage.cs` | Product images | ProductImages |
+| `DigitalProductFile.cs` | Downloadable product files | DigitalProductFiles |
+| `ShoppingCart.cs` | Persistent shopping carts | ShoppingCarts |
+| `ShoppingCartItem.cs` | Cart line items | ShoppingCartItems |
+| `ShippingAddress.cs` | Customer shipping addresses | ShippingAddresses |
+| `Order.cs` | Customer orders | Orders |
+| `OrderItem.cs` | Order line items | OrderItems |
+| `CustomerDownload.cs` | Digital download tokens | CustomerDownloads |
+| `Subscription.cs` | Recurring subscriptions | Subscriptions |
+| `SubscriptionPayment.cs` | Subscription payment history | SubscriptionPayments |
+| `CustomerPaymentMethod.cs` | Payment gateway customer IDs | CustomerPaymentMethods |
+| `PaymentResult.cs` | Payment result DTO | — |
+| `PayPal/` | PayPal API request/response models | — |
+
 #### Supporting Classes (in SystemCredential.cs)
 
 | Class | Purpose |
@@ -96,6 +125,8 @@ Contains entity classes that map to database tables and view models for the UI.
 | `GalleryViewModels.cs` | Models for gallery browser with pagination support |
 | `CredentialViewModels.cs` | Models for credential management UI |
 | `ActiveUsersViewModel.cs` | Models for active users dashboard |
+| `StoreViewModels.cs` | Models for store browsing, products, cart, checkout, orders |
+| `StoreAdminViewModels.cs` | Models for admin dashboard, order management, subscriptions |
 
 ---
 
@@ -113,6 +144,14 @@ Contains business logic services that implement core functionality.
 | `EmailService.cs` | SMTP-based email sending (implements IEmailSender) |
 | `EnhancedEmailService.cs` | Advanced email with Azure Communication Services + SMTP fallback |
 | `SystemSettingsService.cs` | Application settings management |
+| `ProductCatalogService.cs` | Product/category CRUD, images, digital files, inventory |
+| `ShoppingCartService.cs` | Cart operations with stock validation |
+| `OrderService.cs` | Order lifecycle, tracking, refunds, sales reports |
+| `StorePaymentService.cs` | Stripe + PayPal payment processing and refunds |
+| `SubscriptionService.cs` | Subscription management and payment history |
+| `DigitalDeliveryService.cs` | Download token management with limits/expiry |
+| `ShippingAddressService.cs` | Customer address management |
+| `PayPalApiClient.cs` | PayPal REST API client |
 
 #### Service Interfaces
 
@@ -122,6 +161,13 @@ Contains business logic services that implement core functionality.
 | `IGalleryManagementService` | GalleryManagementService |
 | `IImageOptimizationService` | ImageOptimizationService |
 | `ISystemSettingsService` | SystemSettingsService |
+| `IProductCatalogService` | ProductCatalogService |
+| `IShoppingCartService` | ShoppingCartService |
+| `IOrderService` | OrderService |
+| `IStorePaymentService` | StorePaymentService |
+| `ISubscriptionService` | SubscriptionService |
+| `IDigitalDeliveryService` | DigitalDeliveryService |
+| `IShippingAddressService` | ShippingAddressService |
 
 ---
 
@@ -148,6 +194,19 @@ DbSet<GalleryCategory> GalleryCategories
 DbSet<GalleryImage> GalleryImages
 DbSet<LinkCategory> LinkCategories
 DbSet<CategoryLink> CategoryLinks
+DbSet<StoreCategory> StoreCategories
+DbSet<Product> Products
+DbSet<ProductImage> ProductImages
+DbSet<DigitalProductFile> DigitalProductFiles
+DbSet<ShoppingCart> ShoppingCarts
+DbSet<ShoppingCartItem> ShoppingCartItems
+DbSet<ShippingAddress> ShippingAddresses
+DbSet<Order> Orders
+DbSet<OrderItem> OrderItems
+DbSet<CustomerDownload> CustomerDownloads
+DbSet<Subscription> Subscriptions
+DbSet<SubscriptionPayment> SubscriptionPayments
+DbSet<CustomerPaymentMethod> CustomerPaymentMethods
 ```
 
 ---
@@ -204,8 +263,39 @@ Views/
 │   └── Index.cshtml            # Email testing
 ├── ContactFormSettings/
 │   └── Index.cshtml            # Contact form recipients
-└── ActiveUsers/
-    └── Index.cshtml            # Active users dashboard
+├── ActiveUsers/
+│   └── Index.cshtml            # Active users dashboard
+├── Store/                     # Public storefront
+│   ├── Browse.cshtml          # Product listing
+│   ├── Product.cshtml         # Product detail
+│   └── _CategorySidebar.cshtml
+├── Cart/                      # Shopping cart
+│   └── Index.cshtml
+├── Checkout/                  # Checkout flow
+│   ├── Index.cshtml           # Checkout page
+│   └── Confirmation.cshtml    # Order confirmation
+├── OrderHistory/              # Customer orders
+│   ├── Index.cshtml           # Order list
+│   ├── Detail.cshtml          # Order detail
+│   ├── Addresses.cshtml       # Manage addresses
+│   └── Downloads.cshtml       # Digital downloads
+├── Subscription/              # Subscription management
+│   ├── Subscribe.cshtml       # Payment page
+│   ├── Manage.cshtml          # Active subscription
+│   ├── Cancelled.cshtml
+│   └── NoSubscription.cshtml
+└── StoreAdmin/                # Store admin
+    ├── Index.cshtml           # Admin dashboard
+    ├── Products.cshtml        # Product list
+    ├── CreateProduct.cshtml
+    ├── EditProduct.cshtml
+    ├── Categories.cshtml
+    ├── Orders.cshtml          # Order list
+    ├── OrderDetail.cshtml
+    ├── Inventory.cshtml
+    ├── Subscriptions.cshtml   # Subscription list
+    ├── SubscriptionDetail.cshtml  # Payment history + refund
+    └── SalesReport.cshtml
 ```
 
 ---
@@ -244,10 +334,12 @@ Contains static files served directly to clients.
 ```
 wwwroot/
 ├── css/
-│   └── site.css                # Main application styles
+│   ├── site.css                # Main application styles
+│   └── store.css               # Store-specific styles
 ├── js/
 │   ├── site.js                 # Main JavaScript (includes top button, etc.)
-│   └── qr.js                   # QR code functionality
+│   ├── qr.js                   # QR code functionality
+│   └── store.js                # Store JavaScript
 ├── lib/                        # Client-side libraries
 │   ├── bootstrap/              # Bootstrap CSS/JS
 │   ├── jquery/                 # jQuery
@@ -256,6 +348,9 @@ wwwroot/
 ├── images/
 │   └── site/                   # Site images (logo, etc.)
 ├── Galleries/                  # Uploaded gallery images (runtime)
+├── store/                      # Store images
+│   ├── products/               # Product images
+│   └── categories/             # Category images
 └── favicon.ico                 # Browser icon
 ```
 
@@ -263,11 +358,11 @@ wwwroot/
 
 ### /ProtectedFiles
 
-Contains uploaded PDF documents for the Document Library.
+Contains protected files served through authenticated controllers.
 
 - **Location:** Outside wwwroot for security
-- **Access:** Controlled through DocumentController
-- **Files:** PDF documents organized by database references
+- `/ProtectedFiles/PDFs/` — Document library PDFs (accessed via DocumentController)
+- `/ProtectedFiles/store/` — Digital product files (secure downloads via DigitalDownloadController)
 
 ---
 
@@ -312,6 +407,8 @@ Project configuration:
   - Microsoft.EntityFrameworkCore.SqlServer
   - Azure.Communication.Email
   - SixLabors.ImageSharp
+  - Stripe.net
+  - PayPalHttp
 
 ### web.config
 
@@ -378,6 +475,6 @@ Dual-provider architecture:
 
 ---
 
-**Version:** 1.0.0
+**Version:** 2.0.0
 **Framework:** Ape Framework
 **Site:** https://Illustrate.net

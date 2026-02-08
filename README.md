@@ -851,6 +851,25 @@ public IActionResult PublicPage() { }
 }
 ```
 
+## Documentation
+
+Detailed guides are available in the [`Docs/`](Docs/) folder:
+
+| Guide | Description |
+|-------|-------------|
+| [01 - Getting Started](Docs/01-Getting-Started.md) | Prerequisites, installation, first run |
+| [02 - Administrator Guide](Docs/02-Administrator-Guide.md) | Admin tools, user management, store admin |
+| [03 - Email Configuration](Docs/03-Email-Configuration-Guide.md) | Azure + SMTP email setup |
+| [04 - Document Library](Docs/04-Document-Library-Guide.md) | PDF document management |
+| [05 - Security Guide](Docs/05-Security-Guide.md) | Authentication, encryption, access control |
+| [06 - Deployment Guide](Docs/06-Deployment-Guide.md) | IIS and Azure deployment |
+| [07 - Contact Form](Docs/07-Contact-Form-Guide.md) | Contact form and spam protection |
+| [08 - Directory Structure](Docs/08-Directory-Structure-Guide.md) | Project layout and file reference |
+| [09 - Database Schema](Docs/09-Database-Schema.md) | Complete SQL schema with store tables |
+| [10 - Photo Gallery](Docs/10-Photo-Gallery-Guide.md) | Image gallery management |
+| [11 - Store Guide](Docs/11-Store-Guide.md) | E-commerce: products, orders, subscriptions |
+| [12 - Payment Setup](Docs/12-Payment-Setup-Guide.md) | Stripe and PayPal configuration |
+
 ## Contributing
 
 1. Fork the repository

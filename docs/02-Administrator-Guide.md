@@ -22,6 +22,7 @@ After logging in as an Admin or Manager, you'll see additional menu options:
 | Documents | Manage PDF document library | ✓ | ✓ |
 | Gallery | Manage photo gallery | ✓ | ✓ |
 | More Links | Manage link categories | ✓ | ✓ |
+| Store Admin | Manage products, orders, subscriptions | ✓ | ✓ |
 
 ---
 
@@ -320,6 +321,138 @@ Select multiple images at once for bulk upload.
 
 ---
 
+## Store Administration
+
+The Store module provides a full e-commerce system with product management, order processing, subscription handling, and sales reporting. Access the store admin area from the **Store Admin** menu item or navigate to `/StoreAdmin`.
+
+### Store Dashboard
+
+The Store Dashboard (`/StoreAdmin`) provides an at-a-glance overview of your store:
+
+- Total revenue, order count, and product count
+- Recent orders with status indicators
+- Low-stock product alerts
+- Quick navigation to all store admin sections
+
+### Product Management
+
+Navigate to **Store Admin** > **Products** to manage your product catalog.
+
+**Creating a Product:**
+
+1. Click **Add Product**
+2. Select the product type:
+   - **Physical** -- Tangible items that require shipping and inventory tracking
+   - **Digital** -- Downloadable files delivered electronically after purchase
+   - **Subscription** -- Recurring billing products via Stripe or PayPal
+3. Fill in product details:
+   - Name, SKU, description, and short description
+   - Pricing: base price, compare-at price (strikethrough), cost price, and optional member price (discounted price for active subscribers)
+   - Category assignment
+4. Click **Save**
+
+**Product Images:**
+
+- Upload one or more images per product
+- Set a primary image (displayed in listings and as the main product image)
+- Drag to reorder images
+
+**Digital Product Files:**
+
+- For Digital product types, upload downloadable files
+- Files are stored securely in `ProtectedFiles/store/` (outside the web root)
+- Configure maximum download count and download expiry days per product
+
+**Subscription Product Configuration:**
+
+- For Subscription product types, configure:
+  - Billing interval (e.g., month, year) and interval count
+  - Stripe Price ID (from your Stripe dashboard)
+  - PayPal Plan ID (from your PayPal dashboard)
+
+**Member Pricing:**
+
+- Any product can have an optional **Member Price**
+- Active subscribers automatically see and receive the member price at checkout
+- Displayed as a discounted price alongside the regular price
+
+### Category Management
+
+Navigate to **Store Admin** > **Categories** to organize your product catalog.
+
+- Create hierarchical categories (parent/child relationships)
+- Upload a category image for display on the storefront
+- Set sort order to control display sequence
+- Activate or deactivate categories to show/hide them from the storefront
+
+### Order Management
+
+Navigate to **Store Admin** > **Orders** to manage customer orders.
+
+**Viewing Orders:**
+
+- View all orders with filtering by status (Pending, Processing, Shipped, Delivered, Cancelled, Refunded)
+- Search orders by order number, customer email, or customer name
+- Click any row to view full order details
+
+**Order Details:**
+
+- View line items, pricing breakdown, and customer information
+- View shipping address and payment information
+
+**Updating Order Status:**
+
+- Change order status (e.g., Pending to Processing to Shipped)
+- Add tracking information: select shipping carrier and enter tracking number
+- Add admin notes to orders
+
+**Processing Refunds:**
+
+- Admin role only (Managers cannot process refunds)
+- Enter refund amount and reason
+- Refund is recorded with transaction ID and timestamp
+
+### Subscription Management
+
+Navigate to **Store Admin** > **Subscriptions** to manage recurring subscriptions.
+
+**Viewing Subscriptions:**
+
+- View all subscriptions with status filtering (Active, Past Due, Cancelled, Expired)
+- Click any row to view subscription details
+
+**Subscription Details:**
+
+- View subscriber information, product, and billing details
+- View current period start and end dates
+- View payment gateway (Stripe or PayPal) and subscription IDs
+- View complete payment history including initial payments and renewals
+
+**Processing Subscription Payment Refunds:**
+
+- Admin role only
+- Click the refund button on any payment in the history
+- Enter refund reason in the modal dialog
+- Refund is processed and recorded with transaction ID
+
+### Inventory Management
+
+Navigate to **Store Admin** > **Inventory** to monitor and manage stock levels for physical products.
+
+- View stock levels for all physical products with tracking enabled
+- Products below their low-stock threshold are highlighted
+- Adjust stock quantities up or down with a required reason for the adjustment
+
+### Sales Reports
+
+Navigate to **Store Admin** > **Reports** to view sales analytics.
+
+- **Date-range filtering:** Select start and end dates to analyze specific periods
+- **Revenue breakdowns:** View revenue totals broken down by product type (Physical, Digital, Subscription)
+- **Daily sales chart:** Visual chart showing daily sales volume and revenue over the selected period
+
+---
+
 ## Security Best Practices
 
 ### Credential Management
@@ -351,7 +484,7 @@ Select multiple images at once for bulk upload.
 - **Review credential audit logs** - Check for suspicious access
 - **Update credentials** - Rotate API keys and passwords
 - **Database backup** - Regular backups of the database
-- **File backup** - Backup `/ProtectedFiles/` and `/wwwroot/Galleries/`
+- **File backup** - Backup `/ProtectedFiles/`, `/wwwroot/Galleries/`, `/wwwroot/store/`, and `/ProtectedFiles/store/`
 
 ### Troubleshooting
 
@@ -372,6 +505,6 @@ Select multiple images at once for bulk upload.
 
 ---
 
-**Version:** 1.0.0
+**Version:** 2.0.0
 **Framework:** Ape Framework
 **Site:** https://Illustrate.net
