@@ -48,6 +48,7 @@ namespace Ape.Data
 
         // Store: Subscriptions & Payments
         public DbSet<Subscription> Subscriptions { get; set; }
+        public DbSet<SubscriptionPayment> SubscriptionPayments { get; set; }
         public DbSet<CustomerPaymentMethod> CustomerPaymentMethods { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -276,6 +277,23 @@ namespace Ape.Data
                     .WithMany()
                     .HasForeignKey(e => e.ProductID)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // ============================================================
+            // Store: SubscriptionPayment
+            // ============================================================
+            modelBuilder.Entity<SubscriptionPayment>(entity =>
+            {
+                entity.HasKey(e => e.PaymentID);
+                entity.Property(e => e.PaymentID).ValueGeneratedOnAdd();
+
+                entity.HasIndex(e => e.SubscriptionID);
+                entity.HasIndex(e => e.TransactionId);
+
+                entity.HasOne(e => e.Subscription)
+                    .WithMany()
+                    .HasForeignKey(e => e.SubscriptionID)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             // ============================================================

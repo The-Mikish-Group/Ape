@@ -72,3 +72,62 @@ public class SubscriptionListViewModel
         _ => "bg-secondary"
     };
 }
+
+public class SubscriptionPaymentViewModel
+{
+    public int PaymentID { get; set; }
+    public decimal Amount { get; set; }
+    public DateTime PaymentDate { get; set; }
+    public string PaymentGateway { get; set; } = string.Empty;
+    public string TransactionId { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
+    public string? RefundTransactionId { get; set; }
+    public DateTime? RefundedDate { get; set; }
+    public string? RefundReason { get; set; }
+    public string? Notes { get; set; }
+
+    public string StatusBadgeClass => Status switch
+    {
+        "Paid" => "bg-success",
+        "Refunded" => "bg-danger",
+        "Failed" => "bg-warning text-dark",
+        _ => "bg-secondary"
+    };
+}
+
+public class AdminSubscriptionDetailViewModel
+{
+    public int SubscriptionId { get; set; }
+    public string UserEmail { get; set; } = string.Empty;
+    public string? UserId { get; set; }
+    public string ProductName { get; set; } = string.Empty;
+    public string? ProductDescription { get; set; }
+    public SubscriptionStatus Status { get; set; }
+    public string? PaymentGateway { get; set; }
+    public decimal Amount { get; set; }
+    public string? BillingInterval { get; set; }
+    public string? StripeSubscriptionId { get; set; }
+    public string? PayPalSubscriptionId { get; set; }
+    public DateTime? CurrentPeriodStart { get; set; }
+    public DateTime? CurrentPeriodEnd { get; set; }
+    public DateTime? CancelledDate { get; set; }
+    public string? CancelReason { get; set; }
+    public DateTime CreatedDate { get; set; }
+    public List<SubscriptionPaymentViewModel> Payments { get; set; } = [];
+
+    public string StatusBadgeClass => Status switch
+    {
+        SubscriptionStatus.Active => "bg-success",
+        SubscriptionStatus.PastDue => "bg-warning text-dark",
+        SubscriptionStatus.Cancelled => "bg-secondary",
+        SubscriptionStatus.Expired => "bg-danger",
+        _ => "bg-secondary"
+    };
+
+    public string BillingDisplay => BillingInterval switch
+    {
+        "month" => $"{Amount:C}/month",
+        "year" => $"{Amount:C}/year",
+        _ => $"{Amount:C}/{BillingInterval}"
+    };
+}

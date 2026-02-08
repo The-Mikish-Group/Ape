@@ -14,12 +14,14 @@ public class StoreStripeWebhookController(
     SecureConfigurationService configService,
     IOrderService orderService,
     IDigitalDeliveryService deliveryService,
+    ISubscriptionService subscriptionService,
     ILogger<StoreStripeWebhookController> logger) : ControllerBase
 {
     private readonly ApplicationDbContext _context = context;
     private readonly SecureConfigurationService _configService = configService;
     private readonly IOrderService _orderService = orderService;
     private readonly IDigitalDeliveryService _deliveryService = deliveryService;
+    private readonly ISubscriptionService _subscriptionService = subscriptionService;
     private readonly ILogger<StoreStripeWebhookController> _logger = logger;
 
     [HttpPost]
@@ -114,6 +116,13 @@ public class StoreStripeWebhookController(
             subscription.Status = SubscriptionStatus.Active;
             subscription.UpdatedDate = DateTime.UtcNow;
             await _context.SaveChangesAsync();
+
+            // Record payment history
+            var amount = invoice!.AmountPaid > 0 ? invoice.AmountPaid / 100m : subscription.Amount;
+            var transactionId = invoice.Id ?? "unknown";
+            await _subscriptionService.RecordPaymentAsync(
+                subscription.SubscriptionID, amount, "Stripe", transactionId, "Renewal");
+
             _logger.LogInformation("Webhook: Subscription {SubscriptionId} renewed via invoice", subscription.SubscriptionID);
         }
     }

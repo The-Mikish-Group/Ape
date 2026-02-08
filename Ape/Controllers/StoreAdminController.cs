@@ -450,4 +450,50 @@ public class StoreAdminController(
 
         return View(subscriptions);
     }
+
+    public async Task<IActionResult> SubscriptionDetail(int id)
+    {
+        var detail = await _subscriptionService.GetSubscriptionDetailByIdAsync(id);
+        if (detail == null)
+        {
+            TempData["ErrorMessage"] = "Subscription not found.";
+            return RedirectToAction(nameof(Subscriptions));
+        }
+
+        ViewData["Title"] = $"Subscription: {detail.ProductName}";
+        return View(detail);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> RefundSubscriptionPayment(int paymentId, string? reason)
+    {
+        var payment = await _subscriptionService.GetPaymentByIdAsync(paymentId);
+        if (payment == null || payment.Status != "Paid")
+        {
+            TempData["ErrorMessage"] = "Payment not found or not eligible for refund.";
+            return RedirectToAction(nameof(Subscriptions));
+        }
+
+        var refundResult = payment.PaymentGateway switch
+        {
+            "Stripe" => await _paymentService.RefundStripePaymentAsync(payment.TransactionId),
+            "PayPal" => await _paymentService.RefundPayPalPaymentAsync(payment.TransactionId),
+            _ => PaymentResult.CreateFailure($"Unknown payment gateway: {payment.PaymentGateway}")
+        };
+
+        if (refundResult.Success)
+        {
+            await _subscriptionService.MarkPaymentRefundedAsync(
+                paymentId, refundResult.TransactionId ?? "unknown", reason);
+            TempData["SuccessMessage"] = "Payment refunded successfully.";
+        }
+        else
+        {
+            TempData["ErrorMessage"] = $"Refund failed: {refundResult.ErrorMessage}";
+        }
+
+        return RedirectToAction(nameof(SubscriptionDetail), new { id = payment.SubscriptionID });
+    }
 }

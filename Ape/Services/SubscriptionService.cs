@@ -160,4 +160,127 @@ public class SubscriptionService(
             .AsNoTracking()
             .CountAsync(s => s.Status == SubscriptionStatus.Active);
     }
+
+    public async Task<AdminSubscriptionDetailViewModel?> GetSubscriptionDetailByIdAsync(int subscriptionId)
+    {
+        var sub = await _context.Subscriptions
+            .AsNoTracking()
+            .Include(s => s.Product)
+            .FirstOrDefaultAsync(s => s.SubscriptionID == subscriptionId);
+
+        if (sub == null) return null;
+
+        // Look up user email from AspNetUsers
+        var userEmail = await _context.Users
+            .AsNoTracking()
+            .Where(u => u.Id == sub.UserId)
+            .Select(u => u.Email)
+            .FirstOrDefaultAsync() ?? sub.UserId;
+
+        var payments = await _context.SubscriptionPayments
+            .AsNoTracking()
+            .Where(p => p.SubscriptionID == subscriptionId)
+            .OrderByDescending(p => p.PaymentDate)
+            .Select(p => new SubscriptionPaymentViewModel
+            {
+                PaymentID = p.PaymentID,
+                Amount = p.Amount,
+                PaymentDate = p.PaymentDate,
+                PaymentGateway = p.PaymentGateway,
+                TransactionId = p.TransactionId,
+                Status = p.Status,
+                RefundTransactionId = p.RefundTransactionId,
+                RefundedDate = p.RefundedDate,
+                RefundReason = p.RefundReason,
+                Notes = p.Notes
+            })
+            .ToListAsync();
+
+        return new AdminSubscriptionDetailViewModel
+        {
+            SubscriptionId = sub.SubscriptionID,
+            UserId = sub.UserId,
+            UserEmail = userEmail,
+            ProductName = sub.Product?.Name ?? "Unknown",
+            ProductDescription = sub.Product?.ShortDescription,
+            Status = sub.Status,
+            PaymentGateway = sub.PaymentGateway,
+            Amount = sub.Amount,
+            BillingInterval = sub.BillingInterval,
+            StripeSubscriptionId = sub.StripeSubscriptionId,
+            PayPalSubscriptionId = sub.PayPalSubscriptionId,
+            CurrentPeriodStart = sub.CurrentPeriodStart,
+            CurrentPeriodEnd = sub.CurrentPeriodEnd,
+            CancelledDate = sub.CancelledDate,
+            CancelReason = sub.CancelReason,
+            CreatedDate = sub.CreatedDate,
+            Payments = payments
+        };
+    }
+
+    public async Task<StoreOperationResult> RecordPaymentAsync(
+        int subscriptionId, decimal amount, string gateway, string transactionId, string? notes)
+    {
+        // Avoid duplicate records for the same transaction
+        var exists = await _context.SubscriptionPayments
+            .AnyAsync(p => p.TransactionId == transactionId);
+
+        if (exists)
+        {
+            _logger.LogInformation("Payment already recorded for transaction {TransactionId}", transactionId);
+            return StoreOperationResult.SucceededNoId("Payment already recorded.");
+        }
+
+        var payment = new SubscriptionPayment
+        {
+            SubscriptionID = subscriptionId,
+            Amount = amount,
+            PaymentDate = DateTime.UtcNow,
+            PaymentGateway = gateway,
+            TransactionId = transactionId,
+            Status = "Paid",
+            Notes = notes,
+            CreatedDate = DateTime.UtcNow
+        };
+
+        _context.SubscriptionPayments.Add(payment);
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Payment recorded for subscription {SubscriptionId}: {Amount:C} via {Gateway}",
+            subscriptionId, amount, gateway);
+
+        return StoreOperationResult.Succeeded(payment.PaymentID, "Payment recorded.");
+    }
+
+    public async Task<SubscriptionPayment?> GetPaymentByIdAsync(int paymentId)
+    {
+        return await _context.SubscriptionPayments
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.PaymentID == paymentId);
+    }
+
+    public async Task<StoreOperationResult> MarkPaymentRefundedAsync(
+        int paymentId, string refundTransactionId, string? reason)
+    {
+        var payment = await _context.SubscriptionPayments
+            .FirstOrDefaultAsync(p => p.PaymentID == paymentId);
+
+        if (payment == null)
+            return StoreOperationResult.Failed("Payment record not found.");
+
+        if (payment.Status == "Refunded")
+            return StoreOperationResult.Failed("Payment has already been refunded.");
+
+        payment.Status = "Refunded";
+        payment.RefundTransactionId = refundTransactionId;
+        payment.RefundedDate = DateTime.UtcNow;
+        payment.RefundReason = reason;
+
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Payment {PaymentId} marked as refunded. Refund transaction: {RefundTransactionId}",
+            paymentId, refundTransactionId);
+
+        return StoreOperationResult.SucceededNoId("Payment marked as refunded.");
+    }
 }

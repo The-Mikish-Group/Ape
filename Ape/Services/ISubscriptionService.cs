@@ -13,4 +13,8 @@ public interface ISubscriptionService
     Task<List<SubscriptionListViewModel>> GetAllSubscriptionsAsync(SubscriptionStatus? status = null, int page = 1, int pageSize = 25);
     Task<int> GetSubscriptionCountAsync(SubscriptionStatus? status = null);
     Task<int> GetActiveSubscriptionCountAsync();
+    Task<AdminSubscriptionDetailViewModel?> GetSubscriptionDetailByIdAsync(int subscriptionId);
+    Task<StoreOperationResult> RecordPaymentAsync(int subscriptionId, decimal amount, string gateway, string transactionId, string? notes);
+    Task<SubscriptionPayment?> GetPaymentByIdAsync(int paymentId);
+    Task<StoreOperationResult> MarkPaymentRefundedAsync(int paymentId, string refundTransactionId, string? reason);
 }

@@ -13,11 +13,13 @@ public class StorePayPalWebhookController(
     ApplicationDbContext context,
     IOrderService orderService,
     IDigitalDeliveryService deliveryService,
+    ISubscriptionService subscriptionService,
     ILogger<StorePayPalWebhookController> logger) : ControllerBase
 {
     private readonly ApplicationDbContext _context = context;
     private readonly IOrderService _orderService = orderService;
     private readonly IDigitalDeliveryService _deliveryService = deliveryService;
+    private readonly ISubscriptionService _subscriptionService = subscriptionService;
     private readonly ILogger<StorePayPalWebhookController> _logger = logger;
 
     [HttpPost]
@@ -100,6 +102,11 @@ public class StorePayPalWebhookController(
             subscription.Status = SubscriptionStatus.Active;
             subscription.UpdatedDate = DateTime.UtcNow;
             await _context.SaveChangesAsync();
+
+            // Record initial payment
+            await _subscriptionService.RecordPaymentAsync(
+                subscription.SubscriptionID, subscription.Amount, "PayPal", subscriptionId, "Initial payment");
+
             _logger.LogInformation("PayPal Webhook: Subscription {SubscriptionId} activated", subscriptionId);
         }
     }

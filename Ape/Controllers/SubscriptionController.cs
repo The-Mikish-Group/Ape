@@ -96,6 +96,12 @@ public class SubscriptionController(
             userId, request.ProductId, "Stripe", request.StripeSubscriptionId,
             product.Price, product.BillingInterval);
 
+        if (result.Success && result.EntityId.HasValue)
+        {
+            await _subscriptionService.RecordPaymentAsync(
+                result.EntityId.Value, product.Price, "Stripe", request.StripeSubscriptionId, "Initial payment");
+        }
+
         return Json(new { success = result.Success, message = result.Message });
     }
 
@@ -138,6 +144,12 @@ public class SubscriptionController(
 
         if (result.Success)
         {
+            if (result.EntityId.HasValue)
+            {
+                await _subscriptionService.RecordPaymentAsync(
+                    result.EntityId.Value, product.Price, "PayPal", subscription_id, "Initial payment");
+            }
+
             TempData["SuccessMessage"] = "Your subscription is now active!";
             return RedirectToAction(nameof(Manage));
         }

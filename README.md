@@ -98,6 +98,7 @@ A production-ready ASP.NET Core MVC framework with comprehensive authentication,
 - **Checkout Flow**: Smart checkout (skips shipping for digital-only orders)
 - **Payment Processing**: Stripe (card payments) and PayPal integration
 - **Subscription Billing**: Recurring payments via Stripe Subscriptions and PayPal
+- **Subscription Payment History**: Admin view of all subscription payments (initial + renewals) with refund capability
 - **Member Pricing**: Discounted prices for active subscribers
 - **Order Management**: Full order lifecycle (pending → processing → shipped → delivered)
 - **Shipping & Tracking**: Carrier and tracking number management with email notifications
@@ -468,6 +469,7 @@ Ape/
 │   ├── OrderItem.cs               # Order line items
 │   ├── CustomerDownload.cs        # Digital download tokens
 │   ├── Subscription.cs            # Recurring subscriptions
+│   ├── SubscriptionPayment.cs     # Subscription payment history
 │   ├── CustomerPaymentMethod.cs   # Payment method storage
 │   ├── ShippingAddress.cs         # Customer addresses
 │   ├── PaymentResult.cs           # Payment result DTO
@@ -540,6 +542,7 @@ Ape/
 - `OrderItems` - Order line items (product snapshot)
 - `CustomerDownloads` - Token-based digital download access
 - `Subscriptions` - Recurring subscriptions (Stripe/PayPal)
+- `SubscriptionPayments` - Payment history for subscription charges and refunds
 - `CustomerPaymentMethods` - Stored payment gateway customer IDs
 
 ## Security Considerations
