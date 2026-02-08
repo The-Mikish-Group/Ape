@@ -24,7 +24,7 @@
                                 {
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="radio" name="shippingAddressId" value="@addr.AddressId"
-                                               id="addr-@addr.AddressId" checked="@(addr.AddressId == Model.SelectedAddressId ? "checked" : null)" />
+                                               id="addr-@addr.AddressId" @(addr.AddressId == Model.SelectedAddressId ? "checked" : "") />
                                         <label class="form-check-label" for="addr-@addr.AddressId">
                                             <strong>@addr.FullName</strong> — @addr.FormattedAddress
                                             @if (addr.IsDefault) { <span class="badge bg-primary ms-1">Default</span> }

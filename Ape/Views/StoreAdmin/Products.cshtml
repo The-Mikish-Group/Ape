@@ -33,9 +33,9 @@
                     <label class="form-label small">Type</label>
                     <select name="type" class="form-select form-select-sm" onchange="this.form.submit()">
                         <option value="">All Types</option>
-                        <option value="Physical" selected="@(filterType == Ape.Models.ProductType.Physical ? "selected" : null)">Physical</option>
-                        <option value="Digital" selected="@(filterType == Ape.Models.ProductType.Digital ? "selected" : null)">Digital</option>
-                        <option value="Subscription" selected="@(filterType == Ape.Models.ProductType.Subscription ? "selected" : null)">Subscription</option>
+                        <!option value="Physical" @(filterType == Ape.Models.ProductType.Physical ? "selected" : "")>Physical</!option>
+                        <!option value="Digital" @(filterType == Ape.Models.ProductType.Digital ? "selected" : "")>Digital</!option>
+                        <!option value="Subscription" @(filterType == Ape.Models.ProductType.Subscription ? "selected" : "")>Subscription</!option>
                     </select>
                 </div>
                 <div class="col-auto">
@@ -45,7 +45,7 @@
                 <div class="col-auto">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="showInactive" value="true" id="showInactive"
-                               checked="@(showInactive ? "checked" : null)" onchange="this.form.submit()" />
+                               @(showInactive ? "checked" : "") onchange="this.form.submit()" />
                         <label class="form-check-label" for="showInactive">Show Inactive</label>
                     </div>
                 </div>

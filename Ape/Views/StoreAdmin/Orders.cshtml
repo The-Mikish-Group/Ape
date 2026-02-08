@@ -16,7 +16,7 @@
                         <option value="">All Statuses</option>
                         @foreach (var status in Enum.GetValues<Ape.Models.OrderStatus>())
                         {
-                            <option value="@((int)status)" selected="@(Model.FilterStatus == status ? "selected" : null)">@status</option>
+                            <!option value="@((int)status)" @(Model.FilterStatus == status ? "selected" : "")>@status</!option>
                         }
                     </select>
                 </div>

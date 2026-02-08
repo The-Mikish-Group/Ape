@@ -61,9 +61,9 @@
                                 @foreach (var category in (ViewBag.LinkCategories as List<Ape.Models.ViewModels.LinkCategoryViewModel>) ?? new List<Ape.Models.ViewModels.LinkCategoryViewModel>())
                                 {
                                     var isSelected = ViewBag.SelectedCategoryId != null && ViewBag.SelectedCategoryId.ToString() == category.CategoryId.ToString();
-                                    <option value="@category.CategoryId" selected="@(isSelected ? "selected" : null)">
+                                    <!option value="@category.CategoryId" @(isSelected ? "selected" : "")>
                                         @category.CategoryName@(category.IsAdminOnly ? " (Admin Only)" : "")
-                                    </option>
+                                    </!option>
                                 }
                             </select>
                         </div>

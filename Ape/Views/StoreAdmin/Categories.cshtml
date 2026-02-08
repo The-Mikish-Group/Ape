@@ -104,7 +104,7 @@
                                                             <option value="">None (Root Level)</option>
                                                             @foreach (var parentCat in Model.Where(c => c.CategoryId != cat.CategoryId))
                                                             {
-                                                                <option value="@parentCat.CategoryId" selected="@(cat.ParentCategoryId == parentCat.CategoryId ? "selected" : null)">@parentCat.Name</option>
+                                                                <!option value="@parentCat.CategoryId" @(cat.ParentCategoryId == parentCat.CategoryId ? "selected" : "")>@parentCat.Name</!option>
                                                             }
                                                         </select>
                                                     </div>
@@ -113,7 +113,7 @@
                                                         <input type="number" class="form-control" name="SortOrder" value="@cat.SortOrder" />
                                                     </div>
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" name="IsActive" value="true" id="isActive-@cat.CategoryId" checked="@(cat.IsActive ? "checked" : null)" />
+                                                        <input class="form-check-input" type="checkbox" name="IsActive" value="true" id="isActive-@cat.CategoryId" @(cat.IsActive ? "checked" : "") />
                                                         <label class="form-check-label" for="isActive-@cat.CategoryId">Active</label>
                                                     </div>
                                                 </div>
