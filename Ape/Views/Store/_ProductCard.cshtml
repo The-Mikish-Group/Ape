@@ -4,11 +4,11 @@
     <a asp-controller="Store" asp-action="Product" asp-route-slug="@Model.Slug" class="text-decoration-none">
         @if (Model.PrimaryThumbnailUrl != null)
         {
-            <img src="@Model.PrimaryThumbnailUrl" alt="@Model.Name" class="card-img-top" style="height:200px;object-fit:cover;" />
+            <img src="@Model.PrimaryThumbnailUrl" alt="@Model.Name" class="card-img-top" style="height:400px;object-fit:cover;" />
         }
         else
         {
-            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:200px;">
+            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:400px;">
                 <i class="bi bi-image display-4 text-muted"></i>
             </div>
         }

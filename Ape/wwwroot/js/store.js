@@ -44,7 +44,7 @@ function addToCart(productId) {
         if (msgDiv) {
             msgDiv.style.display = 'block';
             msgDiv.className = 'mt-2 alert alert-warning alert-dismissible fade show';
-            msgDiv.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Please <a href="/Identity/Account/Login">log in</a> to add items to your cart.<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+            msgDiv.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Please <a href="/Identity/Account/Login">Register and Log-in</a> to add items to your cart.<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
         }
     });
 }

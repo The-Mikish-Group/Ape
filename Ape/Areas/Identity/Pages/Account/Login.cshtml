@@ -92,6 +92,13 @@
     .bg-red-lighter {
         background-color: #ecb3b8;
     }
+
+        .bg-red-lighter:hover,
+        .bg-red-lighter:focus,
+        .bg-red-lighter:active {
+            background-color: #db96af;
+        }
+
     .btn-register {
         background-color: #d1e7dd;
         color: #0a3622;
@@ -117,8 +124,8 @@
                 passwordInput.type = 'text';
                 passwordIcon.textContent = '🔓';
                 // Eye icon already set
-                togglePasswordButton.style.backgroundColor = '#c8e6c9'; // Light green
-                togglePasswordButton.style.borderColor = '#a5d6a7';
+                togglePasswordButton.style.backgroundColor = '#c8e6c9'; // Light green               
+                togglePasswordButton.style.borderColor = '#a5d6a7';                
             } else {
                 passwordInput.type = 'password';
                 passwordIcon.textContent = '🙈';

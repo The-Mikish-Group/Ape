@@ -31,7 +31,7 @@ public class CartController(
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
-            return Json(new { success = false, message = "Please log in to add items to your cart." });
+            return Json(new { success = false, message = "Please Register and log in to add items to your cart." });
 
         var isMember = await _subscriptionService.HasActiveSubscriptionAsync(userId);
         var result = await _cartService.AddItemAsync(userId, request.ProductId, request.Quantity, isMember);
