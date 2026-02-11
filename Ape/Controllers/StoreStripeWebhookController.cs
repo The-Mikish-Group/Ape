@@ -8,7 +8,7 @@ using Stripe;
 namespace Ape.Controllers;
 
 [ApiController]
-[Route("api/store/stripe-webhook")]
+[Route("api/StoreStripeWebhook")]
 public class StoreStripeWebhookController(
     ApplicationDbContext context,
     SecureConfigurationService configService,
